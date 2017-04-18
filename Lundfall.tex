@@ -4,12 +4,17 @@
 \title{Models of linear dependent type theory}
 \author{Martin Lundfall}
 \maketitle
+\abstract
+Linear dependent type theory is the synthesis of linear logic and dependent type theory, yielding a system of deduction which maintains a careful accounting of the assumptions used in a derivation. In this master thesis I explore some concrete models in which linear dependent type theory can be interpreted.
+\newpage
 \tableofcontents
+\newpage
 \section{Background}
 \subsection{Dependent type theory}
 \subsection{Linear type theory}
-\subsection{Grothendieck Fibrations}
+\subsection{Fibrations}
 A fibration $p : \mathbf{E} \to \mathbf{B}$ induces for every $u : A \to B$ in $\mathbf{B}$ a functor $u^*: E_B \to E_A$ unique up to unique isomorphism. In general $u^* \circ v^* \cong (u \circ v)^*$, so we don't have functoriality on the nose. Those fibration for which there are lifts of morphisms such that the equalities hold on the nose are called \textbf{Split }.
+We will need to talk about monoidal categories indexed over some base category. A convenient notion is that of a monoidal fibration:
 \begin{defn}
 A \textbf{monoidal fibration} is a functor $\Phi\colon E\to B$ such that
 \begin{itemize}
@@ -18,6 +23,158 @@ A \textbf{monoidal fibration} is a functor $\Phi\colon E\to B$ such that
 \item the tensor product of $E$ preserves cartesian arrows.
 \end{itemize}
 \end{defn}
+Let $\mathcal{C}$ be a category and $F : \mathcal{C} \to \mathbf{Cat}$ a (pseudo)functor. $\textbf{Cat}_{/*}$ denotes the slice category of categories over the terminal category, i.e. the category constisting of pointed categories $(\mathcal{D}, d)$, $(\mathcal{E}, e)$ as objects and functors $G : \mathcal{D} \to \mathcal{E}$ equipped with morphisms $\gamma : G(d) \to e$ as morphisms.
+\begin{defn}
+The Grothendieck construction $\int F$ of $F$ is the pullback of the following diagram:
+\[
+\ti
+\int F \ar[r] \ar[d] & \textbf{Cat}_{/*} \ar[d, "U"] \\
+\mathcal{C} \ar[r, "F"] & \textbf{Cat} \\
+\kz
+\]
+\end{defn}
+In other words, the category whose objects consists of pairs $(a, b)$ where $a \in \Ob(\mathcal{C})$ and $b \in F(a)$, and whose morphisms $f : (a, b) \to (\alpha, \beta)$ are pairs $(f, g)$ where $f: a \to \alpha$ and $g : F(f)(b) \to \beta$.
+But in general, we do not want to constrain ourselves to the case where the base category has a monoidal structure. Instead, we ask for the minimal structure that forces the induced functors of fibers to be monoidal. This structure is that of a lax monoidal fibration \cite{zawadowski}:
+\begin{defn}
+Lax monoidal fibration
+\end{defn}
+\begin{defn}
+A map $p : G \to H$ in $\textbf{Grpd}$ is a \textbf{fibration} of groupoids if for every $g \in G$
+and $f : p(g) \to h$ in $H$, there exists an object $g'$ and map $\hat f : g \to g'$ in $G$ such that $p(g') = h$ and $p(\hat f) = f : p(g) \to p(g')$.
+\end{defn}
+\begin{lem}
+For any groupoid $G$ and functor $A \in [G, \mathcal{V}]$ the comma category $(I \downarrow A)$ is a groupoid, and its associated projection $p_{G.A} : (I \downarrow A) \to G$ is a fibration.
+\begin{proof}
+A morphism between objects $(g, i)$, $(g', i')$ in $(I \downarrow A)$ are given by a morphism $f : g \to g'$ in $G$ such that $A(f) \circ i = i'$. Since $G$ is a groupoid there exists an inverse $f^{-1}$. That this map yields an inverse of $(I \downarrow A)$ is immediate from the fact that the following diagram in $\mathcal{V}$ commutes:
+\[
+\ti
+I \ar[rd,"i'",swap] \ar[r, "i"] & A(g) \ar[d, "A(f)", bend right,swap] \\
+& A(g') \ar[u, "A(f^{-1}) = A(f)^{1}", bend right,swap]
+\kz
+\]
+To see that $p$ is a fibration, let $(g, i)$ be an object of $(I \downarrow A)$ and $f : g \to g'$ an arrow in $G$. Then the object $(g', A(f)\circ i)$ together with $f$ seen as a morphism of $(I \downarrow A)$ form an immediate commutative diagram in $\mathcal{V}$.
+\end{proof}
+\end{lem}
+\begin{cor}
+The restriction of $\diag(\mathcal{V})$ to the category of groupoids is also a model for IDLTT.
+\end{cor}
+\subsection{Spectra}
+A sequential spectrum is an $\mathbb{N}-graded$ (compactly generated, or (sufficiently well-behaved)) pointed topological space $X_{\bullet} = X_n$ with continuous maps $X_n \land S \to X_{n+1}$. It is not uncommon that the maps (often referred to as structure maps) are in fact isomorphisms.
+A basic example is the suspension spectra, which can be constructed out of any (well-behaved) topological space $X$ as $X_n = S^n \land X$. The map $S^n \land X \land S \to S^{n+1} \land X$ is an isomorphism.
+Every spectra corresponds to a cohomology theory, as outlined below.
+In Homotopy type theory, Mike Shulman writes in (https://homotopytypetheory.org/2013/07/24/cohomology/), spectrums are described as follows:
+More precisely, a spectrum is a family of types $Y : \mathbb{N} \to \mathcal{U}$ such that for all n we have (a specified equivalence) $Y_n = \Omega Y_{n+1}$.
+For such a Y, we define the (abelian) cohomology of X with coefficients in Y to be
+\[
+H^n(X;Y) := \Vert X \to \Omega^{k-n} Y_k \Vert_0 \quad (n \in \mathbb{Z})
+\]
+The stable homotopy group of a spectra is a $\mathbb{Z}$-graded abelian group, whose $q$ component arises as a colimit to the diagram:
+\[
+\pi_{k+q}(X_k) = [S^{k+q}, X_k]_* \xrightarrow{S \land (-)} [S^{k+q+1}, S \land X_{k}] \xrightarrow{1_{S^{k+q+1}}, \sigma} [S^{k+q+1}, X_{k+1}] = \pi_{k+q+1}(X_{k+1})
+\]
+Definition 1.16. A morphism $f: X \to Y$ of sequential spectra, is called a stable weak homotopy equivalence, if its image under the stable homotopy group-functor of def. 1.13 is an isomorphism
+\[
+\pi_{\bullet}(f): \pi_{\bullet}(X) \simeq \pi_{\bullet}(Y)
+\]
+An $\Omega$-spectrum is a spectrum for which the maps $\hat \sigma : X_n \to \text{Maps}(S^1,X_{n+1})$ arising out out of the adjunction $\Hom(\Sigma X, Y) \cong \Hom(X, [S^1, Y])$ from the structure maps $\sigma$ are weak homotopy equivalences. Note that this is the condition Mike requires above.
+The category of spectra has all limits and colimits. They are inherited from Top. It also has a zero object, the spectra which is a constant point. Coproducts of spectra $X$ and $Y$ comes from the componentwise wedge sum of topological spaces.
+A map $f: A \to B$ is called a \textbf{retract} (of $g : C \to D$) if there exist i, j, r, and s, such that the following diagram commutes:
+\[
+\ti
+A \ar[d, "f"] \ar[r, "i"] & C \ar[d, "g"] \ar[r,"j"] & A \ar[d, "f"]\\
+B \ar[r, "r"] & D \ar[r, "s"] & B
+\kz
+\]
+such that $j \circ i = 1_A$ and $s \circ r = 1_B$.
+\begin{defn}
+A complete and cocomplete category is a \textbf{model category}, $\mathcal{M}$ if it has three classes of morphisms, F, G and W called fibrations, cofibrations and weak equivalences satisfying the following conditions:
+\begin{itemize}
+\item \textbf{Retracts}: If $f$ is a retract of $g$, then $f$ belongs to the same class as $g$.
+\item \textbf{(2 out of 3)}: If two of the maps $f$, $g$ and $gf$ are weak equivalences, then so is the third
+\item \textbf{Lifting} (weak equivalences + cofibrations) have the left lifting property with respect to fibrations, and cofibrations have the left lifting property with respect to (weak equivalances + fibrations). In other words, for $f$ a fibration and $g$ cofibration, if anyone of them is also weak equivalence, then there exists a lifting map as in the following diagram:
+\[
+\ti
+A \ar[d, "f"] \ar[r] & B \ar[d, "g"]\\
+C \ar[ur, "h", dotted] \ar[r] & D
+\kz
+\]
+\item \textbf{Factorization} every morphism f can be written as $f = p \circ i$ for a fibration p and an acyclic cofibration i. Every morphissm f can be written as $f = p \circ i$ for an acyclic fibration p and a cofibration i.
+\end{itemize}
+\end{defn}
+An object is said to be fibrant if $X \to 1$ is a fibration. An object is cofibrant if $0 \to X$ is a cofibration.\\
+A \textbf{path object} $PX$ in a model category is the factorization object in the diagonal map $\Delta_X : X \to X \times X$.
+\[
+X \xrightarrow{i \in W} PX \xrightarrow{p \in F} X \times X
+\]
+A \textbf{cylinder object} $CX$ is the factorization of the codiagonal map $\nabla_X : X \sqcup X \to X$:
+\[
+X \sqcup X \xto{f \in G} CX \xto{g \in W} X
+\]
+The factorization axiom ensures that these always exists (in fact, factorization is a stronger condition)\\
+The fiber of a map of pointed spaces $f : X \to Y$ is the pullback:
+\[
+\ti
+\text{fib}(f) \ar[r] & X \ar[d, "f"]\\
+* \ar[r, "point"] & Y
+\kz
+\]
+where point is the inclusion of the point into the selcted point of $Y$. Cofiber arises dually as a pushout.
+For $f, g : X \to Y$, a \textbf{left homotopy} $\eta : f \implies_L g$ is a map $\eta : CX \to Y$ such that the following diagram commutes:
+\[
+\ti
+X \ar[dr, "f"] \ar[r] & CX \ar[d, "\eta"] & X \ar[l] \ar[dl, "g",swap]\\
+& Y &
+\kz
+\]
+For $f, g : X \to Y$, a \textbf{right homotopy} $\eta : f \implies_R g$ is a map $\eta :X \to PY$ such that the following diagram commutes:
+\[
+\ti
+& X \ar[dl, "f"] \ar[dr, "g"] \ar[d, "{\eta}"]\\
+Y &   PY \ar[l,] \ar[r, ] & Y
+\kz
+\]
+If $X$ is a cofibrant object, then a left homotopy induces a right homotopy. If $X$ is fibrant, then a right homotopy induces a left homotopy.
+The \textbf{Homotopy category}, $Ho(\mathcal{C})$ of a model category $\mathcal{C}$ is the category whose objects are the objects of $\mathcal{C}$ which are both fibrant and cofibrant and whose morphisms are the equivalence classes of the morphisms of $\mathcal{C}$ under the homotopy relation.\\
+From any map $f: X \to Y$ one can form long fiber sequences:
+\[
+\dots \text{fib(fib(f))} \cong \Omega Y \to \text{fib}(f) \to X \xto{f} Y
+\]
+or long cofiber sequences analoguously.
+Spectra form a model category. A homomorphism of spectra $f_{\bullet} : X_{\bullet} \to Y_{\bullet}$ is a
+\begin{itemize}
+\item \textbf{Strict weak equivalence} if the components $f_n : X_n \to Y_n$ are weak homotopy equivalences.
+\item \textbf{strict fibration} if each component is a fibration in the classical model structure on topological spaces. (Serre fibration)
+\item \textbf{strict cofibration} if $f_0$ is a cofib in Top, and if all maps
+\[
+f_{n+1}, \sigma : X_n \sqcup_{S \land X_{n}} S \land Y_{n} \to Y_{n+1}
+\]
+\end{itemize}
+are cofibrations.\\
+These classes of morphisms give the category of spectra the structure of a model categoyr.\\
+A \textbf{relative cell complex inclusion} is a map $f : X \to X'$ fitting in to the following pushout diagram:
+\[
+\ti
+S^{n-1} \ar[r,"\phi"] \ar[d, "i"] & X \ar[d,"f"]\\
+D^n \ar[r] & X'
+\kz
+\]
+for some continuous function $\phi$.\\
+A spectrum is called a CW-spectrum if all of its spaces are CW-complexes and the structure maps are relative cell complex inclusions.\\
+The category of spectra can be equipped with fibrations, cofibrations and weak equivalences in such a way that the fibrant-cofibrant objects are all $\Omega$-spectra. The homotopy category of this model category is called the \textbf{stable homotopy category}.\\
+The stable homotopy category has finite colimits induced by the wedge sum, and zero object $0=\sum(\star)$. The hom-sets $[X, Y]$ of the stable homotopy category have a group structure, since $[X, Y] \cong [X, \Omega \Sigma Y]$ and since maps into a loop object carry an induced group action given by path composition. Furthermore this group is abelian (Eckmann-Hilton). Thus the stable homotopy category is a category enriched in abelian groups.
+An additive category is a category $\mathcal{C}$:
+\begin{itemize}
+\item Enriched in \textbf{Ab}
+\item with finite coproducts
+\end{itemize}
+from this follows that the coproducts coincide with products.\\
+The stable homotopy category is therefore an additive category.
+It is furthermore a triangulated category, which makes the long homotopy fiber sequences and cofiber sequences coincide. Specifically, for a cofiber sequence $X \xto{f} Y \xto{g} Z$ in the stable homotopy category and for any other spectra $A$, there is a long \textbf{fiber-cofiber} sequence of abelian groups:
+\[
+\dots [A, \Omega Y] \to [A, \Omega Z] \to [A, X] \to [A, Y] \to [A, Z] \to [A, \Sigma X] \to [A, \Sigma Y] \dots
+\]
+\newpage
+
 \section{Syntax}
 \subsection{Structural rules}
 We will be dealing with the following judgements:\\
@@ -109,7 +266,7 @@ To interpret linear dependent type theory we begin by building a \textbf{context
 
 In our case, this is only almost true. We will build a contextual category in which not only the structural rules are assumed, but also the rules for the tensor product of linear types. This simplification allows us to formulate the semantic structure in terms of symmetric monoidal categories instead of multicategories.
 
-Our particular choice of contextual category will consist of a comprehension category and a locally symmetric monoidal fibration defined below. Roughly, this will give a category of intuitionistic contexts such that to each intuitionistic types $\Gamma$ we associate a category consisting of intuitionistic types compatible with generalised substitution, and a monoidal category consisting of linear types.
+Our particular choice of contextual category will consist of a comprehension category \cite{jacobs} and a locally symmetric monoidal fibration defined below. Roughly, this will give a category of intuitionistic contexts such that to each intuitionistic types $\Gamma$ we associate a category consisting of intuitionistic types compatible with generalised substitution, and a monoidal category consisting of linear types.
 \begin{defn}
 A \textbf{comprehension category} consists of a commutative diagram of functors
 \[
@@ -376,212 +533,17 @@ Dually, we can use the same argument to conclude that when $\mathcal{V}$ has all
 \begin{cor}
 If $\mathcal{V}$ has all colimits, then $\diag(\mathcal{V})$ supports $\Sigma$-types. If $\mathcal{V}$ has all limits, then $\diag(\mathcal{V})$ supports $\Pi$-types.
 \end{cor}
-\newpage
-\section{Merging $\diag(\mathcal{V})$ with the groupoid model}
-A further generalization of IDLTT is to have linear types and intuitionistic types as separate entities, i.e. not every intuitionistic type in a context $\Gamma$ represented by an object of $\mathcal{L}(\Gamma)$. Instead, one would like to think of the intuitionistic types of $\Gamma$ as the fibrations over it. 
-\newpage
-It appears that $\Sigma$ and $\Pi$ types will guarantee the existences of colimits and limits for any diagram of the shape $B : (I \downarrow a) \to \mathcal{V}$ where $a$ is any object of $\mathcal{V}$ (because that would be a kan extension of a functor in to the terminal category). We get the following result.
-\begin{thm}
-If $\mathcal{V}$ has an object $A$ such that $\mathcal{V}[I, A] = \emptyset$, then $\mathcal{V}$ has initial (terminal) object if $\diag(\mathcal{V})$ supports $\Sigma$ ($\Pi$) types.
-\begin{proof}
-Let $A_F \in [\mathbf{1}, \mathcal{V}]$ be the functor which is constantly $A$. Then $(I \downarrow A) = \mathbf{0}$. Now $\Sigma_{!A}$ and $\Pi_{!A}$ are left respective right kan extension of the functor $p : \mathbf{0} \to \mathbf{1}$, and thus yield limits and colimits of the empty diagram.
-\end{proof}
-\end{thm}
-When does $M_{\mathcal{C}} : [\mathcal{C}, \mathcal{V}] \to \mathcal{I}(\mathcal{C})$ have a left adjoint $L$? Want iso:
-\[
-\Hom_{[\mathcal{C}, \mathcal{V}]}(L(p_{\mathcal{C}.A}), B) \cong \Hom_{(\mathcal{I})}(p_{\mathcal{C}.A}, p_{\mathcal{C}.B})
-\]
-Define $L$ as the functor taking projections $p_{\mathcal{C}.A} : (I \downarrow A) \to \mathcal{C}$ to $A$.\\
-Then the above is \textit{not} an iso in the general case. Let $\mathcal{C}$ be the discrete category on two objects. Whereas a natural transformation $\eta : A \to B$ must send $A(1) \to B(1)$ and $A(2) \to B(2)$, a functor $(I \downarrow A) \to (I \downarrow B)$ may switch the objects.
-
-Side note:\\
-If $I \in \mathcal{V}$ is not in the image of a functor $A \in [\mathcal{C}, \mathcal{V}]$, then compositions $- \circ p_{\mathcal{C}.A}$ of projections don't seem to be projections again.
-\begin{defn}
-A map $p : G \to H$ in $\textbf{Grpd}$ is a \textbf{fibration} if for every $g \in G$ and $f : p(g) \to h$ in $H$, there exists an object $g'$ and map $\hat f : g \to g'$ in $G$ such that $p(g') = h$ and $p(\hat f) = f : p(g) \to p(g')$.
-\end{defn}
-\begin{lem}
-For any groupoid $G$ and functor $A \in [G, \mathcal{V}]$ the comma category $(I \downarrow A)$ is a groupoid, and its associated projection $p_{G.A} : (I \downarrow A) \to G$ is a fibration.
-\begin{proof}
-A morphism between objects $(g, i)$, $(g', i')$ in $(I \downarrow A)$ are given by a morphism $f : g \to g'$ in $G$ such that $A(f) \circ i = i'$. Since $G$ is a groupoid there exists an inverse $f^{-1}$. That this map yields an inverse of $(I \downarrow A)$ is immediate from the fact that the following diagram in $\mathcal{V}$ commutes:
-\[
-\ti
-I \ar[rd,"i'",swap] \ar[r, "i"] & A(g) \ar[d, "A(f)", bend right,swap] \\
-& A(g') \ar[u, "A(f^{-1}) = A(f)^{1}", bend right,swap]
-\kz
-\]
-To see that $p$ is a fibration, let $(g, i)$ be an object of $(I \downarrow A)$ and $f : g \to g'$ an arrow in $G$. Then the object $(g', A(f)\circ i)$ together with $f$ seen as a morphism of $(I \downarrow A)$ form an immediate commutative diagram in $\mathcal{V}$.
-\end{proof}
-\end{lem}
-\begin{cor}
-The restriction of $\diag(\mathcal{V})$ to the category of groupoids is also a model for IDLTT.
-\end{cor}
-
-
-
-\subsection{Monoidal groupoids}
-Given any bicategory $\mathcal{B}$, there is a monoidal groupoid $End(b)$ of endomorphisms of an object $b \in \mathcal{B}$ with 1-cells $f : b \to b$ as objects and invertible 2-cells $\eta : f \implies f'$ as morphisms. The monoidal structure of $End(b)$ is given by composition: $f \otimes f' = f'\circ f$. In particular, if $\mathcal{B} = \mathbf{Cat}$, then we have $End(\mathcal{C})$ a monoidal groupoid consisting of functors and natural isomorphisms.\\
-
-\section{Dependent ordered type theory}
-If one were to drop exchange as a structural rule, this should correspond to dropping the requirement of the semantic category being symmetric. A particular construction which might be interesting to explore in this setting would be simplicial sets equipped with the join. Would this work?
-
-
+\subsection{Spectra}
+%\subsection{Monoidal groupoids}
+%Given any bicategory $\mathcal{B}$, there is a monoidal groupoid $End(b)$ of endomorphisms of an object $b \in \mathcal{B}$ with 1-cells $f : b \to b$ as objects and invertible 2-cells $\eta : f \implies f'$ as morphisms. The monoidal structure of $End(b)$ is given by composition: $f \otimes f' = f'\circ f$. In particular, if $\mathcal{B} = \mathbf{Cat}$, then we have $End(\mathcal{C})$ a monoidal groupoid consisting of functors and natural isomorphisms.\\
 
 \newpage
 
 
-\section{Grothendieck construction}
-Let $\mathcal{C}$ be a category and $F : \mathcal{C} \to \mathbf{Cat}$ a (pseudo)functor. $\textbf{Cat}_{/*}$ denotes the slice category of categories over the terminal category, i.e. the category constisting of pointed categories $(\mathcal{D}, d)$, $(\mathcal{E}, e)$ as objects and functors $G : \mathcal{D} \to \mathcal{E}$ equipped with morphisms $\gamma : G(d) \to e$ as morphisms.
-
-The Grothendieck construction $\int F$ of $F$ is the pullback of the following diagram:
-\[
-\ti
-\int F \ar[r] \ar[d] & \textbf{Cat}_{/*} \ar[d, "U"] \\
-\mathcal{C} \ar[r, "F"] & \textbf{Cat} \\
-\kz
-\]
-In other words, the category whose objects consists of pairs $(a, b)$ where $a \in \Ob(\mathcal{C})$ and $b \in F(a)$, and whose morphisms $f : (a, b) \to (\alpha, \beta)$ are pairs $(f, g)$ where $f: a \to \alpha$ and $g : F(f)(b) \to \beta$.
-\section{Spectra}
-A sequential spectrum is an $\mathbb{N}-graded$ (compactly generated, or (sufficiently well-behaved)) pointed topological space $X_{\bullet} = X_n$ with continuous maps $X_n \land S \to X_{n+1}$. It is not uncommon that the maps (often referred to as structure maps) are in fact isomorphisms.
-A basic example is the suspension spectra, which can be constructed out of any (well-behaved) topological space $X$ as $X_n = S^n \land X$. The map $S^n \land X \land S \to S^{n+1} \land X$ is an isomorphism.
-Every spectra corresponds to a cohomology theory, as outlined below.
-In Homotopy type theory, Mike Shulman writes in (https://homotopytypetheory.org/2013/07/24/cohomology/), spectrums are described as follows:
-More precisely, a spectrum is a family of types $Y : \mathbb{N} \to \mathcal{U}$ such that for all n we have (a specified equivalence) $Y_n = \Omega Y_{n+1}$.
-For such a Y, we define the (abelian) cohomology of X with coefficients in Y to be
-\[
-H^n(X;Y) := \Vert X \to \Omega^{k-n} Y_k \Vert_0 \quad (n \in \mathbb{Z})
-\]
-The stable homotopy group of a spectra is a $\mathbb{Z}$-graded abelian group, whose $q$ component arises as a colimit to the diagram:
-\[
-\pi_{k+q}(X_k) = [S^{k+q}, X_k]_* \xrightarrow{S \land (-)} [S^{k+q+1}, S \land X_{k}] \xrightarrow{1_{S^{k+q+1}}, \sigma} [S^{k+q+1}, X_{k+1}] = \pi_{k+q+1}(X_{k+1})
-\]
-Definition 1.16. A morphism $f: X \to Y$ of sequential spectra, is called a stable weak homotopy equivalence, if its image under the stable homotopy group-functor of def. 1.13 is an isomorphism
-\[
-\pi_{\bullet}(f): \pi_{\bullet}(X) \simeq \pi_{\bullet}(Y)
-\]
-An $\Omega$-spectrum is a spectrum for which the maps $\hat \sigma : X_n \to \text{Maps}(S^1,X_{n+1})$ arising out out of the adjunction $\Hom(\Sigma X, Y) \cong \Hom(X, [S^1, Y])$ from the structure maps $\sigma$ are weak homotopy equivalences. Note that this is the condition Mike requires above.
-The category of spectra has all limits and colimits. They are inherited from Top. It also has a zero object, the spectra which is a constant point. Coproducts of spectra $X$ and $Y$ comes from the componentwise wedge sum of topological spaces.
-A map $f: A \to B$ is called a \textbf{retract} (of $g : C \to D$) if there exist i, j, r, and s, such that the following diagram commutes:
-\[
-\ti
-A \ar[d, "f"] \ar[r, "i"] & C \ar[d, "g"] \ar[r,"j"] & A \ar[d, "f"]\\
-B \ar[r, "r"] & D \ar[r, "s"] & B
-\kz
-\]
-such that $j \circ i = 1_A$ and $s \circ r = 1_B$.
-\section{Model category}
-A complete and cocomplete category is a \textbf{model category}, $\mathcal{M}$ if it has three classes of morphisms, F, G and W called fibrations, cofibrations and weak equivalences satisfying the following conditions:
-\begin{itemize}
-\item \textbf{Retracts}: If $f$ is a retract of $g$, then $f$ belongs to the same class as $g$.
-\item \textbf{(2 out of 3)}: If two of the maps $f$, $g$ and $gf$ are weak equivalences, then so is the third
-\item \textbf{Lifting} (weak equivalences + cofibrations) have the left lifting property with respect to fibrations, and cofibrations have the left lifting property with respect to (weak equivalances + fibrations). In other words, for $f$ a fibration and $g$ cofibration, if anyone of them is also weak equivalence, then there exists a lifting map as in the following diagram:
-\[
-\ti
-A \ar[d, "f"] \ar[r] & B \ar[d, "g"]\\
-C \ar[ur, "h", dotted] \ar[r] & D
-\kz
-\]
-\item \textbf{Factorization} every morphism f can be written as $f = p \circ i$ for a fibration p and an acyclic cofibration i. Every morphissm f can be written as $f = p \circ i$ for an acyclic fibration p and a cofibration i.
-\end{itemize}
-An object is said to be fibrant if $X \to 1$ is a fibration. An object is cofibrant if $0 \to X$ is a cofibration.\\
-A \textbf{path object} $PX$ in a model category is the factorization object in the diagonal map $\Delta_X : X \to X \times X$.
-\[
-X \xrightarrow{i \in W} PX \xrightarrow{p \in F} X \times X
-\]
-A \textbf{cylinder object} $CX$ is the factorization of the codiagonal map $\nabla_X : X \sqcup X \to X$:
-\[
-X \sqcup X \xto{f \in G} CX \xto{g \in W} X
-\]
-The factorization axiom ensures that these always exists (in fact, factorization is a stronger condition)\\
-The fiber of a map of pointed spaces $f : X \to Y$ is the pullback:
-\[
-\ti
-\text{fib}(f) \ar[r] & X \ar[d, "f"]\\
-* \ar[r, "point"] & Y
-\kz
-\]
-where point is the inclusion of the point into the selcted point of $Y$. Cofiber arises dually as a pushout.
-For $f, g : X \to Y$, a \textbf{left homotopy} $\eta : f \implies_L g$ is a map $\eta : CX \to Y$ such that the following diagram commutes:
-\[
-\ti
-X \ar[dr, "f"] \ar[r] & CX \ar[d, "\eta"] & X \ar[l] \ar[dl, "g",swap]\\
-& Y &
-\kz
-\]
-For $f, g : X \to Y$, a \textbf{right homotopy} $\eta : f \implies_R g$ is a map $\eta :X \to PY$ such that the following diagram commutes:
-\[
-\ti
-& X \ar[dl, "f"] \ar[dr, "g"] \ar[d, "{\eta}"]\\
-Y &   PY \ar[l,] \ar[r, ] & Y
-\kz
-\]
-If $X$ is a cofibrant object, then a left homotopy induces a right homotopy. If $X$ is fibrant, then a right homotopy induces a left homotopy.
-The \textbf{Homotopy category}, $Ho(\mathcal{C})$ of a model category $\mathcal{C}$ is the category whose objects are the objects of $\mathcal{C}$ which are both fibrant and cofibrant and whose morphisms are the equivalence classes of the morphisms of $\mathcal{C}$ under the homotopy relation.\\
-From any map $f: X \to Y$ one can form long fiber sequences:
-\[
-\dots \text{fib(fib(f))} \cong \Omega Y \to \text{fib}(f) \to X \xto{f} Y
-\]
-or long cofiber sequences analoguously.
-Spectra form a model category. A homomorphism of spectra $f_{\bullet} : X_{\bullet} \to Y_{\bullet}$ is a
-\begin{itemize}
-\item \textbf{Strict weak equivalence} if the components $f_n : X_n \to Y_n$ are weak homotopy equivalences.
-\item \textbf{strict fibration} if each component is a fibration in the classical model structure on topological spaces. (Serre fibration)
-\item \textbf{strict cofibration} if $f_0$ is a cofib in Top, and if all maps
-\[
-f_{n+1}, \sigma : X_n \sqcup_{S \land X_{n}} S \land Y_{n} \to Y_{n+1}
-\]
-\end{itemize}
-are cofibrations.\\
-These classes of morphisms give the category of spectra the structure of a model categoyr.\\
-A \textbf{relative cell complex inclusion} is a map $f : X \to X'$ fitting in to the following pushout diagram:
-\[
-\ti
-S^{n-1} \ar[r,"\phi"] \ar[d, "i"] & X \ar[d,"f"]\\
-D^n \ar[r] & X'
-\kz
-\]
-for some continuous function $\phi$.\\
-A spectrum is called a CW-spectrum if all of its spaces are CW-complexes and the structure maps are relative cell complex inclusions.\\
-The category of spectra can be equipped with fibrations, cofibrations and weak equivalences in such a way that the fibrant-cofibrant objects are all $\Omega$-spectra. The homotopy category of this model category is called the \textbf{stable homotopy category}.\\
-The stable homotopy category has finite colimits induced by the wedge sum, and zero object $0=\sum(\star)$. The hom-sets $[X, Y]$ of the stable homotopy category have a group structure, since $[X, Y] \cong [X, \Omega \Sigma Y]$ and since maps into a loop object carry an induced group action given by path composition. Furthermore this group is abelian (Eckmann-Hilton). Thus the stable homotopy category is a category enriched in abelian groups.
-An additive category is a category $\mathcal{C}$:
-\begin{itemize}
-\item Enriched in \textbf{Ab}
-\item with finite coproducts
-\end{itemize}
-from this follows that the coproducts coincide with products.\\
-The stable homotopy category is therefore an additive category.
-It is furthermore a triangulated category, which makes the long homotopy fiber sequences and cofiber sequences coincide. Specifically, for a cofiber sequence $X \xto{f} Y \xto{g} Z$ in the stable homotopy category and for any other spectra $A$, there is a long \textbf{fiber-cofiber} sequence of abelian groups:
-\[
-\dots [A, \Omega Y] \to [A, \Omega Z] \to [A, X] \to [A, Y] \to [A, Z] \to [A, \Sigma X] \to [A, \Sigma Y] \dots
-\]
-\newpage
 \section{Ideas}
 H-spaces generalized to the tensor product?
-\section{Experiment: Automorphism type}
-\begin{defn}
-Given a type $A$, define its \textbf{automorphism type}, denoted, $Aut(A)$ as the type of equivalences of $A$:
-\[
-Aut(A) \sum_{f : A \to A}\text{isequiv(f)}
-\]
-\end{defn}
-Conjectures:
-\begin{itemize}
-\item $Aut(\Fin n) = Fin n!$ consists of all permutations of $n$ elements.
-\item $Aut(\mathbb{Z}) \simeq \mathbb{N}$, with every equivalence being of the form $suc^n$ with inverse $pred^n$ for any $n \in \mathbb{N}$. $(Let suc^0 = id)$.
-\item $Aut(\mathbb{N}) = \mathbb{N}$, or larger still? For any $n \in \mathbb{N}$, we can form an equivalence by a function $f_n$ as
-\[
-f_n(m) = \begin{cases} m \mbox{ if }m \not \in \{n, \suc(n)\}\\
-       \suc(n) \mbox{ if } m = n\\
-       n \mbox{ if } m = \suc n
-       \end{cases}
-\]       
-\item $Aut(S^1) \simeq \mathbb{Z}$? Traditionally, this would be the unitary group. In our case, I think functions $f : S^1 \to S^1$ are uniquely determined by the image of $loop : \text{base} = \text{base}$. Since this can go to any path generated by loop, there is an equivalence for every element of the free group on one element.
-\item What is $Aut(S^n)$?
-\item What is $\sum_{A : \mathcal{U}}A = \mathbf{2}$?
-\item $Aut(A)$ is a set if $A$ is. Does the converse hold?
-\item What can be said about $Aut(A + B)$? We know that $Aut(\Fin n + \Fin m) \simeq \Fin (m + n)!$.
-\end{itemize}
-\newpage
+\subsection{Dependent ordered type theory}
+If one were to drop exchange as a structural rule, this should correspond to dropping the requirement of the semantic category being symmetric. A particular construction which might be interesting to explore in this setting would be simplicial sets equipped with the join. Would this work?
 \bibliographystyle{plain}
 \bibliography{refs.bib}
 \end{document}
