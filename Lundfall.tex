@@ -5,14 +5,28 @@
 \author{Martin Lundfall}
 \maketitle
 \abstract
-Linear dependent type theory is the synthesis of linear logic and dependent type theory, yielding a system of deduction which maintains a careful accounting of the assumptions used in a derivation. In this master thesis I explore some concrete models in which linear dependent type theory can be interpreted.
+Linear dependent type theory is the synthesis of linear logic and dependent type theory, yielding a system of deduction which maintains a careful account of the assumptions used in a derivation. In this master thesis I explore some concrete models in which linear dependent type theory can be interpreted.
 \newpage
 \tableofcontents
 \newpage
 \section{Background}
 \subsection{Dependent type theory}
+
 \subsection{Linear type theory}
 \subsection{Fibrations}
+A general heuristic for modelling some kind of mathematical object $E$ dependent over some other object $B$ is to specify a \textit{projection} morphism $p : E \to B$ subject to certain constraints. For example, a family of sets $A_i$ indexed the set $I$ might equally well be understood as the set $E = \bigsqcup_{i \in I}A_i$ together with a morphism $p : E  \to I$ such that $p^{-1}(i) = A_i$. This is the principle behind fibrations. Dependeding on which kind of mathematical object we are dealing with, we want to impose conditions on the projection $p : E \to B$ to be able to \textit{lift} certain structure of the base $B$ into \textit{fibers} $E_b = p^{-1}(b)$ for $b \in B$.
+
+
+In the context of categories, the appropriate notion is that of a \textbf{Grothendieck fibration}, or simply \textbf{fibration}. In order for a functor $p : E \to B$ to be a fibration, one needs to be able to lift arrows in the base category $B$ to arrows in $E$. We do this by asking for the existence of certain \textit{cartesian arrows} in $E$.
+\begin{defn}[Cartesian arrow]
+Given a functor $p : E \to B$, an arrow $f : e \to e'$ of $E$ is said to be \textbf{cartesian} if...
+\end{defn}
+\begin{defn}[Grothendieck fibration]
+A functor $p: E \to B$ is a \textbf{Grothendieck fibration} if, for every arrow $f$ in $B$, there exists a cartesian arrow $f^*$ in $E$ such that $p(f^*) = f$.
+\end{defn}
+A basic review of Grothendieck fibrations particularly relevant to the semantics of dependent type theory can be found in \cite{jacobs}. We repeat the notions relevant for our investigations here.
+
+
 A fibration $p : \mathbf{E} \to \mathbf{B}$ induces for every $u : A \to B$ in $\mathbf{B}$ a functor $u^*: E_B \to E_A$ unique up to unique isomorphism. In general $u^* \circ v^* \cong (u \circ v)^*$, so we don't have functoriality on the nose. Those fibration for which there are lifts of morphisms such that the equalities hold on the nose are called \textbf{Split }.
 We will need to talk about monoidal categories indexed over some base category. A convenient notion is that of a monoidal fibration:
 \begin{defn}
@@ -22,6 +36,10 @@ A \textbf{monoidal fibration} is a functor $\Phi\colon E\to B$ such that
 \item $E$ and $B$ are monoidal categories and $\Phi$ is a strict monoidal functor, and
 \item the tensor product of $E$ preserves cartesian arrows.
 \end{itemize}
+\end{defn}
+But in general, we do not want to constrain ourselves to the case where the base category has a monoidal structure. Instead, we ask for the minimal structure that forces the induced functors of fibers to be monoidal. This structure is that of a lax monoidal fibration \cite{zawadowski}:
+\begin{defn}
+A \textbf{lax monoidal fibration} is a fibration $p : E \to B$ such that ...
 \end{defn}
 Let $\mathcal{C}$ be a category and $F : \mathcal{C} \to \mathbf{Cat}$ a (pseudo)functor. $\textbf{Cat}_{/*}$ denotes the slice category of categories over the terminal category, i.e. the category constisting of pointed categories $(\mathcal{D}, d)$, $(\mathcal{E}, e)$ as objects and functors $G : \mathcal{D} \to \mathcal{E}$ equipped with morphisms $\gamma : G(d) \to e$ as morphisms.
 \begin{defn}
@@ -34,10 +52,6 @@ The Grothendieck construction $\int F$ of $F$ is the pullback of the following d
 \]
 \end{defn}
 In other words, the category whose objects consists of pairs $(a, b)$ where $a \in \Ob(\mathcal{C})$ and $b \in F(a)$, and whose morphisms $f : (a, b) \to (\alpha, \beta)$ are pairs $(f, g)$ where $f: a \to \alpha$ and $g : F(f)(b) \to \beta$.
-But in general, we do not want to constrain ourselves to the case where the base category has a monoidal structure. Instead, we ask for the minimal structure that forces the induced functors of fibers to be monoidal. This structure is that of a lax monoidal fibration \cite{zawadowski}:
-\begin{defn}
-Lax monoidal fibration
-\end{defn}
 \begin{defn}
 A map $p : G \to H$ in $\textbf{Grpd}$ is a \textbf{fibration} of groupoids if for every $g \in G$
 and $f : p(g) \to h$ in $H$, there exists an object $g'$ and map $\hat f : g \to g'$ in $G$ such that $p(g') = h$ and $p(\hat f) = f : p(g) \to p(g')$.
@@ -176,6 +190,7 @@ It is furthermore a triangulated category, which makes the long homotopy fiber s
 \newpage
 
 \section{Syntax}
+The particular linear dependent type theory under consideration is a mixture of the presentations given by Krishnaswami in \cite{krishnaswami} and Vákár in \cite{vakar14}. As is common in linear logic, we split contexts into two parts separated by a semicolon. The first part contains \textit{intuitionistic} assumptions who can be used freely (or not used at all) in the conclusion and are not 'consumed' when used. The second part of the context is the \textit{linear} part, containing ephemeral assumptions or resources, who have to be used exactly once in the conclusion. Types can either be intuitionistic, in which case we simply write $A \text{ type}$, or linear, written $A \text{ linear}$. 
 \subsection{Structural rules}
 We will be dealing with the following judgements:\\
 \fbox{
@@ -190,7 +205,7 @@ $\Gamma; \Xi \vdash x : A$\\
 $\Gamma \vdash A \equiv A' \text{ type}$\\
 $\Gamma \vdash A \equiv A' \text{ linear}$\\
 $\Gamma \vdash M \equiv N : A$\\
-$\Gamma; \Xi \vdash x \equiv y : A$\\
+$\Gamma; \Xi \vdash x \equiv y : A$
 \end{minipage}
 \begin{minipage}{.7\linewidth}
 \textbf{Meaning:}\\
@@ -206,8 +221,10 @@ $M$ and $N$ are equal intuitionistic terms of $A$ in $\Gamma$\\
 $x$ and $y$ are equal linear terms of $A$ in $\Gamma; \Xi$
 \end{minipage}}
 \\
+
 Our basic structural rules are the following:
-\[
+\\
+\fbox{
 \begin{minipage}{.5\linewidth}
 \[
 \inference {}{\vdash \cdot \text{ ctxt}}[CI-Base]
@@ -258,8 +275,12 @@ Our basic structural rules are the following:
 \inference{\vdash \Gamma; x : A \text{ ctxt}}{\Gamma; x : A \vdash x : A}[Lin-var]
 \]
 \end{minipage}
-\]
+}
 along with rules specifying that judgemental equality is closed over these. $\mathcal{J}$ denotes a judgement which is either $A \text{ type}$, $A \text{ linear}$ or $M : A$.
+\subsection{Intuitionistic typing}
+Standard $\Pi$, $\Sigma$ and $Id$-types.
+\subsection{Linear typing}
+Linear $\Pi$ and $\Sigma$
 \section{Semantics}
 \subsection{Contextual categories of linear dependent types}
 To interpret linear dependent type theory we begin by building a \textbf{contextual category}, an algebraic structure which abstracts the key features of the syntax. The idea is to construct the most general framework in which one can interpret the structural rules to deal with these once and for all. Once this has been done we can consider the extra conditions have to be imposed in order for the model to support various type constructors, and provide concrete models that satisfy these conditions.\\
@@ -412,7 +433,41 @@ Finally, if $B$ is an object of $\mathcal{L}_{\Gamma.A.\Gamma'}$, then the image
 \section{Models}
 \subsection{Monoidal Families}
 \subsection{Diagrams}
-Expanding upon the Monoidal Families example given by Vakar \cite{vakar14}, we consider diagrams $J : \mathcal{D} \to \mathcal{V}$ of any shape in a monoidal category $\mathcal{V}$. We expand this to a functor $\text{Diag}(\mathcal{V}) : \mathbf{Cat}^{op} \to \mathbf{SMCat(-,V)}$ where $\mathcal{C} \xrightarrow{F} \mathcal{D}$ in \textbf{Cat} induces a monoidal functor $[\mathcal{D}, \mathcal{V}] \xrightarrow{(-) \circ F} [\mathcal{C}, \mathcal{V}]$. To highlight the connection to the type theory, we let $A\{F\}$ in  $\diag(\mathcal{V})(\mathcal{C})$ denote the image of any object $A \in \diag(\mathcal{V})(\mathcal{D})$ under this functor. Notice that for any category $\mathcal{C}$, the functor category $[\mathcal{C}, \mathcal{V}]$ naturally carries a monoidal structure by $(F \otimes G)(c) = F(c) \otimes G(c)$, with the constant functor at the unit object $I \in \mathcal{\Ob(V)}$ as unit. This functor will also be denoted $I$.
+Expanding upon the Monoidal Families example given by Vakar \cite{vakar14}, we consider diagrams $J : \mathcal{D} \to \mathcal{V}$ of any shape in a category $\mathcal{V}$. In other words, we construct a category $\diag(\mathcal{V})$ whose objects are functors with $\mathcal{V}$ as codomain and whose morphisms for diagrams $J : \mathcal{D} \to \mathcal{V}$ and $J' :\mathcal{C} \to \mathcal{V}$ are given by functors $F : \mathcal{C} \to \mathcal{D}$ such that $J \circ F = J'$.
+
+From this we get the obvious domain fibration $dom : \diag(\mathcal{V}) \to \textbf{Cat}$.
+\begin{thm}
+If $\mathcal{V}$ is a monoidal category, $dom$ is a lax monoidal fibration.
+\begin{proof}
+\end{proof}
+\end{thm}
+This suggests that we can get a model for linear dependent type theory by letting $\mathcal{L} = \diag(\mathcal{V})$ in the semantic structures given above. But what about the choice of $\mathcal{T}$? One can trivially choose $\mathcal{T} = \mathbf{Cat}$ to get the following picture:
+\[
+\ti
+\diag(\mathcal{V}) \ar[rd, "dom"]  & \mathbf{Cat} \ar[d, "1_{\mathbf{Cat}}"] \ar[r, "Id"] & \mathbf{Cat}^\to \ar[ld, "cod"] \\
+& \mathbf{Cat}
+\kz
+\]
+where $Id : \mathbf{Cat} \to \mathbf{Cat}^\to$ is the map sending a category to its identity functor. Another choice would be $\mathcal{T} = \mathbf{Fib}$, the category of grothendieck fibrations, yielding:
+\[
+\ti
+\diag(\mathcal{V}) \ar[rd, "dom"]  & \mathbf{Fib} \ar[d, "Base"] \ar[r, "\mathcal{P}"] & \mathbf{Cat}^\to \ar[ld, "cod"] \\
+& \mathbf{Cat}
+\kz
+\]
+where $Base$ is the morphism sending a fibration $p : E \to B \mapsto B$ and $\mathcal{P}$ sends a fibration $p : E \to B$ to its underlying functor $p : E \to B$. For any functor $F : A \to B$ in $\mathbf{Cat}$, there is a pullback:
+\[
+\ti
+A \times_{B} E \ar[r] \ar[d, "F^*(p)"] & E \ar[d, "p"] \\
+A \ar[r, "F"] & B
+\kz
+\]
+where $F^*(p)$ is a fibration if $p$ is. This shows that $\mathcal{P}$ sends cartesian arrows to cartesian arrows.
+
+One could also restrict $\diag(\mathcal{V})$ to diagrams in $\mathcal{V}$ over groupoids. In that case, $\mathcal{T}$ consists of fibrations of groupoids and the intuitionistic fragment of the type theory is essentially the groupoid model as presented by Hofmann and Streicher in \cite{hofmann1998}. This suggests that this model can serve as a setting for linear dependent homotopy type theory.
+
+
+We expand this to a functor $\text{Diag}(\mathcal{V}) : \mathbf{Cat}^{op} \to \mathbf{SMCat(-,V)}$ where $\mathcal{C} \xrightarrow{F} \mathcal{D}$ in \textbf{Cat} induces a monoidal functor $[\mathcal{D}, \mathcal{V}] \xrightarrow{(-) \circ F} [\mathcal{C}, \mathcal{V}]$. To highlight the connection to the type theory, we let $A\{F\}$ in  $\diag(\mathcal{V})(\mathcal{C})$ denote the image of any object $A \in \diag(\mathcal{V})(\mathcal{D})$ under this functor. Notice that for any category $\mathcal{C}$, the functor category $[\mathcal{C}, \mathcal{V}]$ naturally carries a monoidal structure by $(F \otimes G)(c) = F(c) \otimes G(c)$, with the constant functor at the unit object $I \in \mathcal{\Ob(V)}$ as unit. This functor will also be denoted $I$.
 \begin{thm}[Comprehension in $\diag(\mathcal{V})$]
 $Diag(\mathcal{V})$ admits a comprehension. In other words, for any diagram $J : \mathcal{D} \to \mathcal{V}$ there is a representating object $\mathcal{D}.J \xrightarrow{\mathbf{p}_{\mathcal{D}.J}} \mathcal{D}$ in $\mathbf{Cat}_{/\mathcal{D}}$ such that for any morphism $F : \mathcal{C} \to \mathcal{D}$, we have $\diag(\mathcal{V})(\mathcal{C})(I, J\{F\}) \cong \mathbf{Cat}_{/\mathcal{D}}(F, \mathbf{p}_{(\mathcal{D}, J)})$.
 \begin{proof}
