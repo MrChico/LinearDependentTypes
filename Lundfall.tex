@@ -10,37 +10,59 @@ Linear dependent type theory is the synthesis of linear logic and dependent type
 \tableofcontents
 \newpage
 \section{Background}
+
 \subsection{Dependent type theory}
 
 \subsection{Linear type theory}
 \subsection{Fibrations}
+
 A general heuristic for modelling some kind of mathematical object $E$ dependent over some other object $B$ is to specify a \textit{projection} morphism $p : E \to B$ subject to certain constraints. For example, a family of sets $A_i$ indexed the set $I$ might equally well be understood as the set $E = \bigsqcup_{i \in I}A_i$ together with a morphism $p : E  \to I$ such that $p^{-1}(i) = A_i$. This is the principle behind fibrations. Dependeding on which kind of mathematical object we are dealing with, we want to impose conditions on the projection $p : E \to B$ to be able to \textit{lift} certain structure of the base $B$ into \textit{fibers} $E_b = p^{-1}(b)$ for $b \in B$.
 
-
+\subsubsection{Grothendieck fibrations}
 In the context of categories, the appropriate notion is that of a \textbf{Grothendieck fibration}, or simply \textbf{fibration}. In order for a functor $p : E \to B$ to be a fibration, one needs to be able to lift arrows in the base category $B$ to arrows in $E$. We do this by asking for the existence of certain \textit{cartesian arrows} in $E$.
 \begin{defn}[Cartesian arrow]
-Given a functor $p : E \to B$, an arrow $f : e \to e'$ of $E$ is said to be \textbf{cartesian} if...
+Given a functor $p : E \to B$, an arrow $f : e' \to e''$ of $E$ is said to be \textbf{cartesian} with respect to $p$ if for every $h : e \to e''$ and $\alpha : p(e) \to p(e')$ such that $p(f)\alpha = p(h)$, there is a unique arrow $\hat \alpha : e \to e'$ such that $p(\hat \alpha) = \alpha$ and $f \hat \alpha = h$.
 \end{defn}
+The situation is illustrated in the following diagrams:
+\[
+\ti
+p(e) \ar[d, "\forall \alpha"] \ar[dr, "p(h)"] & & & e \ar[d, "!\exists \hat \alpha"] \ar[dr, "\forall h"] \\
+p(e') \ar[r, "p(f)"] & p(e'') & & e' \ar[r, "f"] & e''\\
+\kz
+\]
 \begin{defn}[Grothendieck fibration]
-A functor $p: E \to B$ is a \textbf{Grothendieck fibration} if, for every arrow $f$ in $B$, there exists a cartesian arrow $f^*$ in $E$ such that $p(f^*) = f$.
+A functor $p: E \to B$ is a \textbf{Grothendieck fibration} if, for every $e \in E$, $b \in B$ and arrow $f : b \to p(e)$ in $B$, there exists a cartesian arrow $f^*$ in $E$ such that $p(f^*) = f$.
 \end{defn}
+Sometimes we will refer to $f^*$ as a \textbf{lift} of $f$. Although it is not uniquely determined, its domain will determined up to unique isomorphism. 
 A basic review of Grothendieck fibrations particularly relevant to the semantics of dependent type theory can be found in \cite{jacobs}. We repeat the notions relevant for our investigations here.
+\\
+
+For any object $b \in B$ in the base, we call the subcategory of $E$ which is mapped to $b$ and its identity morphism the \textbf{fiber} over $b$. This will be denoted $E_b$.
+A fibration $p : E \to B$ induces for every $u : b \to b'$ in $B$ a functor $u^*: E_{b'} \to E_{b}$ by sending every object to the domain of the cartesian arrow associated with it. This functor will be unique up to unique natural isomorphism. In general, for two compatible morphisms $u$ and $v$ in the base, a lift of a composition is only naturally isomorphic to the composition of a lift. In other words, we have $u^* \circ v^* \cong (u \circ v)^*$ and not functoriality on the nose. Those fibration for which there are lifts of morphisms such that the equalities hold on the nose are called \textbf{Split}.
+
+\begin{defn}[Cartesian functor]
+Let $p : E \to B$ and $q : E' \to B$ be fibrations over the same base. A functor $F : E \to E'$ is \textbf{cartesian} if $qF = p$ and cartesian morphisms in $E$ with respect to $p$ are mapped to cartesian morphisms in $E'$ with respect to $q$.
+\end{defn}
+This determines a category $\textbf{Fib}(B)$, consisting of fibrations over $B$ and cartesian functors between them. More generally, one can construct a category $\textbf{Fib}$ whose morphisms from fibrations $p : E \to B$ and $q : E' \to B'$ are pairs of functors $(F, G)$ where $F : E \to E'$ and $G : B \to B'$ such that $G \circ p = q \circ F$ and $F$ preserves cartesian morphisms. In fact, the functor $\textbf{Fib} \to \textbf{Cat}$ sending a fibration to its base is itself a fibration whose fibers are $\textbf{Fib}(B)$ for any small category $B$.
 
 
-A fibration $p : \mathbf{E} \to \mathbf{B}$ induces for every $u : A \to B$ in $\mathbf{B}$ a functor $u^*: E_B \to E_A$ unique up to unique isomorphism. In general $u^* \circ v^* \cong (u \circ v)^*$, so we don't have functoriality on the nose. Those fibration for which there are lifts of morphisms such that the equalities hold on the nose are called \textbf{Split }.
-We will need to talk about monoidal categories indexed over some base category. A convenient notion is that of a monoidal fibration:
-\begin{defn}
-A \textbf{monoidal fibration} is a functor $\Phi\colon E\to B$ such that
-\begin{itemize}
-\item $\Phi$ is a Grothendieck fibration
-\item $E$ and $B$ are monoidal categories and $\Phi$ is a strict monoidal functor, and
-\item the tensor product of $E$ preserves cartesian arrows.
-\end{itemize}
+With the notion of a fibered natural transformation, $\mathbf{Fib}$ forms a 2-category.
+\begin{defn}[Fibered natural transformation]
+For two pairs of parallel functors $F$, $H$ and $G$, $J$ between fibrations $(E, B)$ and $(E', B')$, as illustrated in the commutative square:
+\[
+\ti
+E \ar[d, "p"] \ar[r, "F", bend left] \ar[r, "G", bend right] & E' \ar[d, "{p'}"]\\
+B \ar[r, "H", bend left] \ar[r, "J", bend right] & B'
+\kz
+\]
+a \textbf{Fibered natural transformation} $(\lambda, \lambda')$ between $(F, H)$ and $(G, J)$ is a pair of natural transformations $\lambda : G \to F$ and $\lambda' : A \to B$ such that $p'(\lambda) = p_{\lambda'}$.
 \end{defn}
-But in general, we do not want to constrain ourselves to the case where the base category has a monoidal structure. Instead, we ask for the minimal structure that forces the induced functors of fibers to be monoidal. This structure is that of a lax monoidal fibration \cite{zawadowski}:
-\begin{defn}
-A \textbf{lax monoidal fibration} is a fibration $p : E \to B$ such that ...
-\end{defn}
+\begin{rem} Notice that this definition does not ask for $F$ and $G$ to be cartesian functors. But when that is the case, fibered natural transformations between the parallel morphisms $(F, A)$ and $(G, A)$ in $\mathbf{Fib}$ are the 2-morphisms of this 2-category.
+\end{rem}
+An important special case of this is when $B = B'$ and $H = J = 1_B$. Then a fibered natural transformation $\lambda : F \to G$ is simply a natural transformation such that all of its components are sent to identities via $p'$.
+
+
+TODO: Put this in the right context
 Let $\mathcal{C}$ be a category and $F : \mathcal{C} \to \mathbf{Cat}$ a (pseudo)functor. $\textbf{Cat}_{/*}$ denotes the slice category of categories over the terminal category, i.e. the category constisting of pointed categories $(\mathcal{D}, d)$, $(\mathcal{E}, e)$ as objects and functors $G : \mathcal{D} \to \mathcal{E}$ equipped with morphisms $\gamma : G(d) \to e$ as morphisms.
 \begin{defn}
 The Grothendieck construction $\int F$ of $F$ is the pullback of the following diagram:
@@ -52,26 +74,56 @@ The Grothendieck construction $\int F$ of $F$ is the pullback of the following d
 \]
 \end{defn}
 In other words, the category whose objects consists of pairs $(a, b)$ where $a \in \Ob(\mathcal{C})$ and $b \in F(a)$, and whose morphisms $f : (a, b) \to (\alpha, \beta)$ are pairs $(f, g)$ where $f: a \to \alpha$ and $g : F(f)(b) \to \beta$.
+
+\subsubsection{Other types of fibrations}
+In exploring models of linear and dependent types, fibrations of other structures will arise. In particular, we will need to talk about fibration of groupoids and lax monoidal fibrations.
 \begin{defn}
-A map $p : G \to H$ in $\textbf{Grpd}$ is a \textbf{fibration} of groupoids if for every $g \in G$
+A map $p : G \to H$ in $\textbf{Grpd}$ is a \textbf{fibration of groupoids} if for every $g \in G$
 and $f : p(g) \to h$ in $H$, there exists an object $g'$ and map $\hat f : g \to g'$ in $G$ such that $p(g') = h$ and $p(\hat f) = f : p(g) \to p(g')$.
 \end{defn}
-\begin{lem}
-For any groupoid $G$ and functor $A \in [G, \mathcal{V}]$ the comma category $(I \downarrow A)$ is a groupoid, and its associated projection $p_{G.A} : (I \downarrow A) \to G$ is a fibration.
-\begin{proof}
-A morphism between objects $(g, i)$, $(g', i')$ in $(I \downarrow A)$ are given by a morphism $f : g \to g'$ in $G$ such that $A(f) \circ i = i'$. Since $G$ is a groupoid there exists an inverse $f^{-1}$. That this map yields an inverse of $(I \downarrow A)$ is immediate from the fact that the following diagram in $\mathcal{V}$ commutes:
+When considering fibrations of monoidal categories, we distinguish between the case where both the fibration and the base are monoidal categories, and when we simply want each fiber to be a monoidal category and the induced functors between these to be monoidal functors. The former notion is that of a monoidal fibration:
+\begin{defn}
+A \textbf{monoidal fibration} is a functor $\Phi\colon E\to B$ such that
+\begin{itemize}
+\item $\Phi$ is a Grothendieck fibration
+\item $E$ and $B$ are monoidal categories and $\Phi$ is a strict monoidal functor, and
+\item the tensor product of $E$ preserves cartesian arrows.
+\end{itemize}
+\end{defn}
+From this it can be shown that maps in the base induce monoidal functors in between the fibers. See \cite{shulmanmonoidal} for details.
+
+
+A weaker notion that does not require the base category to be monoidal is that of a lax monoidal fibration \cite{zawadowski}. We simply want each fiber to be a monoidal category and that funcotrs between fibers are monoidal.
+\begin{defn}
+A \textbf{lax monoidal fibration} is a fibration $p : E \to B$ along with
+\begin{enumerate}
+\item Two functors $\otimes : E \times_{B} E \to E$ and $I : B \to E$ fitting into the following diagram:
 \[
 \ti
-I \ar[rd,"i'",swap] \ar[r, "i"] & A(g) \ar[d, "A(f)", bend right,swap] \\
-& A(g') \ar[u, "A(f^{-1}) = A(f)^{1}", bend right,swap]
+E \times_{B} E \ar[r, "\otimes"] \ar[rd] & E \ar[d, "p"] & B \ar[l, "I"] \ar[ld, "1_B"] \\
+& B &
+\kz
+\].
+\item Three fibered natural isomorphisms $\alpha, \lambda$ and $\rho$ associated with the diagrams:
+\[
+\ti
+E \times_B E \times_B E \ar[r, "1_E \times_B \otimes"] \ar[d, "\otimes \times_B 1_E"] & E \times_B E \ar[d, "\otimes", swap] \\
+E \times_B E \ar[r, "\otimes"] \ar[ru, "\alpha", Rightarrow, shorten <=30pt,shorten >=30pt]  & E
 \kz
 \]
-To see that $p$ is a fibration, let $(g, i)$ be an object of $(I \downarrow A)$ and $f : g \to g'$ an arrow in $G$. Then the object $(g', A(f)\circ i)$ together with $f$ seen as a morphism of $(I \downarrow A)$ form an immediate commutative diagram in $\mathcal{V}$.
-\end{proof}
-\end{lem}
-\begin{cor}
-The restriction of $\diag(\mathcal{V})$ to the category of groupoids is also a model for IDLTT.
-\end{cor}
+and
+\[
+\ti
+B \times_B E \ar[r, "I \times_B 1_{E}"] \ar[rdd, "\pi_2",swap] & E \times_B E  \ar[dd, "\otimes",swap] & E \times_B B \ar[ldd, "\pi_1"] \ar[l, "1_E \times I"] \\
+\ar[r, "\lambda", xshift=20 pt, Rightarrow, shorten <=30pt, shorten >=30pt] & {}& \ar[l, "\rho", Rightarrow, xshift=-20pt, shorten <=30pt, shorten >=30pt,swap] \\
+  & E &  
+\kz
+\]
+\item such that $\alpha$, $\lambda$ and $\rho$ satisfies the pentagon and triangle identities in each fiber.
+\item for every $b \in B$, $\rho_{I_b} = \lambda^{-1}_{I_b} : I_b \otimes I_b \to I_b$
+\end{enumerate}
+\end{defn}
+These conditions are sufficient for each fiber to be a monoidal category and for the induced functors between fibers to be monoidal. More detais are given in \cite{zawadowski}.
 \subsection{Spectra}
 A sequential spectrum is an $\mathbb{N}-graded$ (compactly generated, or (sufficiently well-behaved)) pointed topological space $X_{\bullet} = X_n$ with continuous maps $X_n \land S \to X_{n+1}$. It is not uncommon that the maps (often referred to as structure maps) are in fact isomorphisms.
 A basic example is the suspension spectra, which can be constructed out of any (well-behaved) topological space $X$ as $X_n = S^n \land X$. The map $S^n \land X \land S \to S^{n+1} \land X$ is an isomorphism.
@@ -277,17 +329,101 @@ Our basic structural rules are the following:
 \end{minipage}
 }
 along with rules specifying that judgemental equality is closed over these. $\mathcal{J}$ denotes a judgement which is either $A \text{ type}$, $A \text{ linear}$ or $M : A$.
-\subsection{Intuitionistic typing}
+\subsection{Purely Intuitionistic typing}
 Standard $\Pi$, $\Sigma$ and $Id$-types.
-\subsection{Linear typing}
-Linear $\Pi$ and $\Sigma$
+\subsection{Purely Linear typing}
+Standard $\otimes$, $I$, $\multimap$, \&.
+\subsection{Linear-intuitionistic interplay}
+We want to have a way of types and terms back and forth between the intuitionistic and linear side. On the syntactic side, we introduce two the operators $M$ and $L$, which transfers a linear type/term to its intuitionistic counterpart and vice versa. Semantically, this will establish a fiberwise adjunction between the categories of linear types intuitionistic types:
+\[
+\ti
+\mathcal{L}_{\Gamma} \ar[r, "M"{name=A, below}, bend right] & \mathcal{T}_{\Gamma} \ar[l, "L"{name=B, above}, bend right] \ar[from=A, to=B, symbol=\vdash]
+\kz
+\]
+where the exponential modality from traditional linear logic is understood as the comonad $! = LM$. Below are the syntactic rules for the operators $M$ and $L$.\\
+\fbox{
+\begin{minipage}{.5\linewidth}
+\[
+\inference{\Gamma \vdash A \type}{\Gamma \vdash A_L \linear}[L-F]
+\]\\
+\[
+\inference{\Gamma \vdash a : A}{\Gamma ; \cdot \vdash a_L : A_L}[L-I]
+\]\\
+\[
+\inference{\Gamma \vdash B \linear \quad \Gamma; \Xi \vdash y : A_L \quad \Gamma, x : A; \Xi' \vdash t : B}{\Gamma; \Xi, \Xi' \vdash \text{let  $x$ be $y$ in }t : B}[L-E]
+\]\\
+\[
+\inference{\Gamma; \Xi, \Xi' \vdash \text{let  $x$ be $F(s)$ in }t : B}{\Gamma; \Xi, \Xi' \vdash \text{let  $x$ be $F(s)$ in }t \equiv t[F(s)/x]  : B}[L-C]
+\]
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+\[
+\inference{\Gamma \vdash B \linear}{\Gamma \vdash B_M \type}[M-F]
+\]\\
+\[
+\inference{\Gamma ; \cdot \vdash b : B}{\Gamma \vdash b_M : B_M}[M-I]
+\]\\
+\[
+\inference{
+\Gamma \vdash t : B_M\\
+}{\Gamma; \cdot \vdash \sigma(t) : B \\}[M-E]
+\]\\
+\[
+\inference{
+\Gamma \vdash b_M : B_M\\
+}{\Gamma; \cdot \vdash \sigma(b_M) \equiv b : B \\}[M-C]
+\]
+\end{minipage}
+}\\
+
+
+Notice that the elimination and computation rules for $M$ suggests that $\sigma$ is a section to $M$. In particular, this implies that $M$ is faithful functor which is injective on objects.
+
+\subsubsection{Linear dependent types}
+The linear variants of the intuitionistic $\Pi$- and $\Sigma$-types will be denoted $\sqcap$ and $\exists$, respectively.\\
+\fbox{
+\begin{minipage}{.5\linewidth}
+\[
+\inference{\Gamma \vdash A \type \quad \Gamma, x : A \vdash B \linear}{\Gamma \vdash \sqcap_{x : A}B \linear}[$\sqcap$-F]
+\]\\
+\[
+\inference{\Gamma, x : A; \Xi \vdash b : B}
+{\Gamma; \Xi \vdash \lambda x. b : \sqcap_{x: A}B}[$\sqcap$-I]
+\]\\
+\[
+\inference{\Gamma; \Xi \vdash t : \sqcap_{x : A}B \quad \Gamma \vdash a : A}
+{\Gamma; \Xi \vdash t(a) : B[a/x]}[$\sqcap$-E]
+\]\\
+\[
+\inference{\Gamma; \Xi \vdash \lambda x. b (a) : \sqcap_{x : A}B}
+{\Gamma; \Xi \vdash \lambda x. b (a) = b[a/x] : B[a/x]}[$\sqcap$-C]
+\]
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+\[
+\inference{\Gamma \vdash A \type \quad \Gamma, x : A \vdash B \linear}{\Gamma \vdash \exists_{x : A}B \linear}[$\exists$-F]
+\]\\
+\[
+\inference{\Gamma \vdash s : A \quad \Gamma; \Xi \vdash b : B[s/x]}{\Gamma \vdash (s, b) : \exists_{x : A}B}[$\exists$-I]
+\]\\
+\[
+\inference{\Gamma; \Xi \vdash t : \exists_{x : A}B \quad \Gamma, x : A; \Xi', y : B \vdash c : C}{\Gamma; \Xi, \Xi' \vdash \text{let $x, y$ be $t$ in c : C}}[$\exists$-E]
+\]\\
+\[
+\inference{\Gamma; \Xi \vdash \text{let $x, y$ be $(s, t)$ in c : C}}
+{\Gamma; \Xi \vdash \text{let $x, y$ be $(s, t)$ in c} \equiv c[s/x][t/y]}[$\exists$-C]
+\]
+
+\end{minipage}
+}\\
+
 \section{Semantics}
 \subsection{Contextual categories of linear dependent types}
 To interpret linear dependent type theory we begin by building a \textbf{contextual category}, an algebraic structure which abstracts the key features of the syntax. The idea is to construct the most general framework in which one can interpret the structural rules to deal with these once and for all. Once this has been done we can consider the extra conditions have to be imposed in order for the model to support various type constructors, and provide concrete models that satisfy these conditions.\\
 
 In our case, this is only almost true. We will build a contextual category in which not only the structural rules are assumed, but also the rules for the tensor product of linear types. This simplification allows us to formulate the semantic structure in terms of symmetric monoidal categories instead of multicategories.
 
-Our particular choice of contextual category will consist of a comprehension category \cite{jacobs} and a locally symmetric monoidal fibration defined below. Roughly, this will give a category of intuitionistic contexts such that to each intuitionistic types $\Gamma$ we associate a category consisting of intuitionistic types compatible with generalised substitution, and a monoidal category consisting of linear types.
+Our particular choice of contextual category will consist of a comprehension category \cite{jacobs}, in which we can interpret the intuitionistic fragment of our theory and a locally symmetric monoidal fibration where the linear fragment will reside.
 \begin{defn}
 A \textbf{comprehension category} consists of a commutative diagram of functors
 \[
@@ -303,8 +439,7 @@ where $B^\to$ is the arrow category of $B$ and $cod : B^\to \to B$ denotes the c
 \item $p : E\to B$ is a Grothendieck fibration,
 \item $\pi : E\to B^\to$ takes cartesian morphisms in $E$ to cartesian morphisms in $B^\to$
 \end{enumerate}
-\begin{lem} Notice that by the second condition, cartesian morphisms in $E$ are mapped to pullback squares in $B$.
-\begin{proof}
+Notice that by the second condition, cartesian morphisms in $E$ are mapped to pullback squares in $B$:\\
 A cartesian morphism $(p, q) : f \to g$ in $B^\to$ is a commutative square in $B$
 \[
 \ti
@@ -321,8 +456,6 @@ A \ar[r, "f"] & A'
 \kz
 \]
 there is a unique arrow $u : E \to B$ such that $p' = p \circ u$ and $q'e = g \circ u$. This is precisely the universal property of the pullback.
-\end{proof}
-\end{lem}
 If $\mathcal{B}$ has all pullbacks, then $\text{cod} : B^\to \to B$ is a fibration and in that case $\pi$ is a cartesian functor.
 \begin{lem}\label{pb-lem}
 The pullback of a section is the section of a pullback. In other words, for morphisms $f : A \to C$, $g : B \to C$ and $h : C \to B$ such that $hg = 1_B$, then $h^*$ is a section of $g^*$.
@@ -345,10 +478,7 @@ The two pullbacks lemma says that if the two inner squares are pullbacks, then s
 \end{proof}
 \end{lem}
 \end{defn}
-\begin{defn}
-A fibration $q : \mathcal{L} \to \mathcal{C}$ is \textbf{locally symmetric monoidal} if each fiber $\mathcal{L}_A$ is a symmetric monoidal category.
-\end{defn}
-A semantics for an intuitionistic linear dependent type theory consists of a comprehension $p : \mathcal{T} \to \mathcal{C}$ and a locally monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, illustrated in the following picture:
+A semantics for an intuitionistic linear dependent type theory consists of a comprehension $p : \mathcal{T} \to \mathcal{C}$ and a lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, illustrated in the following picture:
 \[
 \ti
 \mathcal{L} \ar[rd, "q"] & \mathcal{T} \ar[d, "p"] \ar[r, "\pi"] & \mathcal{C^\rightarrow} \ar[ld, "\text{cod}"]\\
@@ -356,12 +486,21 @@ A semantics for an intuitionistic linear dependent type theory consists of a com
 \kz
 \]
 In this structure, we will interpret intuitionistic contexts $\Gamma$ as objects of $\mathcal{C}$, linear types in $\Gamma$ as objects of the fiber $\mathcal{L}_{[[\Gamma]]}$ and intuitionistic types as objects in $\mathcal{T}_{[[\Gamma]]}$. Terms of linear types will be morphisms in the fibers of $\mathcal{L}$ and terms of intuitionistic types will be represented by a section of the projections associated with context extensions.\\
-This allows us to interpret the structural rules in the following way:
+The correspondence between this structure and the structural rules are given by the following:
 \begin{itemize}
 \item CI-Base is the terminal object $\mathbf{1}$ in $\mathcal{C}$.
 \item CM-Base is the unit object of $\mathcal{L}_{\mathbf{1}}$.
 \item C-int-ext says that for any $A$ in $\mathcal{T}_{\Gamma}$, there is another object $\Gamma.A$ in $\mathcal{C}$. This object is the domain of the morphism that $A$ is mapped to via $\pi$:
 \[\Gamma.A \xrightarrow {\pi_A} \Gamma\]
+\item C-weak-1 corresponds to lifting the morphism $\pi_A : \Gamma.A \to \Gamma$ to a cartesian morphism $\pi_A^* : \mathcal{T}_\Gamma \to \mathcal{T}_{\Gamma.A}$. The context we are looking for is the one associated to $\pi_A^*(\Delta)$.
+\item For C-weak-2, notice that since $\pi$ is a cartesian functor, the context above fits into the following pullback:
+\[
+\ti
+\Gamma.A.\Delta\{\pi_A\} \ar[r, "q"] \ar[d, "\pi_{\Delta\{\pi_A\}}"]  & \Gamma.\Delta \ar[d, "\pi_\Delta"]\\
+\Gamma.A \ar[r, "\pi_A"] & \Gamma
+\kz
+\]
+so by lifting $q$ to the monoidal functor $q^* : \mathcal{L}_{\Gamma.\Delta} \to \mathcal{L}_{\Gamma.A.\pi^*(\Delta)}$. The context we are looking for is the image of $\Xi$ under this functor.
 \item C-lin-ext says that for any two objects $\Xi$ and $A$ in $\mathcal{L}_{\Gamma}$, their tensor product $\Xi \otimes A$ is also an object of $\mathcal{L}_{\Gamma}$.
 \item Int-exch says that if we have both $A$ and $B$ in $\mathcal{T}_{\Gamma}$, then $\Gamma.A.B\{\pi_A\}$ and $\Gamma.B.A\{\pi_B\}$ both are pullbacks of this cospan:
 \[
@@ -431,7 +570,59 @@ Finally, if $B$ is an object of $\mathcal{L}_{\Gamma.A.\Gamma'}$, then the image
 \end{itemize}
 \newpage
 \section{Models}
-\subsection{Monoidal Families}
+\subsection{Set indexed families}
+Our first model will be an extension of the standard set-theoretic model of dependent type theory \cite{hofmann1997syntax}. The extension of this model to the linear realm is fairly straightforward, but still provides a setting for some fairly interesting examples, such as $\mathcal{V}$-enriched categories. It is also sufficient for showing that linear dependent type theory is a proper generalisation of both dependent type theory and linear type theory, as outlined in \cite{vakar14}. 
+
+
+Both the intuitionistic and linear fibrations will be categories of set-indexed families.
+\begin{defn}[$Fam(\mathcal{C})$]
+For an arbitrary category $\mathcal{C}$, let $Fam(\mathcal{C})$ denote the category whose objects consists of pairs $(S, f)$ where $S$ is a set and $f$ is a function $f : S \to Ob(\mathcal{C})$. Morphisms of $Fam(\mathbf{Set})$ are pairs $(u, \alpha) : (S, f) \to (S', g)$ where $u : S \to J$ and $\alpha : S \to \text{Mor}(\mathcal{C})$ such that $\alpha(s) : f(s) \to g(u(s))$ for all $s \in S$. Composition is given, for two compatible morphisms $(u, \alpha)$ and $(v, \beta)$, by:
+\[
+(v, \beta) \circ (u, \alpha) = (v \circ u, g(u(s)) \circ f(s))
+\]
+for all $s \in S$.
+\end{defn}
+By projecting a family to its indexing set, we get a fibration $p : Fam(\mathcal{C}) \to \mathbf{Set}$, and if $\mathcal{C}$ has a terminal object, $\top$, we can form a comprehension category by defining $\pi : Fam(\mathcal{C}) \to \mathbf{Set}^\to$ as follows.
+
+On objects, let
+\[
+\pi(S, f) = fst: \{(s, t) \; | \; s \in S, t : \top \to f(s)\} \to S
+\]
+For a morphism $(u, \alpha) : (S, f) \to (S', g)$, let
+\[
+q_{(u,\alpha)} : \{(s, t) \; | \; s \in S, t : \top \to f(s) \} \to \{(s', t') \; | \; s' \in S', t' : \top \to g(s') \}
+\]
+be defined by $q_{(u, \alpha)}(s, t) = (u(s), \alpha(s) \circ t)$. The functor $\pi$ sends morphisms $(u, \alpha)$ to squares:
+\[
+\ti
+\{(s, t) \; | \; s \in S, t : \top \to f(s) \} \ar[r, "q_{(u, \alpha)}"] \ar[d, "fst"]& \{(s', t') \; | \; s' \in S', t' : \top \to g(s') \} \ar[d, "fst"]\\
+I \ar[r, "u"] & J
+\kz
+\]
+in $\mathbf{Set}$.
+\\
+
+The intuitionistic part of our semantic structure will simply be the fibration $p : Fam(\mathbf{Set}) \to \mathbf{Set}$ with $\pi : Fam(\mathbf{Set}) \to \mathbf{Set}^\to$ as outlined above. For the linear part, we choose any symmetric monoidal category $\mathcal{V}$ and form the fibration $q : Fam(\mathcal{V}) \to \mathbf{Set}$. With the functor $I : \mathbf{Set} \to Fam(\mathcal{V})$ defined by mapping a set $S$ to the family constant at the unit of $\mathcal{V}$ and $\otimes : Fam(\mathcal{V}) \times_{\mathbf{Set}} Fam(\mathcal{V}) \to Fam(\mathcal{V})$ induced by the monoidal structure of $\mathcal{V}$, this forms a lax monoidal functor.
+
+
+We have the following picture:
+\[
+\ti
+Fam(\mathcal{V}) \ar[rd, "q"]  & Fam(\mathbf{Set}) \ar[d, "p"] \ar[r, "\pi"] & \mathbf{Set}^\to \ar[ld, "cod"] \\
+& \mathbf{Set}
+\kz
+\]
+
+In this model, consider the following construction:
+\[
+\begin{split}
+&\vdash A \text{ type}\\
+x, y : A &\vdash Arr(x, y) \text{ linear}\\
+x, y, z : A &\vdash \_ \circ \_ : Arr(y, z) \otimes Arr(x, y) \multimap Arr(x, z)\\
+&and so on
+\end{split}
+\]
+Then $Arr(x, y)$ will be interpreted as a functor $[[Arr(x, y)]] : Free([[A]]) \to \mathcal{V}$. But this is not quite what we want? We want $Arr(x,y)$ to be an object of $\mathcal{V}$.
 \subsection{Diagrams}
 Expanding upon the Monoidal Families example given by Vakar \cite{vakar14}, we consider diagrams $J : \mathcal{D} \to \mathcal{V}$ of any shape in a category $\mathcal{V}$. In other words, we construct a category $\diag(\mathcal{V})$ whose objects are functors with $\mathcal{V}$ as codomain and whose morphisms for diagrams $J : \mathcal{D} \to \mathcal{V}$ and $J' :\mathcal{C} \to \mathcal{V}$ are given by functors $F : \mathcal{C} \to \mathcal{D}$ such that $J \circ F = J'$.
 
@@ -462,11 +653,11 @@ A \times_{B} E \ar[r] \ar[d, "F^*(p)"] & E \ar[d, "p"] \\
 A \ar[r, "F"] & B
 \kz
 \]
-where $F^*(p)$ is a fibration if $p$ is. This shows that $\mathcal{P}$ sends cartesian arrows to cartesian arrows.
+where $F^*(p)$ is a fibration if $p$ is, by Lemma(Prop 2.6 in comprehension categories). This shows that $\mathcal{P}$ sends cartesian arrows to cartesian arrows. READ EXAMPLE 4.6 in Comprehension cats
 
 One could also restrict $\diag(\mathcal{V})$ to diagrams in $\mathcal{V}$ over groupoids. In that case, $\mathcal{T}$ consists of fibrations of groupoids and the intuitionistic fragment of the type theory is essentially the groupoid model as presented by Hofmann and Streicher in \cite{hofmann1998}. This suggests that this model can serve as a setting for linear dependent homotopy type theory.
 
-
+\newpage
 We expand this to a functor $\text{Diag}(\mathcal{V}) : \mathbf{Cat}^{op} \to \mathbf{SMCat(-,V)}$ where $\mathcal{C} \xrightarrow{F} \mathcal{D}$ in \textbf{Cat} induces a monoidal functor $[\mathcal{D}, \mathcal{V}] \xrightarrow{(-) \circ F} [\mathcal{C}, \mathcal{V}]$. To highlight the connection to the type theory, we let $A\{F\}$ in  $\diag(\mathcal{V})(\mathcal{C})$ denote the image of any object $A \in \diag(\mathcal{V})(\mathcal{D})$ under this functor. Notice that for any category $\mathcal{C}$, the functor category $[\mathcal{C}, \mathcal{V}]$ naturally carries a monoidal structure by $(F \otimes G)(c) = F(c) \otimes G(c)$, with the constant functor at the unit object $I \in \mathcal{\Ob(V)}$ as unit. This functor will also be denoted $I$.
 \begin{thm}[Comprehension in $\diag(\mathcal{V})$]
 $Diag(\mathcal{V})$ admits a comprehension. In other words, for any diagram $J : \mathcal{D} \to \mathcal{V}$ there is a representating object $\mathcal{D}.J \xrightarrow{\mathbf{p}_{\mathcal{D}.J}} \mathcal{D}$ in $\mathbf{Cat}_{/\mathcal{D}}$ such that for any morphism $F : \mathcal{C} \to \mathcal{D}$, we have $\diag(\mathcal{V})(\mathcal{C})(I, J\{F\}) \cong \mathbf{Cat}_{/\mathcal{D}}(F, \mathbf{p}_{(\mathcal{D}, J)})$.
@@ -494,6 +685,23 @@ G(f) &= F(f)
 \]
 where $g_c : I \to F(c)$ is some morphism satisfying the commutativity conditions above. This uniqely defines a natural transformation $g \in \diag(\mathcal{V})(\mathcal{C})(I, J\{F\})$. Furthermore, for any natural transformation $\eta \in \diag(\mathcal{V})(\mathcal{C})(I, J\{F\}$, there is a corresponding functor $\hat \eta : \mathcal{C} \to (I \downarrow J)$ mapping $c \mapsto (F(c), \eta_c)$.
 \end{proof}
+\begin{lem}
+For any groupoid $G$ and functor $A \in [G, \mathcal{V}]$ the comma category $(I \downarrow A)$ is a groupoid, and its associated projection $p_{G.A} : (I \downarrow A) \to G$ is a fibration.
+\begin{proof}
+A morphism between objects $(g, i)$, $(g', i')$ in $(I \downarrow A)$ are given by a morphism $f : g \to g'$ in $G$ such that $A(f) \circ i = i'$. Since $G$ is a groupoid there exists an inverse $f^{-1}$. That this map yields an inverse of $(I \downarrow A)$ is immediate from the fact that the following diagram in $\mathcal{V}$ commutes:
+\[
+\ti
+I \ar[rd,"i'",swap] \ar[r, "i"] & A(g) \ar[d, "A(f)", bend right,swap] \\
+& A(g') \ar[u, "A(f^{-1}) = A(f)^{1}", bend right,swap]
+\kz
+\]
+To see that $p$ is a fibration, let $(g, i)$ be an object of $(I \downarrow A)$ and $f : g \to g'$ an arrow in $G$. Then the object $(g', A(f)\circ i)$ together with $f$ seen as a morphism of $(I \downarrow A)$ form an immediate commutative diagram in $\mathcal{V}$.
+\end{proof}
+\end{lem}
+\begin{cor}
+The restriction of $\diag(\mathcal{V})$ to the category of groupoids is also a model for IDLTT.
+\end{cor}
+
 \end{thm}
 The functor $p_{\mathcal{D}.J}$ will sometimes be referred to as the \textbf{projection} associated to $J$.
 Recall that a model $\mathcal{C}, \mathcal{L}$ of ILDTT \textbf{supports $\Sigma$-types} if $\mathcal{L}(p_{\Delta.A})$ has a left adjoint for all $\Delta \in \mathcal{C}$, and $A \in \mathcal{L}(\Delta)$. It \textbf{supports $\Pi$-types} if all $\mathcal{L}(p_{\Delta.A})$ have right adjoints.
