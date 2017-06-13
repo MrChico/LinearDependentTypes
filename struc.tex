@@ -1,0 +1,52 @@
+\fbox{
+\begin{minipage}{.5\linewidth}
+\[
+\inference {}{\vdash \cdot \text{ ctxt}}[CI-Base]
+\]
+\[
+\inference {}{\vdash \cdot ; \cdot \text{ ctxt}}[CM-Base]
+\]
+\[
+\inference {\Gamma \vdash A \text{ type}}{\vdash \Gamma, x : A \text{ ctxt}}[C-int-ext]
+\]
+\[
+\inference{\Gamma \vdash A \text{ type} \quad \vdash \Gamma, \Delta \text{ ctxt}}{
+\vdash \Gamma, x : A, \Delta \text{ ctxt}}[C-weak-1]
+\]
+\[
+\inference{\Gamma \vdash A \text{ type} \quad \vdash \Gamma, \Delta; \Xi \text{ ctxt}}{
+\vdash \Gamma, x : A, \Delta; \Xi \text{ ctxt}}[C-weak-2]
+\]
+\[
+\inference {\vdash \Gamma; \Xi \text{ ctxt} \quad \Gamma \vdash A \text{ linear}}{\vdash \Gamma; \Xi, x : A \text{ ctxt}}[C-lin-ext]
+\]
+\[
+\inference{\Gamma; \Xi, x : A, y : B, \Xi' \vdash t : A'}
+{\Gamma; \Xi, y : B, x : A, \Xi' \vdash t : A'}[Lin-exch]
+\]
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+\[
+\inference{\Gamma \vdash A \text{ type} \quad \Gamma, \Gamma'; \Xi \vdash t : A'} {\Gamma, x : A, \Gamma'; \Xi \vdash t : A'}[Weak-L]
+\]
+\[
+\inference{\Gamma \vdash A \text{ type} \quad \Gamma, \Gamma' \vdash \mathcal{J}} {\Gamma, x : A, \Gamma' \vdash \mathcal{J}}[Weak-I]
+\]
+\[
+\inference{\Gamma \vdash M : A \quad \Gamma, x : A, \Gamma' \vdash \mathcal{J}} {\Gamma, \Gamma'[M/x] \vdash \mathcal{J}[M/x]}[Int-subst-1]
+\]
+\[
+\inference{\Gamma \vdash M : A \quad \Gamma, x : A, \Gamma'; \Xi \vdash t : A'} {\Gamma, \Gamma'[M/x]; \Xi[M/x] \vdash t : A'[M/x]}[Int-subst-2]
+\]
+\[
+\inference{\Gamma; \Xi, x : A \vdash t : B \quad \Gamma; \Xi' \vdash M : A}
+{\Gamma; \Xi, \Xi' \vdash t[M/x]: B}[Lin-subst]
+\]
+\[
+\inference{\Gamma, x : A, \Gamma' \text{ ctxt}}{\Gamma, x : A, \Gamma' \vdash x : A}[Int-var]
+\]
+\[
+\inference{\vdash \Gamma; x : A \text{ ctxt}}{\Gamma; x : A \vdash x : A}[Lin-var]
+\]
+\end{minipage}
+}

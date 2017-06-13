@@ -1,0 +1,52 @@
+I want to think of contexts in the following way:
+\[
+\Gamma; x_0: \Xi_0, x_1 : \Xi_1, \dots x_n : \Xi_n
+\]
+where $\Gamma$ is an intuitionistic context as (graded) objects in a category of contexts $\mathcal{C}$. There is a (graded functor) $F_{n} : \mathcal{C}_n \to \text{MonCat}$ associating a monoidal category to each context appearing on level $n$, so that $\Xi_{n +1} \in \Ob(F_{n})(\Xi_n)$. In other words, we start out building in the same way that Vakar does, associating a monoidal category for each linear context, but then we also allow the addition of the objects appearing in this monoidal category to the category of contexts. The extension shall be done with the Grothendieck extension, as inspirid by the Groupoid model by Streicher. For any $\Xi \in \mathcal{L}(\Gamma)$, we form the extended (typing) context $\Gamma; x : \Xi$, whose corresponding monoidal category has as objects pairs $(\xi, a)$ where $\xi \mathcal{L}(\Gamma)$ and $a \in \mathcal{L}(\Gamma)(\Xi, \xi)$.
+
+
+A \textit{monoidal n-stage stage category} consists of
+\begin{itemize}
+\item Objects that are linear contexts $\Gamma; x_0 : \Xi, x_1 : \Xi_1, \dots x_n : \Xi_n$.
+\item Morphisms $f : \Gamma; x_0 : \Xi_0, x_1 : \Xi_1, \dots x_n : \Xi_n \to a_0 : A_0, a_1 : A_1, \dots a_n : A_n ; y_0 : \Xi'_0, y_1 : \Xi'_1, \dots y_n : \Xi'_n$ are represented by terms $f_0, f_1, f_2 \dots f_n; \xi_0, \xi_1, \dots \xi_n$ such that:
+\[
+\begin{split}
+  \Gamma \vdash f_0 : A_0\\
+  \Gamma \vdash f_2 : A_1[f_0/x_0]\\
+  \vdots\\
+  \Gamma \vdash f_n : A_n[f_{n-1}/x_{n-1}][f_{n-2}/x_{n-2}]\dots\\
+  \xi_0 \in \mathcal{L}(\Gamma)(\Xi_0, \Xi'_0\{f\})\\
+  \xi_1 \in \mathcal{L}(\Gamma, \Xi_0)(\Xi_1, \Xi'_2\{f;\xi_1\})
+\end{split}
+\]
+Associate a monoidal category $\mathcal{L}(\Gamma; \Xi)$ to a context $\Gamma; \Xi$ by pairs $(A, a)$ from objects $A \mathcal{L}(\Gamma)$ and morphisms $a \in \mathcal{L}(\Gamma)(\Xi, A)$. The tensor product $(A, a) \otimes (B, b)$ is the pair $A \otimes B, a \otimes b$.
+
+Want to be able to extend a context $\Gamma$ by a Grothendieck construction. If $A$ is an object in $\mathcal{L}(\Gamma)$, then there should be another object $\Gamma; A$, whose corresponding monoidal category should consist of types depending on a term of $A$.
+
+Normally, comprehension says morally that all functions $f : \Delta \to \Gamma.A$ are really just extensions of functions $f : \Delta \to \Gamma$ by some possible term in $A$, i.e. that for every function $f : \Delta \to \Gamma.A$ there is a unique morphism $\hat f: \Delta \to \Gamma$ and term $M \in \mathcal{L}(I, A\{\hat f\})$ such that $f$ is the extension of $\hat f$. A linear comprehension might be characterised in the following way:
+
+For every morphism $f : \Delta \to \Gamma; A$, there is a unique pair $(f, a)$ where $\hat f: \Delta \to \Gamma$ and $a$ an object in $\mathcal{L}(\Delta)_{/(A\{f\})}$.
+
+What is this? Just the slice category over $A$.
+The monoidal category corresponding to $\Gamma; A$ is the category whose objects consists of pairs $(B, a)$ where $B \in \mathcal{L}$ and $a \in \mathcal{L}(\Gamma)(B, A)$ and morphisms between $(B, a)$ and $(B', a')$ are morphisms $f : B \to B'$ in $\mathcal{L}(\Gamma)$ such that:
+\[
+\ti
+B \ar[d, "f"] \ar[r, "a"] & A\\
+B \ar[ru, "a"]
+\kz
+\]
+Notice that this is a monoidal category with $(B, a) \otimes (B', a') = (B \otimes B', a \otimes a')$.
+
+If we have:
+\[
+\begin{split}
+\Gamma; x : A \vdash B \text{ type}\\
+\Gamma; \Xi \vdash a : A
+\end{split}
+\]
+Then surely we should be able to yield $\Gamma; \Xi \vdash B[a/x]$ by substitution.
+We also hope to make sense of an expression like $\Gamma; \Xi; \Delta \vdash b : B[a/x]$.
+$b$ should in other words be something like a morphism $\Xi \otimes \Delta \to (B, a)$ in this new, slick category we are building.
+The new, slick, category should always be prefaced with the target corresponding to a morphism over $A$.
+$(B, x) \mathcal{L}(\Gamma; A)$ so $(B, a) \mathcal{L}(\Gamma; \Xi)$
+\end{itemize}

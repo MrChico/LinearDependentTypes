@@ -1,0 +1,115 @@
+A sequential spectrum is an $\mathbb{N}-graded$ (compactly generated, or (sufficiently well-behaved)) pointed topological space $X_{\bullet} = X_n$ with continuous maps $X_n \land S \to X_{n+1}$. It is not uncommon that the maps (often referred to as structure maps) are in fact isomorphisms.
+A basic example is the suspension spectra, which can be constructed out of any (well-behaved) topological space $X$ as $X_n = S^n \land X$. The map $S^n \land X \land S \to S^{n+1} \land X$ is an isomorphism.
+Every spectra corresponds to a cohomology theory, as outlined below.
+In Homotopy type theory, Mike Shulman writes in (https://homotopytypetheory.org/2013/07/24/cohomology/), spectrums are described as follows:
+More precisely, a spectrum is a family of types $Y : \mathbb{N} \to \mathcal{U}$ such that for all n we have (a specified equivalence) $Y_n = \Omega Y_{n+1}$.
+For such a Y, we define the (abelian) cohomology of X with coefficients in Y to be
+\[
+H^n(X;Y) := \Vert X \to \Omega^{k-n} Y_k \Vert_0 \quad (n \in \mathbb{Z})
+\]
+The stable homotopy group of a spectra is a $\mathbb{Z}$-graded abelian group, whose $q$ component arises as a colimit to the diagram:
+\[
+\pi_{k+q}(X_k) = [S^{k+q}, X_k]_* \xrightarrow{S \land (-)} [S^{k+q+1}, S \land X_{k}] \xrightarrow{1_{S^{k+q+1}}, \sigma} [S^{k+q+1}, X_{k+1}] = \pi_{k+q+1}(X_{k+1})
+\]
+Definition 1.16. A morphism $f: X \to Y$ of sequential spectra, is called a stable weak homotopy equivalence, if its image under the stable homotopy group-functor of def. 1.13 is an isomorphism
+\[
+\pi_{\bullet}(f): \pi_{\bullet}(X) \simeq \pi_{\bullet}(Y)
+\]
+An $\Omega$-spectrum is a spectrum for which the maps $\hat \sigma : X_n \to \text{Maps}(S^1,X_{n+1})$ arising out out of the adjunction $\Hom(\Sigma X, Y) \cong \Hom(X, [S^1, Y])$ from the structure maps $\sigma$ are weak homotopy equivalences. Note that this is the condition Mike requires above.
+The category of spectra has all limits and colimits. They are inherited from Top. It also has a zero object, the spectra which is a constant point. Coproducts of spectra $X$ and $Y$ comes from the componentwise wedge sum of topological spaces.
+A map $f: A \to B$ is called a \textbf{retract} (of $g : C \to D$) if there exist i, j, r, and s, such that the following diagram commutes:
+\[
+\ti
+A \ar[d, "f"] \ar[r, "i"] & C \ar[d, "g"] \ar[r,"j"] & A \ar[d, "f"]\\
+B \ar[r, "r"] & D \ar[r, "s"] & B
+\kz
+\]
+such that $j \circ i = 1_A$ and $s \circ r = 1_B$.
+\begin{defn}
+A complete and cocomplete category is a \textbf{model category}, $\mathcal{M}$ if it has three classes of morphisms, F, G and W called fibrations, cofibrations and weak equivalences satisfying the following conditions:
+\begin{itemize}
+\item \textbf{Retracts}: If $f$ is a retract of $g$, then $f$ belongs to the same class as $g$.
+\item \textbf{(2 out of 3)}: If two of the maps $f$, $g$ and $gf$ are weak equivalences, then so is the third
+\item \textbf{Lifting} (weak equivalences + cofibrations) have the left lifting property with respect to fibrations, and cofibrations have the left lifting property with respect to (weak equivalances + fibrations). In other words, for $f$ a fibration and $g$ cofibration, if anyone of them is also weak equivalence, then there exists a lifting map as in the following diagram:
+\[
+\ti
+A \ar[d, "f"] \ar[r] & B \ar[d, "g"]\\
+C \ar[ur, "h", dotted] \ar[r] & D
+\kz
+\]
+\item \textbf{Factorization} every morphism f can be written as $f = p \circ i$ for a fibration p and an acyclic cofibration i. Every morphissm f can be written as $f = p \circ i$ for an acyclic fibration p and a cofibration i.
+\end{itemize}
+\end{defn}
+An object is said to be fibrant if $X \to 1$ is a fibration. An object is cofibrant if $0 \to X$ is a cofibration.\\
+A \textbf{path object} $PX$ in a model category is the factorization object in the diagonal map $\Delta_X : X \to X \times X$.
+\[
+X \xrightarrow{i \in W} PX \xrightarrow{p \in F} X \times X
+\]
+A \textbf{cylinder object} $CX$ is the factorization of the codiagonal map $\nabla_X : X \sqcup X \to X$:
+\[
+X \sqcup X \xto{f \in G} CX \xto{g \in W} X
+\]
+The factorization axiom ensures that these always exists (in fact, factorization is a stronger condition)\\
+The fiber of a map of pointed spaces $f : X \to Y$ is the pullback:
+\[
+\ti
+\text{fib}(f) \ar[r] & X \ar[d, "f"]\\
+* \ar[r, "point"] & Y
+\kz
+\]
+where point is the inclusion of the point into the selcted point of $Y$. Cofiber arises dually as a pushout.
+For $f, g : X \to Y$, a \textbf{left homotopy} $\eta : f \implies_L g$ is a map $\eta : CX \to Y$ such that the following diagram commutes:
+\[
+\ti
+X \ar[dr, "f"] \ar[r] & CX \ar[d, "\eta"] & X \ar[l] \ar[dl, "g",swap]\\
+& Y &
+\kz
+\]
+For $f, g : X \to Y$, a \textbf{right homotopy} $\eta : f \implies_R g$ is a map $\eta :X \to PY$ such that the following diagram commutes:
+\[
+\ti
+& X \ar[dl, "f"] \ar[dr, "g"] \ar[d, "{\eta}"]\\
+Y &   PY \ar[l,] \ar[r, ] & Y
+\kz
+\]
+If $X$ is a cofibrant object, then a left homotopy induces a right homotopy. If $X$ is fibrant, then a right homotopy induces a left homotopy.
+The \textbf{Homotopy category}, $Ho(\mathcal{C})$ of a model category $\mathcal{C}$ is the category whose objects are the objects of $\mathcal{C}$ which are both fibrant and cofibrant and whose morphisms are the equivalence classes of the morphisms of $\mathcal{C}$ under the homotopy relation.\\
+From any map $f: X \to Y$ one can form long fiber sequences:
+\[
+\dots \text{fib(fib(f))} \cong \Omega Y \to \text{fib}(f) \to X \xto{f} Y
+\]
+or long cofiber sequences analoguously.
+Spectra form a model category. A homomorphism of spectra $f_{\bullet} : X_{\bullet} \to Y_{\bullet}$ is a
+\begin{itemize}
+\item \textbf{Strict weak equivalence} if the components $f_n : X_n \to Y_n$ are weak homotopy equivalences.
+\item \textbf{strict fibration} if each component is a fibration in the classical model structure on topological spaces. (Serre fibration)
+\item \textbf{strict cofibration} if $f_0$ is a cofib in Top, and if all maps
+\[
+f_{n+1}, \sigma : X_n \sqcup_{S \land X_{n}} S \land Y_{n} \to Y_{n+1}
+\]
+\end{itemize}
+are cofibrations.\\
+These classes of morphisms give the category of spectra the structure of a model categoyr.\\
+A \textbf{relative cell complex inclusion} is a map $f : X \to X'$ fitting in to the following pushout diagram:
+\[
+\ti
+S^{n-1} \ar[r,"\phi"] \ar[d, "i"] & X \ar[d,"f"]\\
+D^n \ar[r] & X'
+\kz
+\]
+for some continuous function $\phi$.\\
+A spectrum is called a CW-spectrum if all of its spaces are CW-complexes and the structure maps are relative cell complex inclusions.\\
+The category of spectra can be equipped with fibrations, cofibrations and weak equivalences in such a way that the fibrant-cofibrant objects are all $\Omega$-spectra. The homotopy category of this model category is called the \textbf{stable homotopy category}.\\
+The stable homotopy category has finite colimits induced by the wedge sum, and zero object $0=\sum(\star)$. The hom-sets $[X, Y]$ of the stable homotopy category have a group structure, since $[X, Y] \cong [X, \Omega \Sigma Y]$ and since maps into a loop object carry an induced group action given by path composition. Furthermore this group is abelian (Eckmann-Hilton). Thus the stable homotopy category is a category enriched in abelian groups.
+An additive category is a category $\mathcal{C}$:
+\begin{itemize}
+\item Enriched in \textbf{Ab}
+\item with finite coproducts
+\end{itemize}
+from this follows that the coproducts coincide with products.\\
+The stable homotopy category is therefore an additive category.
+It is furthermore a triangulated category, which makes the long homotopy fiber sequences and cofiber sequences coincide. Specifically, for a cofiber sequence $X \xto{f} Y \xto{g} Z$ in the stable homotopy category and for any other spectra $A$, there is a long \textbf{fiber-cofiber} sequence of abelian groups:
+\[
+\dots [A, \Omega Y] \to [A, \Omega Z] \to [A, X] \to [A, Y] \to [A, Z] \to [A, \Sigma X] \to [A, \Sigma Y] \dots
+\]
+\newpage
