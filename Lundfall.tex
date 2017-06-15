@@ -10,9 +10,10 @@ TODO
 \tableofcontents
 \newpage
 \section{TODO}
-Prove that $M \vdash L$ is an adjunction using Peters supplied rule. Can one prove that it is monoidal?
+Prove that $M \vdash L$ is monoidal
+Linear and semantic universes
+Change computation rules to just state things in terms of metavariables
 Try to find examples of linear types from programming - modify in place etc
-Consider introducing a cartesian ``linear hom-set'' type to model the V-enriched categories
 Kelly's enriched categories for more on enriched cats
 \section{Background}
 TODO
@@ -27,13 +28,19 @@ Linear logic is logic in which the structural rules of weakening and contraction
     \end{split}
 \]
 are not admissable.\\
-In other words, assumptions cannot be freely assumed or dismissed; they must be used exactly once in the conclusion. In linear type theory, we can think of a sequent $x_1 : A_1, x_2 : A_2, \dots, x_n : A_n \vdash t : A$ as modelling a function or process in which the assumptions $x_1, x_2, \dots x_n$ are \textit{resources used} to produce $t$. As a first, toy example, we consider the chemical process of burning hydrogen:
+In other words, assumptions cannot be freely assumed or dismissed; they must be used exactly once in the conclusion. In linear logic, we are inclined to think of a sequent $A_1, A_2, \dots, A_n \vdash B$ as modelling a function or process in which the assumptions $A_1, A_2, \dots A_n$ are \textit{resources used} to yield $B$. As a first, toy example, we consider the chemical process of burning hydrogen:
 \begin{ex}\label{burn}
 Consider the following primitive derivation rule: 
 \[
   O_2 \otimes H_2 \otimes H_2 \vdash H_2O \otimes H_2O
 \]
-stating that given an oxygen molecule and two hydrogen molecules, burning yields two water molecules. If weakening was admissable, we would be able to assume an additional hydrogen molecule without changes the antecedent, which does not make sense under the resource interpretation of linear logic.
+stating that given an oxygen molecule and two hydrogen molecules, burning yields two water molecules. If weakening was admissable, we would be able to assume an additional hydrogen molecule without changes the antecedent, which does not make sense under the resource interpretation of linear logic.\\
+Just as inuitionistic logic naturally extends to (dependent) type theory under the slogan of propositions as types, linear logic can be extended to a linear type theory, where sequents are decorated with proof terms:
+\[
+  x_1 : A_1 x_2 : A_2, \dots x_n : A_n \vdash t : B
+\]
+and here linearity implies that the free variables of $t$ are $x_1, x_2, \dots x_n$, each appearing exactly once.\\
+Interest in linear type theory stems from disparate sources. From the perspective of (classical) computer science, it can be used for modelling state and storage, with linear variables denoting resources like pointers or files \cite{krishnaswami}, or even as a theoretical description of the resource handling of a blockchain \cite{meredith2015linear}. In quantum physics, linear types respect the no cloning theorem of quantum states, and are also proposed as a syntax for quantum computation \cite{duncan2006types}. From a semantic perspective, linear type theory can be interpreted in a symmetric monoidal closed categories, generalising the structure of a cartesian closed categories in which (non-dependent) type theories are interepreted.\\
 \end{ex}
 \input{fibrations}
 %\subsection{Spectra}
@@ -496,8 +503,7 @@ so by L-U, we can transform this equality to the desired
 \end{proof}
 \end{thm}
 \subsubsection{Linear dependent types}
-Since we allow linear types to dependend on terms of cartesian types, we can form new versions of the $\Pi$- and $\Sigma$-types. This can be done in two ways, where the resulting type is either cartesian or linear.
-The linear variants of $\Pi$- and $\Sigma$-types will be denoted $\sqcap$ and $\exists$, respectively.\\
+Since we allow linear types to dependend on terms of cartesian types, we can form new versions of the $\Pi$- and $\Sigma$-types. We will denote these linear variants of $\Pi$- and $\Sigma$-types by $\sqcap$ and $\sqsubset$, respectively.\\
 \fbox{
 \begin{minipage}{.5\linewidth}
 \[
@@ -518,17 +524,17 @@ The linear variants of $\Pi$- and $\Sigma$-types will be denoted $\sqcap$ and $\
 \end{minipage}
 \begin{minipage}{.5\linewidth}
 \[
-\inference{\Gamma \vdash A \type \quad \Gamma, x : A \vdash B \linear}{\Gamma \vdash \exists_{x : A}B \linear}[$\exists$-F]
+\inference{\Gamma \vdash A \type \quad \Gamma, x : A \vdash B \linear}{\Gamma \vdash \sqsubset_{x : A}B \linear}[$\sqsubset$-F]
 \]\\
 \[
-\inference{\Gamma \vdash s : A \quad \Gamma; \Xi \vdash b : B[s/x]}{\Gamma; \Xi \vdash (s, b) : \exists_{x : A}B}[$\exists$-I]
+\inference{\Gamma \vdash s : A \quad \Gamma; \Xi \vdash b : B[s/x]}{\Gamma; \Xi \vdash (s, b) : \sqsubset_{x : A}B}[$\sqsubset$-I]
 \]\\
 \[
-\inference{\Gamma; \Xi \vdash t : \exists_{x : A}B \quad \Gamma, x : A; \Xi', y : B \vdash c : C}{\Gamma; \Xi, \Xi' \vdash \text{let $x, y$ be $t$ in c : C}}[$\exists$-E]
+\inference{\Gamma; \Xi \vdash t : \sqsubset_{x : A}B \quad \Gamma, x : A; \Xi', y : B \vdash c : C}{\Gamma; \Xi, \Xi' \vdash \text{let $x, y$ be $t$ in c : C}}[$\sqsubset$-E]
 \]\\
 \[
 \inference{\Gamma; \Xi \vdash \text{let $x, y$ be $(s, t)$ in c : C}}
-{\Gamma; \Xi \vdash \text{let $x, y$ be $(s, t)$ in c} \equiv c[s/x][t/y]}[$\exists$-C]
+{\Gamma; \Xi \vdash \text{let $x, y$ be $(s, t)$ in c} \equiv c[s/x][t/y]}[$\sqsubset$-C]
 \]
 \end{minipage}
 }\\
@@ -545,8 +551,18 @@ with this construct, recall the example of burning hydrogen given in \ref{burn},
   burn : \sqcap_{n : \mathbb{N}}O_2^n \otimes H_2^{2n} \multimap H_2O^{2n}
   \end{split}
 \]
-If we let the resulting type be cartesian, we get the following type formers:
-TODO:\\
+\\
+An example of the $\sqsubset$ type comes from Krishnaswami's treatment of linear dependent logic as a way to model imperative programs \cite{krishnaswami}. Here, a primitive type of memory locations, $\Gamma \vdash Loc \type$, is introduced, the terms $x$ of which can reference a term of any cartesian type $A$ by means of a term of the linear pointer type $[x \mapsto A]$:
+\[ 
+  \inference{\Gamma \vdash A \type}
+  {\Gamma, x : Loc \vdash [x \mapsto A] \linear}
+\]
+Given a term $\Gamma \vdash t : A$, one can allocate a memory block of memory to store $t$ at a new location, returning a pointer:
+\[
+  \inference{\Gamma \vdash t : A}
+  {\Gamma; \cdot \vdash new_A (t) : \sqsubset_{x : Loc} [x \mapsto A]}
+\]
+
 
 Another example takes inspiration from the realm of blockchain technology, where one deals with resources like bitcoin or ether balances. Say we model ownership of ether by a public address (generated from a cryptographic public key) having the linear type $addr_1 : ETH$. Then we can model a decentralized  mathematical prize comittee, which give out a reward of 1 ether to whoever proves the Goldbach conjecture.\\
 Since the reward is constant, this is ais not truly a dependent linear function and we abusively notate it by $\multimap$:
@@ -728,6 +744,7 @@ Finally, if $B$ is an object of $\mathcal{L}_{\Gamma.A.\Gamma'}$, then the image
 \end{proof}
 \end{thm}
 \subsection{Semantic type formers}
+In the following, we assume that the comprehension category comprising the core of our syntax is full.
 What it means for a model of linear dependent type theory to \textit{support} $\Pi$-, $\Sigma$ and $Id$-types is directly inhererited from the standard, non-linear case.
 \begin{defn}A model of LDTT \textbf{supports $\Pi$-types} if, for all $A \in \mathcal{T}_{\Gamma}$, the induced functor $\pi_A^* : \mathcal{T}_{\Gamma} \to \mathcal{T}_{\Gamma.A}$ has a right adjoint $\Pi_A : \mathcal{T}_{\Gamma.A} \to \mathcal{T}_{\Gamma}$ satisfying the following Beck-Chevalley condition:\\
   For all cartesian morphisms $f : E \to E'$ in $\mathcal{T}$, assume without loss of generality that $E \in \mathcal{T}_{\Gamma}$ and $E' \in \mathcal{T}_{\Delta}$. We have the following pullback square in $\mathcal{C}$:
@@ -749,10 +766,10 @@ inducing the following functors between fibers:
   There is a canonical natural transformation $(pf)^*\Pi_{E'} \to \Pi_{E}q^*_{E, E'}$ which we ask for to be natural isomorphism.\\
 Analoguously, a model \textbf{supports $\Sigma$-types} if $\pi_A^*$ has a left adjoint satisfying a similar Beck-Chevalley condition for all $A$.
 \end{defn}
-The semantic counterpart for the mixed types $\sqcap$ and $\exists$ is similar to that of $\Pi$ and $\Sigma$, but instead of $\mathcal{T}$, we ask for adjoints of the induced functors between fibers of $\mathcal{L}$.
+The semantic counterpart for the mixed types $\sqcap$ and $\sqsubset$ is similar to that of $\Pi$ and $\Sigma$, but instead of $\mathcal{T}$, we ask for adjoints of the induced functors between fibers of $\mathcal{L}$.
 \begin{defn}
 A model of LDTT \textbf{supports $\sqcap$-types} if, for all $A \in \mathcal{T}_{\Gamma}$, the induced (monoidal) functor $\pi_A^* : \mathcal{L}_{\Gamma} \to \mathcal{L}_{\Gamma.A}$ has a monoidal right adjoint.
-It supports $\exists$-types if every $\pi_A^*$ has a monoidal left adjoint.
+It supports $\sqsubset$-types if every $\pi_A^*$ has a monoidal left adjoint.
 \end{defn}
 \begin{defn}[Id-types]
   A model of LDTT \textbf{supports Id-types} if, for all $A \in \mathcal{T}_{\Gamma}$, there exists an object $Id_A \in \mathcal{T}_{\Gamma.A.A\{\pi_A\}}$ and a morphism $r_A : \Gamma.A \to \Gamma.A.A\{\pi_A\}.Id_{A}$ such that:
@@ -772,7 +789,11 @@ It supports $\exists$-types if every $\pi_A^*$ has a monoidal left adjoint.
     \kz
   \]
   there exists a lift $\Gamma.A.A\{\pi_A\}.Id_A \to \Delta.C$ making the two triangles commute.
-  \end{itemize}
+\end{itemize}
+\begin{defn}
+  A model of linear depenendent type theory supports $[-,-]$-types, if, for all objects $A, B \in \mathcal{L}_{\Gamma}$, there exists an object $T[A, B] \in \mathcal{T}_{\Gamma}$ such that $\mathcal{T}_{\Gamma}(X, T[A, B]) \cong \mathcal{L}_{\Gamma.X}(A, B)$.
+\end{defn}
+
 \end{defn}
 
 \newpage
@@ -837,8 +858,8 @@ As an in depth example construction in the families model of linear dependent ty
     \]
   \end{enumerate}
 \end{defn}
-Our goal is to construct a syntactic analogue of this construction in the families model, such that the interpretation of this is an enriched category. There are two ways of doing this. The first is a kind of meta-construction, in which we ask for the existence of certain types and judgemental equalities to hold, whereas the second, internal definintion, is a type \textbf{Enr-Cat}, whose terms are interpreted as enriched categories. The type \textbf{Enr-Cat} allows us to formulate theorems about enriched categories directly in the syntax, but requires TODO
-First, we introduce a new type with which we can reason (non-linearly) about the hom-sets of $\mathcal{V}$:\\
+Our goal is to construct a syntactic analogue of this construction in the families model, such that the interpretation of this is an enriched category. There are two ways of doing this. The first is a kind of meta-construction, in which we ask for the existence of certain types and judgemental equalities to hold, whereas the second, internal definintion, is a type \textbf{Enr-Cat}, whose terms are interpreted as enriched categories. The type \textbf{Enr-Cat} allows us to formulate theorems about enriched categories directly in the syntax, but requires more involved type formers, such as universes, and the following type,
+with which we can reason (non-linearly) about the hom-sets of $\mathcal{V}$:\\
 \fbox{
 \begin{minipage}{.5\linewidth}
   \[
@@ -861,31 +882,24 @@ First, we introduce a new type with which we can reason (non-linearly) about the
   \]
 \end{minipage}
 }
-In the presence of linear function types and the $M$-functor, this type can be constructed as $(A \multimap B)_M$, but adding it as a primitive allows us to talk about the hom-sets of $\mathcal{V}$ even when it is not closed.\\
-We define the type \textbf{Enr-Cat} to consist of the following:
-\begin{itemize}
-\item A (cartesian) type $A$,
-\item for any $x, y : A$, a linear type $B_{x, y}$,
-\item a linear dependent function $M_{x, y} : \sqcap_{x, y, z} B_{x, z} \otimes B_{x,y} \multimap B_{x,z}$,
-\item a linear dependent function $j_x : \sqcap_{x : A} B_{x, x}$ and 
-\item proofs of the equalities $[\lambda f. f] = _{[B_{x, y}, B_{x, y}]} [\lambda f. M(f \otimes j_x)]$ and $[\lambda f. f] = _{[B_{x, y}, B_{x, y}]} [\lambda f. M(j_y \otimes f)]$
+In the presence of linear function types ($\multimap$) and the $M$-functor, this type can be just as well be constructed as $(A \multimap B)_M$. However, adding it as a primitive allows us to talk about the hom-sets of $\mathcal{V}$ even when it is not closed.\\
+\begin{defn}[meta-theoretic enriched categories]
+  A meta-theoretic $\mathcal{V}$-enriched category in a context $\Gamma$ consists of the following data:
+ \begin{itemize}
+\item A (cartesian) type $\Gamma \vdash A \type$,
+\item for any $x, y : A$, a linear type $\Gamma, x, y : A \vdash B_{x, y} \linear$,
+\item terms $\Gamma, x, y, z : A; g: B_{y, z}, f:  B_{x, y} \vdash M(g, f) : B_{x, z}$,
+\item $\Gamma, x : A; \cdot \vdash j_x : B_{x, x}$ and
+\item judgemental equalities $\Gamma, x, y : A; f : B_{x, y} \vdash f \equiv M(j_y \otimes f)$ and $\Gamma, x, y : A; f : B_{x, y} \vdash f \equiv M(f \otimes j_x)$.
 \end{itemize}
+\end{defn}
 Notice that the equation asserting associativity of the composition law is not nessecary, since functions in type theory are inherently associative.
-\[
-  \begin{split}
-    \cdot \vdash \Sigma_{A : U} \Pi_{M_{x, y, z} : \sqcap_{x, y, z : A} B_{y, z} \otimes B_{x, y} \multimap B_{x,z}} \Pi_{j_x : \sqcap_{x: A}B} \\
-  \cdot &\vdash A \text{ type}\\
-  x, y : A &\vdash B_{x,y} \linear\\
-\cdot &\vdash \sqcap_{x, y : A}B_{x, y} \text{ linear}\\
-x : A ; \cdot &\vdash 1_x : B_{x, x}\\
-\cdot; \cdot &\vdash 1_{-} : \sqcap_{x : A}B_{x, x}\\
-\cdot; \cdot &\vdash \_\circ\_ : \sqcap_{x, y, z}B_{y,z} \otimes B_{x, y} \multimap B_{x, z}\\
-x, y : A, z : B_{x,yM}; \cdot &\vdash \sigma(z) \circ 1_x : B_{x, y}\\
-x, y : A, z : B_{x,yM} &\vdash p : (\sigma(z) \circ 1_x)_M =_{B_{x,y}M} \sigma(z)_M\\
-x, y : A, z : B_{x,yM} &\vdash q : (1_y \circ \sigma(z))_M =_{B_{x,y}M} \sigma(z)_Mz\\
-x, y, z, w : A, f : {B_{x, y}}_M, g: {B_{y, z}}_M, h : B_{{z, w}M} &\vdash r : (\sigma(h) \circ (\sigma(g) \circ \sigma(f)))_M =_{B{_y,zM}} ((\sigma(h) \circ \sigma(g)) \circ \sigma(f))_M
-\end{split}
-\]
+\begin{defn}[Internal enriched categories]
+  The type \textbf{Enr-cat} is defined as
+  \[
+    Enr-Cat :\equiv \Sigma_{A : \mathcal{U}} \Sigma_{B : \Pi_{x, y : A}\mathcal{L}} \Sigma_{M : \Pi_{x, y, z : A} [B_{y, z} \otimes B_{x, y}, B_{x,z}]} \Sigma_{j : \Pi_{x: A}[I, B_{x, x}]}[\lambda f. f] = [\lambda f. M_{x, x, y}(f \otimes j_x)] \times [\lambda f. f] = [\lambda f. M_{x, x, y}(j_y \otimes f)] \\
+  \]
+\end{defn}
 The interpretation of this in the families model are precisely $\mathcal{V}$-enriched categories. A type $A$ in the empty context will be a family of sets indexed by a singleton, and the type $B$ is a function $B : A \times A \to \mathcal{V}$, which for each pair $x, y \in A$ assigns an object of $\mathcal{V}$.
 Since $Fam(\mathbf{Set})$ is an extensional model, whenever the $a =_A b$ is inhabited, we have $[[a]]=[[b]]$. Furthermore, since the equalities $p$, $q$ and $r$ are all identifying morphisms in the image of the faithful functor $M$, we have:
 \[
