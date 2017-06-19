@@ -20,7 +20,7 @@ TODO
 \subsection{Dependent type theory}
 TODO
 \subsection{Linear type theory}
-Linear logic is logic in which the structural rules of weakening and contraction:
+Linear logic is a substructural logic in which the rules of weakening and contraction:
 \[
   \begin{split}
     \inference{\Gamma, \Delta \vdash B}{\Gamma, A, \Delta \vdash B}[Weak] \quad \quad 
@@ -108,7 +108,7 @@ The cartesian types that we will use are the standard $\Pi$, $\Sigma$ and $Id$-t
 {\Gamma \vdash t(M) : B[M/x]}[$\Pi$-E]
 \]\\
 \[
-\inference{\Gamma \vdash \lambda x. b(M) : B[M/x]}
+\inference{\Gamma, x : A \vdash b : B \quad \Gamma \vdash M : A}
 {\Gamma \vdash \lambda x. b(M) \equiv b[M/x] : B[M/x]}[$\Pi$-C]
 \]\\
 \[
@@ -329,22 +329,14 @@ Below are the syntactic rules for the operators $M$ and $L$. \\
 (\vdash \Gamma; \Xi' \text{ ctxt})\\ \Gamma; \Xi \vdash y : A_L \quad \Gamma, x : A; \Xi' \vdash t : B}{\Gamma; \Xi, \Xi' \vdash \text{let  $x$ be $y$ in }t : B}[L-E]
 \]\\
 \[
-\inference{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t : B}{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t \equiv t[s/x]  : B}[L-C$_\beta$]
+\inference{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t : B}{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t \equiv t[s/x]  : B}[L-C]
 \]\\
 \[
-\inference{\Gamma; \Xi \vdash \text{let  $x$ be $t$ in }x_L : B}{\Gamma; \Xi \vdash \text{let  $x$ be $t$ in }x_L \equiv t  : B}[L-C$_\eta$]
-\]
-The following should imply the commuting conversion and the $\eta$ rule above.
-\[
-  \begin{split}
     \inference{\Gamma; y : A_L, \Xi \vdash t, t' : B \\
       \Gamma, x : A; \Xi \vdash t[x_L/y] \equiv t'[x_L/y]\\
       \Gamma; \Xi' \vdash a : A_L }
     {\Gamma; \Xi, \Xi' \vdash t[a/y] \equiv t'[a/y]}[L-U]
-    \end{split}
 \]
-
-  
 \end{minipage}
 \begin{minipage}{.5\linewidth}
 \[
@@ -538,7 +530,7 @@ Since we allow linear types to dependend on terms of cartesian types, we can for
 \]
 \end{minipage}
 }\\
-An example of a $\sqcap$ type, consider for any linear type $\Gamma \vdash A \linear$, the n-fold tensor product $A^n :\equiv A \otimes A \dots A$, which we can define by induction over the natural numbers via:
+An example of a $\sqcap$ type, consider for any linear type $\Gamma \vdash A \linear$, the n-fold tensor product $A^n :\equiv A \otimes A \dots A$, which we can define by induction over the natural numbers (using universes) via:
 \[
   \begin{split}
   A^0 &:\equiv I\\
@@ -569,7 +561,31 @@ Since the reward is constant, this is ais not truly a dependent linear function 
 \[
 \cdot; x : ETH \vdash GoldbachReward: \Pi_{x : \mathbb{N}}\Sigma_{y, z : \mathbb{N}}Prime(y) \times Prime(z) \times y + z =_{\mathbb{B}} 2(suc(suc(x))) \multimap ETH
 \]
-To execute the transaction, one would need to exhibit that there is an address $x$ with one ether to begin with and provide a proof of the Goldbach conjecture.
+To execute the transaction, one would need to exhibit that there is an address $x$ with one ether to begin with and provide a proof of the Goldbach conjecture.\\
+\subsection{Universes}
+Our cartesian and linear types live in separate universes, $\mathcal{U}$ and $\mathcal{L}$. Since linear types are type checked in a purely cartesian context, the linear universe is a cartesian type. Our universes are given á la Tarski and are closed under the type formers associated with them. The rules below are not complete, but should be sufficient to outline the pattern. For more detail we refer to Hofmann's \textit{Syntax and Semantics of Dependent types}, \cite{hofmann1997syntax}, or the Krishnaswami's \textit{Integrating Linear and Dependent types}, \cite{krishnaswami}.\\
+\fbox{
+  \begin{minipage}{.5\linewidth}
+    \[
+      \inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash U}[$\mathcal{U}$-F]
+    \]\\
+    \[
+      \inference{\Gamma \vdash t : U}{\Gamma \vdash El(t) \type}[El-F]
+    \]\\
+    \[
+      \inference{\Gamma \vdash t : U \\
+        \Gamma, x : El(t) \vdash v : U}
+        {\Gamma \vdash \hat \Pi_{x : El(t)}v}[U-$\Pi$]
+      \]
+      \[
+        \inference{\Gamma \vdash \hat \Pi_{x : El(t)}v}
+        {\Gamma \vdash \hat El(\Pi_{x : El(t)}v) \equiv \Pi_{x L El(t)}El(v)}[U-$\Pi$-Ty]
+      \]
+      
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+\end{minipage}
+}\\
 \section{Semantics}
 \subsection{Structural semantic core}
 To explore the models of linear dependent type theory we begin by constructing a categorical structure which abstracts the key features of the theory. We will utilize the notion of a \textit{comprehension category}, which provides the most general structure in which we can deal with the structural rules like context extensions and substitutions. Once this has been taken care of we may consider what extra conditions have to be imposed in order for the model to support various type constructors, and then provide concrete models that satisfy these conditions.\\
