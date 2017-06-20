@@ -10,12 +10,15 @@ TODO
 \tableofcontents
 \newpage
 \section{TODO}
-Prove that $M \vdash L$ is monoidal
-Linear and semantic universes
-Change computation rules to just state things in terms of metavariables
-Try to find examples of linear types from programming - modify in place etc
+Clean up $M \vdash L$ and prove that $M \vdash L$ is monoidal
+understand universes semantically
+Change computation rules to just state things in terms of metavariables (maybe not? Hofmann does not do it)
+
+Let $\mathcal{L}$ be a (monoidal?) (2,1)-category. For $A, B \in \mathcal{L}_{\Gamma}$, can one define the type $f =_{[A, B]} g$ to consist of the 2-cells between f and g?
+A (2,1) category is a category enriched over groupoids.
+
 Kelly's enriched categories for more on enriched cats
-\section{Background}
+\section{Preliminaries}
 TODO
 \subsection{Dependent type theory}
 TODO
@@ -43,6 +46,56 @@ and here linearity implies that the free variables of $t$ are $x_1, x_2, \dots x
 Interest in linear type theory stems from disparate sources. From the perspective of (classical) computer science, it can be used for modelling state and storage, with linear variables denoting resources like pointers or files \cite{krishnaswami}, or even as a theoretical description of the resource handling of a blockchain \cite{meredith2015linear}. In quantum physics, linear types respect the no cloning theorem of quantum states, and are also proposed as a syntax for quantum computation \cite{duncan2006types}. From a semantic perspective, linear type theory can be interpreted in a symmetric monoidal closed categories, generalising the structure of a cartesian closed categories in which (non-dependent) type theories are interepreted.\\
 \end{ex}
 \input{fibrations}
+\subsection{Enriched and higher categories}
+The concept of a category can be generalized in a few different directions. In exploring semantics of linear type theory, our first encounter with such structures will be  enriched categories, where hom-sets are generalized to ``hom-objects'' of a monoidal category $\mathcal{V}$.
+\begin{defn}\label{enr-cat}
+  For a monoidal category $\mathcal{V}$, a \textbf{$\mathcal{V}$-enriched category} $\mathcal{C}$, consists of the following:
+  \begin{enumerate}
+  \item A set $\mathcal{C}_0$ of objects,
+  \item for each pair $a, b \in \mathcal{C}_0$, an object $V_{a,b} \in \mathcal{V}$,
+  \item for every $a, b, c \in \mathcal{C}_0$, a \textit{composition law}, i.e. a functor $M_{a, b, c} : V_{b, c} \otimes V_{a, b} \to V_{a, c}$ and
+  \item an identity element $j_a : I \to V_{a, a}$
+\end{enumerate}
+such that for all $a, b, c, d$, the following associativity and identity diagrams commute:
+    \[
+      \ti
+      (V_{c, d} \otimes V_{b, c}) \otimes V_{a, b} \ar[d, "{M_{b, c, d} \otimes 1_{V_{a,b}}}"] \ar[rr, "\alpha"] & & V_{c, d} \otimes (V_{b, c} \otimes V_{a, b}) \ar[d, "{1_{V_{c,d}} \otimes M_{a, b, c}}"]\\
+      V_{b, d} \otimes V_{a, b} \ar[rd, "M_{a, b, d}"] & & V_{c, d} \otimes V_{a, c} \ar[ld, "M_{a, c, d}"]\\
+      & V_{a, d}      &
+      \kz
+    \]
+    \[
+      \ti
+      I \otimes V_{a, b} \ar[d, "j_b \otimes 1_{V_{a, b}}", swap] \ar[r, "l"] & V_{a, b} & V_{a, b} \otimes I \ar[l, "r"] \ar[d, "1_{V_{a, b}} \otimes j_a"] \\
+      V_{b, b} \otimes V_{a, b} \ar[ru, "M_{a, b, b}"] & & V_{a, b} \otimes V_{a, a} \ar[lu, "M_{a, a, b}"]
+      \kz
+    \]
+    where $a$, $l$ and $r$ are respectively the associator and left and right unitors of $\mathcal{V}$.
+\end{defn}
+Note that for the special case of $\mathcal{V} = Set$ we get back the definition of a category. Plenty of examples of constructions in enriched categories can be found in the comprehensive introduction \textit{Basic concepts of enriched category theory} by Max Kelly, \cite{kelly}.\\
+Another generalization of a category is suggested by the direction in which categories generalize sets/classes by allowing arrows between objects. Thinking of arrows as one-dimensional objects between zero-dimensional objects, one can imagine the existence of 2-dimensional arrows between 1-dimensional ones. This leads to the notion of a 2-category. These come in two different forms, strict 2-categories (or just 2-categories) or weak 2-categories (also known as bicategories). Equipped with the notion of an enriched category, strict 2-categories can be defined concisely as:
+\begin{defn}
+  A (strict) 2-category is a $Cat$-enriched category.
+\end{defn}
+Breaking down this definition provides a more illuminating view. A strict 2-category, $\mathcal{C}$, consists of
+\begin{itemize}
+\item a collection of objects $\mathcal{C}_0$,
+\item for any pair of objects $a, b \in \mathcal{C}_0$, a category $C_{a, b}$, whose objects will be called ``1-morphisms'' and whose morphisms are renamed ``2-morphisms''.
+\item for any object $a \in \mathcal{C}$, an ``identity'' functor $1_a : \mathbf{1} \to \mathcal{C}_{a, a}$, 
+\item for any triple of objects $a, b, c \in \mathcal{C}_0$, a functor $Comp : C_{b, c} \times C_{a, b} \to C_{a, c}$
+  satisfying the associativity and identity diagrams from the definition of enriched categories.
+\end{itemize}
+The action of $Comp$ on 1-morphisms can be thought of as a ``horizontal composition'': written $gf := Comp(g, f)$ for $f \in \mathcal{C}_{a, b}$ and $g \in \mathcal{C}_{b, c}$ and its action on 2-morphisms is ``vertical composition'': given $f, g \in \mathcal{C}_{a, b}$, $f', g' \in \mathcal{C}_{b, c}$ and 2-morphisms $\alpha : f \implies g$ and $\beta : f' \to g'$, we write the 2-morphism $Comp(\beta, \alpha) : Comp(g, f) \to Comp(g', f')$ as $\beta \circ \alpha$.
+Thanks to the functoriality of $Comp$, these satisfy the following \textit{interchange law}:
+\[
+  (\beta' \circ \beta)(\alpha'\circ \alpha)=(\beta'\alpha')\circ(\beta\alpha)
+\]\\
+The path from strict 2-categories to weak 2-categories is marched to the category theoretic slogan that it is undesirable to speak of equality between objects in a category. 
+\begin{defn}
+  Weak 2-category
+\end{defn}
+
+
 %\subsection{Spectra}
 %\input{spectra}
 \section{Syntax}
@@ -563,28 +616,51 @@ Since the reward is constant, this is ais not truly a dependent linear function 
 \]
 To execute the transaction, one would need to exhibit that there is an address $x$ with one ether to begin with and provide a proof of the Goldbach conjecture.\\
 \subsection{Universes}
-Our cartesian and linear types live in separate universes, $\mathcal{U}$ and $\mathcal{L}$. Since linear types are type checked in a purely cartesian context, the linear universe is a cartesian type. Our universes are given á la Tarski and are closed under the type formers associated with them. The rules below are not complete, but should be sufficient to outline the pattern. For more detail we refer to Hofmann's \textit{Syntax and Semantics of Dependent types}, \cite{hofmann1997syntax}, or the Krishnaswami's \textit{Integrating Linear and Dependent types}, \cite{krishnaswami}.\\
+Our cartesian and linear types live in separate universes, $U$ and $L$. Since linear types are type checked in a purely cartesian context, the linear universe is a cartesian type. Our universes are given á la Tarski and are closed under the type formers associated with them. Below, we only outline the closure over the type formers $\Pi$, $\otimes$ and $\sqcap$, but this should be sufficient to give the idea. For more detail we refer to Hofmann's \textit{Syntax and Semantics of Dependent types}, \cite{hofmann1997syntax}, or Krishnaswami's \textit{Integrating Linear and Dependent types}, \cite{krishnaswami}.\\
 \fbox{
   \begin{minipage}{.5\linewidth}
     \[
-      \inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash U}[$\mathcal{U}$-F]
+      \inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash U \type}[$\mathcal{U}$-F]
     \]\\
     \[
-      \inference{\Gamma \vdash t : U}{\Gamma \vdash El(t) \type}[El-F]
+      \inference{\Gamma \vdash t : U}{\Gamma \vdash El(t) \type}[U-El-F]
     \]\\
     \[
       \inference{\Gamma \vdash t : U \\
         \Gamma, x : El(t) \vdash v : U}
         {\Gamma \vdash \hat \Pi_{x : El(t)}v}[U-$\Pi$]
-      \]
+      \]\\
       \[
-        \inference{\Gamma \vdash \hat \Pi_{x : El(t)}v}
-        {\Gamma \vdash \hat El(\Pi_{x : El(t)}v) \equiv \Pi_{x L El(t)}El(v)}[U-$\Pi$-Ty]
+        \inference{\Gamma \vdash t : U \\
+        \Gamma, x : El(t) \vdash v : U}
+        {\Gamma \vdash  El(\hat \Pi_{x : El(t)}v) \equiv \Pi_{x : El(t)}El(v)}[U-$\Pi$-Ty]
       \]
-      
 \end{minipage}
 \begin{minipage}{.5\linewidth}
-\end{minipage}
+        \[
+      \inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash L \type}[L-F]
+    \]\\
+    \[
+      \inference{\Gamma \vdash t : L}{\Gamma \vdash El(t) \linear}[L-El-F]
+    \]\\
+    \[
+      \inference{\Gamma \vdash t : L \quad \Gamma \vdash s : L}{\Gamma \vdash t \hat \otimes s : L}[L-$\otimes$]
+    \]\\
+        \[
+          \inference{\Gamma \vdash t : L \\
+            \Gamma \vdash s : L}{El(t \hat \otimes s) \equiv El(s) \otimes El(t)}[L-$\otimes$-Ty]
+    \]\\
+    \[
+      \inference{\Gamma \vdash t : U\\
+        \Gamma, x : El(t) \vdash s : L}
+        {\Gamma \vdash \hat \sqcap_{x : El(t)} s : L}[L-$\sqcap$]
+    \]\\
+    \[
+      \inference{\Gamma \vdash t : U\\
+        \Gamma, x : El(t) \vdash s : L}
+        {\Gamma \vdash El(\hat \sqcap_{x : El(t)} s) \equiv \sqcap_{x : El(t)}El(s)} [L-$\sqcap$-Ty]
+    \]\\
+  \end{minipage}
 }\\
 \section{Semantics}
 \subsection{Structural semantic core}
@@ -597,18 +673,18 @@ The idea behind the core of the semantics is to construct a comprehension catego
 A \textbf{comprehension category} consists of a commutative diagram of functors
 \[
 \ti
-E \ar[rd, "p"] \ar[r, "\pi"]  & B^{\to} \ar[d, "\text{cod}"]\\
-& B
+\mathcal{T} \ar[rd, "p"] \ar[r, "\pi"]  & \mathcal{C}^{\to} \ar[d, "\text{cod}"]\\
+& \mathcal{C}
 \kz
 \]
 where $B^\to$ is the arrow category of $B$ and $cod : B^\to \to B$ denotes the codomainfunctor such that:
 \begin{enumerate}%
-\item $B$ has a terminal object
-\item $p : E\to B$ is a Grothendieck fibration,
-\item $\pi : E\to B^\to$ takes cartesian morphisms in $E$ to cartesian morphisms in $B^\to$
+\item $\mathcal{C}$ has a terminal object
+\item $p : \mathcal{T} \to \mathcal{C}$ is a Grothendieck fibration,
+\item $\pi : \mathcal{T} \to \mathcal{C}^\to$ takes cartesian morphisms in $\mathcal{T}$ to cartesian morphisms in $\mathcal{C}^\to$
 \end{enumerate}
-Notice that by the second condition, cartesian morphisms in $E$ are mapped to pullback squares in $B$:\\
-A cartesian morphism $(p, q) : f \to g$ in $B^\to$ is a commutative square in $B$
+Notice that by the second condition, cartesian morphisms in $\mathcal{T}$ are mapped to pullback squares in $\mathcal{C}$:\\
+A cartesian morphism $(p, q) : f \to g$ in $\mathcal{C}^\to$ is a commutative square in $\mathcal{C}$
 \[
 \ti
 B \ar[r, "g"] \ar[d, "p"] & B' \ar[d, "q"]\\
@@ -624,28 +700,8 @@ A \ar[r, "f"] & A'
 \kz
 \]
 there is a unique arrow $u : E \to B$ such that $p' = p \circ u$ and $q'e = g \circ u$. This is precisely the universal property of the pullback.
-If $\mathcal{B}$ has all pullbacks, then $\text{cod} : B^\to \to B$ is a fibration and in that case $\pi$ is a cartesian functor.\\
-Maps of $\mathcal{C}$ that are in the image $\pi$ will be called \textit{projections}, and by the remark above, pullbacks of projections always exist. Terms of a type will be interpreted as sections of the corresponding projections. The pullbacks of $E$ will play the role of substitutions in the type theory, and since substitution is strictly associative in the theory, we need pullbacks of $E$ to be strictly associative too. This requirement forces us to restrict our attention to \textit{split comprehension categories}, i.e. comprehension categories such that $p$ is a split fibration.
-\begin{lem}\label{pb-lem}
-The pullback of a section is the section of a pullback. In other words, for morphisms $f : A \to C$, $g : B \to C$ and $h : C \to B$ such that $hg = 1_B$, then $h^*$ (if it exists) is a section of $g^*$.
-\begin{proof}
-We have the following pullback:
-\[
-\ti
-A \times_C B \ar[d, "q"] \ar[r, "g^*"] & A \ar[d, "f"] \\
-B \ar[r, "g"] & C
-\kz
-\]
-Pulling back $h$ along $q$ we have the following double pullback:
-\[
-\ti
-E \ar[d, "q'"] \ar[r, "h^*"] & A \times_C B \ar[d, "q"] \ar[r, "g^*"] & A \ar[d, "f"] \\
-C \ar[r, "h"] & B \ar[r, "g"] & C
-\kz
-\]
-The two pullbacks lemma says that if the two inner squares are pullbacks, then so is the outer rectangle, so $E$ is also the pullback of the span $f : A \to C$ and $gh = 1_C : C \to C$. But this is just $A$ with projections $1_A$ and $f$. So we get that $q' = f$ and $g^* h^* = 1_A$.
-\end{proof}
-\end{lem}
+If $\mathcal{C}$ has all pullbacks, then $\text{cod} : \mathcal{C}^\to \to \mathcal{C}$ is a fibration and we immediately have a comprehension category.
+Maps of $\mathcal{C}$ that arise via $\pi(A)$ for some $A \in \mathcal{T}$ will be called \textit{projections}, and by the remark above, pullbacks of projections always exist. Terms of a type will be interpreted as sections of the corresponding projections. The pullbacks of $\mathcal{C}$ will play the role of substitutions in the type theory, and since substitution is strictly associative in the theory, we need pullbacks of $\mathcal{C}$ to be strictly associative too. This requirement forces us to restrict our attention to \textit{split comprehension categories}, i.e. comprehension categories such that $p$ is a split fibration.
 \end{defn}
 A semantics for linear dependent type theory consists of a split comprehension $p : \mathcal{T} \to \mathcal{C}$ and a split lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, illustrated in the following picture:
 \[
@@ -655,7 +711,20 @@ A semantics for linear dependent type theory consists of a split comprehension $
 \kz
 \]
 
-This structure is sufficient for interpreting the structural core of our theory. We make this precise by proving soundness by induction on the derivation rules of Figure \ref{struc}.
+This structure is sufficient for interpreting the structural core of our theory. We make this precise by proving soundness by induction on the derivation rules of Figure \ref{struc}. The following lemma will come in handy:
+\begin{lem}\label{pb-lem}
+  The pullback of an arrow, $g$, has a section if $g$ does. In other words, given a pullback of $g$:
+  \[
+    \ti
+    A \times_{C} B \ar[d, "g^*"] \ar[r, "k"] & B \ar[d, "g", bend right]\\
+    A \ar[r, "f"] & C \ar[u, "h", bend right]
+    \kz
+  \]
+  such that $gh = 1_C$, then $h^*$ exists and is a section of $g^*$.
+\begin{proof}
+Since $A$ with projections $1_A$ and $hf$ forms a cone to the cospan, there exists a unique map $u : A \to A \times_{C} B$ such that $hfu = k$ and $g^*u = 1_A$, making $u$ a section of $g^*$.
+\end{proof}
+\end{lem}
 \begin{thm}[Soundness]
 A split comprehension category $p : \mathcal{T} \to \mathcal{C}$ together with a split lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$ is a model for the linear dependent type theory consisting of the structural rules presented in Figure \ref{struc} and the $\otimes$- and $I$-types presented in Figure \ref{tensor}.
 \begin{proof}
@@ -857,23 +926,7 @@ Fam(\mathcal{V}) \ar[rd, "q"]  & Fam(\mathbf{Set}) \ar[d, "p"] \ar[r, "\pi"] & \
 \]
 
 \subsection{Syntactic enriched categories}
-As an in depth example construction in the families model of linear dependent type theory, we recall the notion of an enriched category.
-\begin{defn}
-  For a monoidal category $\mathcal{V}$, a \textbf{$\mathcal{V}$-enriched category} $\mathcal{C}$, consists of the following:
-  \begin{enumerate}
-  \item A set $\mathcal{C}_0$ of objects,
-  \item for each pair $x, y \in \mathcal{C}_0$, an object $V_{x,y} \in \mathcal{V}$,
-  \item for every $x, y, z \in \mathcal{C}_0$, a \textit{composition law} $M_{x, y, z} : V_{y, z} \otimes V_{x, y} \to V_{x, z}$ and
-    \item an identity element $j_x : I \to V_{x, x}$
-    such that the following diagrams commute:
-    \[
-      \ti
-      A & A \\
-      A & A
-      \kz
-    \]
-  \end{enumerate}
-\end{defn}
+As an in depth example construction in the families model of linear dependent type theory, recall the notion of an enriched category in as defined in \ref{enr-cat}.
 Our goal is to construct a syntactic analogue of this construction in the families model, such that the interpretation of this is an enriched category. There are two ways of doing this. The first is a kind of meta-construction, in which we ask for the existence of certain types and judgemental equalities to hold, whereas the second, internal definintion, is a type \textbf{Enr-Cat}, whose terms are interpreted as enriched categories. The type \textbf{Enr-Cat} allows us to formulate theorems about enriched categories directly in the syntax, but requires more involved type formers, such as universes, and the following type,
 with which we can reason (non-linearly) about the hom-sets of $\mathcal{V}$:\\
 \fbox{
