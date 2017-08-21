@@ -12,16 +12,17 @@ TODO
 \section{TODO}
 Clean up $M \vdash L$ and prove that $M \vdash L$ is monoidal
 understand universes semantically
-Change computation rules to just state things in terms of metavariables (maybe not? Hofmann does not do it)
-
 Let $\mathcal{L}$ be a (monoidal?) (2,1)-category. For $A, B \in \mathcal{L}_{\Gamma}$, can one define the type $f =_{[A, B]} g$ to consist of the 2-cells between f and g?
-A (2,1) category is a category enriched over groupoids.
-
+Examples of such categories:
+Cat (with natural iso)
+Grp
+SMC
 Kelly's enriched categories for more on enriched cats
 \section{Preliminaries}
-TODO
+The paper is largely split into two sections; syntax and semantics. 
+Familiarity with basic category theoretic concepts like limits, adjoints, monoidal categories is assumed.
 \subsection{Dependent type theory}
-TODO
+A \textit{type} is a syntactic construction whose meaning and function stems from the ways in which it interacts with the derivation rules of a \textit{type theory}. Approaching type theory from the perspective of logic, we can form a first approximation of the definition of a type as a generalization of a proposition and a set.
 \subsection{Linear type theory}
 Linear logic is a substructural logic in which the rules of weakening and contraction:
 \[
@@ -70,12 +71,12 @@ such that for all $a, b, c, d$, the following associativity and identity diagram
       V_{b, b} \otimes V_{a, b} \ar[ru, "M_{a, b, b}"] & & V_{a, b} \otimes V_{a, a} \ar[lu, "M_{a, a, b}"]
       \kz
     \]
-    where $a$, $l$ and $r$ are respectively the associator and left and right unitors of $\mathcal{V}$.
+    where $a$, $l$ and $r$ are the respectively the associator and left and right unitor ismorphisms from the monoidal structure of $\mathcal{V}$.
 \end{defn}
 Note that for the special case of $\mathcal{V} = Set$ we get back the definition of a category. Plenty of examples of constructions in enriched categories can be found in the comprehensive introduction \textit{Basic concepts of enriched category theory} by Max Kelly, \cite{kelly}.\\
 Another generalization of a category is suggested by the direction in which categories generalize sets/classes by allowing arrows between objects. Thinking of arrows as one-dimensional objects between zero-dimensional objects, one can imagine the existence of 2-dimensional arrows between 1-dimensional ones. This leads to the notion of a 2-category. These come in two different forms, strict 2-categories (or just 2-categories) or weak 2-categories (also known as bicategories). Equipped with the notion of an enriched category, strict 2-categories can be defined concisely as:
 \begin{defn}
-  A (strict) 2-category is a $Cat$-enriched category.
+  A \textbf{(strict) 2-category} is a $Cat$-enriched category.
 \end{defn}
 Breaking down this definition provides a more illuminating view. A strict 2-category, $\mathcal{C}$, consists of
 \begin{itemize}
@@ -85,14 +86,38 @@ Breaking down this definition provides a more illuminating view. A strict 2-cate
 \item for any triple of objects $a, b, c \in \mathcal{C}_0$, a functor $Comp : C_{b, c} \times C_{a, b} \to C_{a, c}$
   satisfying the associativity and identity diagrams from the definition of enriched categories.
 \end{itemize}
-The action of $Comp$ on 1-morphisms can be thought of as a ``horizontal composition'': written $gf := Comp(g, f)$ for $f \in \mathcal{C}_{a, b}$ and $g \in \mathcal{C}_{b, c}$ and its action on 2-morphisms is ``vertical composition'': given $f, g \in \mathcal{C}_{a, b}$, $f', g' \in \mathcal{C}_{b, c}$ and 2-morphisms $\alpha : f \implies g$ and $\beta : f' \to g'$, we write the 2-morphism $Comp(\beta, \alpha) : Comp(g, f) \to Comp(g', f')$ as $\beta \circ \alpha$.
+The action of $Comp$ on 1-morphisms is called ``horizontal composition'' and is written $gf := Comp(g, f)$ for $f \in \mathcal{C}_{a, b}$ and $g \in \mathcal{C}_{b, c}$, whereas the composition between 2-morphisms $\alpha : f \implies g$, $\alpha' : g \implies h$ for $f, g, h \in \mathcal{C}_{a, b}$ is written $\alpha' \circ \alpha$.
 Thanks to the functoriality of $Comp$, these satisfy the following \textit{interchange law}:
 \[
   (\beta' \circ \beta)(\alpha'\circ \alpha)=(\beta'\alpha')\circ(\beta\alpha)
 \]\\
-The path from strict 2-categories to weak 2-categories is marched to the category theoretic slogan that it is undesirable to speak of equality between objects in a category. 
+The path from strict 2-categories to weak 2-categories is marched to the category theoretic slogan that it is undesirable to speak of equality between objects in a category. 2-morphisms give us a way of relating 1-morphisms up to isomorphism instead of on-the-nose equality. Thus we are inclined to loosen the restriction of the associativity and unital diagrams in the definition of a 2-category to only commute up to coherent natural isomorphism:
 \begin{defn}
-  Weak 2-category
+  A \textbf{weak 2-category} $\mathcal{C}$ is a collection of objects, 1-morphisms and 2-morphisms with composition and identity functors as before, such that for all $a, b, c, d \in \mathcal{C}_0$, there exists natural isomorphisms
+  \[
+    \gamma :  M_{a,b,d} \circ (M_{b,c,d} \otimes 1_{V_{a,b}}) \implies M_{a, c, d} \circ (1_{V_{c, d}} \otimes M_{a, b, c}) \circ a
+  \]
+  \[
+    \lambda : l \implies M_{a, b, b} \circ (j_b \circ 1_{V_{a,b}})
+  \]
+  \[
+    \rho : r \implies M_{a, a, b} \circ (1_{V_{a,b}} \circ j_a)
+  \]
+  in other words, associated with the diagrams:
+  \[
+    \ti
+    (V_{c, d} \otimes V_{b, c}) \otimes V_{a, b} \ar[d, "{M_{b, c, d} \otimes 1_{V_{a,b}}}"] \ar[rr, "\alpha"] & & V_{c, d} \otimes (V_{b, c} \otimes V_{a, b}) \ar[d, "{1_{V_{c,d}} \otimes M_{a, b, c}}"]\\
+    V_{b, d} \otimes V_{a, b} \ar[rd, "M_{a, b, d}"] \ar[rr, "\gamma", Rightarrow, shorten <=50pt,shorten >=50pt]& & V_{c, d} \otimes V_{a, c} \ar[ld, "M_{a, c, d}"]\\
+    & V_{a, d}      &
+    \kz
+  \]
+  \[
+    \ti
+    I \otimes V_{a, b} \ar[d, "j_b \otimes 1_{V_{a, b}}", swap] \ar[d, "\lambda", Rightarrow, xshift=30pt, shorten <=10pt,shorten >=10pt, yshift=7pt] \ar[r, "l"] & V_{a, b} & V_{a, b} \otimes I \ar[l, "r"] \ar[d, "1_{V_{a, b}} \otimes j_a"] \ar[d, "\rho", Rightarrow, xshift=-30pt, shorten <=10pt,shorten >=10pt, yshift=7pt] \\
+    V_{b, b} \otimes V_{a, b} \ar[ru, "M_{a, b, b}",swap] & & V_{a, b} \otimes V_{a, a} \ar[lu, "M_{a, a, b}"]
+    \kz
+  \]
+  subject to the following coherence conditions:
 \end{defn}
 
 
@@ -360,7 +385,7 @@ The typing rules for the remaining linear rules are standard.
 
 
 \subsection{Linear-Cartesian interplay}
-We want to have a way of types and terms back and forth between the cartesian and linear side. On the syntactic side, we introduce two the operators $M$ and $L$, which transfers a linear type/term to its cartesian counterpart and vice versa. Semantically, this will establish a fiberwise adjunction between the categories of linear and cartesian types:
+We introduce two the modal operators $M$ and $L$, which transfers a linear type/term to its cartesian counterpart and vice versa. Semantically, this will establish a fiberwise adjunction between the categories of linear and cartesian types:
 \[
 \ti
 \mathcal{L}_{\Gamma} \ar[r, "M"{name=A, below}, bend right] & \mathcal{T}_{\Gamma} \ar[l, "L"{name=B, above}, bend right] \ar[from=A, to=B, symbol=\vdash]
@@ -415,7 +440,7 @@ Below are the syntactic rules for the operators $M$ and $L$. \\
 \]
 \end{minipage}
 }\\
-If we really want to think of $L$ and $M$ as functors, we should expect them to satisfy the following functoriality conditions. For an arbitrary morphism, $\Gamma; x : A \vdash f : B$, the image of $f$ under $M$ is given by:\\
+To motivate the semantic interpretation of $L$ and $M$ as adjoint functors, we should first of all expect them to satisfy basic functoriality conditions. For an arbitrary morphism, $\Gamma; x : A \vdash f : B$, the image of $f$ under $M$ is given by:\\
 \[
   \begin{split}
   \Gamma; x : A &\vdash f : B\\
@@ -450,6 +475,7 @@ while $M(g) \circ M(f)$ is given by:
     \Gamma, z : A_M &\vdash g[f/y][\sigma(z)/x]_M : C_M
   \end{split}
 \]
+proving functoriality of $M$.
 Functoriality of $L$ is not as immediate. The identity on $A$, $\Gamma, x : A \vdash x : A$ is mapped to:
 \[
   \Gamma; y : A_L \vdash \text{let $x$ be $y$ in $x_L$} : A_L
