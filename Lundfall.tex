@@ -5,19 +5,20 @@
 \author{Martin Lundfall}
 \maketitle
 \abstract
-TODO
+The role that types play in type theory can be seen as a simoultaneous generalisation of the concept of a set, proposition and data type. In linear type theory, this view can be extended by interpreting linear types as a particular kind of resource that is \textit{consumed} in the derivation. In this paper, we construct a type theory in which we distinguish between non-linear, dependent types (what we will call \textit{cartesian}), and linear types, where both constructs are allowed to depend on terms of cartesian types. In the interplay between the cartesian and linear types we develop two new type formers, $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, with rules similar to $\Pi$ and $\Sigma$, but where the dependent type $B$ (and therefore the resulting construct) is linear. The $!$-exponential from linear logic is deconstructed into two operators, $M$ and $L$, allowing a transformation of linear types into cartesian and vice versa. We construct a semantic framework where the type theory is interpreted by constructing a base category of cartesian contexts equipped with two fibrations, whose fibers over a context $\Gamma$ give rise to the categories of linear and cartesian types in $\Gamma$. The operators $M$ and $L$ give rise to a fiberwise adjunction between these.
 \newpage
 \tableofcontents
 \newpage
 \section{TODO}
-Clean up $M \vdash L$ and prove that $M \vdash L$ is monoidal
-understand universes semantically
-Let $\mathcal{L}$ be a (monoidal?) (2,1)-category. For $A, B \in \mathcal{L}_{\Gamma}$, can one define the type $f =_{[A, B]} g$ to consist of the 2-cells between f and g?
-Examples of such categories:
-Cat (with natural iso)
-Grp
-SMC
-Kelly's enriched categories for more on enriched cats
+Understand universes semantically\\
+Let $\mathcal{L}$ be a (monoidal?) (2,1)-category. For $A, B \in \mathcal{L}_{\Gamma}$, can one define the type $f =_{[A, B]} g$ to consist of the 2-cells between f and g?\\
+Examples of such categories:\\
+Cat (with natural iso)\\
+Grp\\
+SMC\\
+Kelly's enriched categories for more on enriched cats\\
+\section{Introduction}
+
 \section{Preliminaries}
 The paper is largely split into two sections; syntax and semantics. 
 Familiarity with basic category theoretic concepts like limits, adjoints, monoidal categories is assumed.
@@ -41,7 +42,7 @@ Consider the following primitive derivation rule:
 stating that given an oxygen molecule and two hydrogen molecules, burning yields two water molecules. If weakening was admissable, we would be able to assume an additional hydrogen molecule without changes the antecedent, which does not make sense under the resource interpretation of linear logic.\\
 Just as inuitionistic logic naturally extends to (dependent) type theory under the slogan of propositions as types, linear logic can be extended to a linear type theory, where sequents are decorated with proof terms:
 \[
-  x_1 : A_1 x_2 : A_2, \dots x_n : A_n \vdash t : B
+  x_1 : A_1, x_2 : A_2, \dots x_n : A_n \vdash t : B
 \]
 and here linearity implies that the free variables of $t$ are $x_1, x_2, \dots x_n$, each appearing exactly once.\\
 Interest in linear type theory stems from disparate sources. From the perspective of (classical) computer science, it can be used for modelling state and storage, with linear variables denoting resources like pointers or files \cite{krishnaswami}, or even as a theoretical description of the resource handling of a blockchain \cite{meredith2015linear}. In quantum physics, linear types respect the no cloning theorem of quantum states, and are also proposed as a syntax for quantum computation \cite{duncan2006types}. From a semantic perspective, linear type theory can be interpreted in a symmetric monoidal closed categories, generalising the structure of a cartesian closed categories in which (non-dependent) type theories are interepreted.\\
@@ -71,7 +72,7 @@ such that for all $a, b, c, d$, the following associativity and identity diagram
       V_{b, b} \otimes V_{a, b} \ar[ru, "M_{a, b, b}"] & & V_{a, b} \otimes V_{a, a} \ar[lu, "M_{a, a, b}"]
       \kz
     \]
-    where $a$, $l$ and $r$ are the respectively the associator and left and right unitor ismorphisms from the monoidal structure of $\mathcal{V}$.
+    where $a$, $l$ and $r$ are the associator, and left and right unitor ismorphisms associated with the monoidal structure of $\mathcal{V}$.
 \end{defn}
 Note that for the special case of $\mathcal{V} = Set$ we get back the definition of a category. Plenty of examples of constructions in enriched categories can be found in the comprehensive introduction \textit{Basic concepts of enriched category theory} by Max Kelly, \cite{kelly}.\\
 Another generalization of a category is suggested by the direction in which categories generalize sets/classes by allowing arrows between objects. Thinking of arrows as one-dimensional objects between zero-dimensional objects, one can imagine the existence of 2-dimensional arrows between 1-dimensional ones. This leads to the notion of a 2-category. These come in two different forms, strict 2-categories (or just 2-categories) or weak 2-categories (also known as bicategories). Equipped with the notion of an enriched category, strict 2-categories can be defined concisely as:
@@ -82,7 +83,7 @@ Breaking down this definition provides a more illuminating view. A strict 2-cate
 \begin{itemize}
 \item a collection of objects $\mathcal{C}_0$,
 \item for any pair of objects $a, b \in \mathcal{C}_0$, a category $C_{a, b}$, whose objects will be called ``1-morphisms'' and whose morphisms are renamed ``2-morphisms''.
-\item for any object $a \in \mathcal{C}$, an ``identity'' functor $1_a : \mathbf{1} \to \mathcal{C}_{a, a}$, 
+\item for any object $a \in \mathcal{C}_0$, an ``identity'' functor $1_a : \mathbf{1} \to \mathcal{C}_{a, a}$, 
 \item for any triple of objects $a, b, c \in \mathcal{C}_0$, a functor $Comp : C_{b, c} \times C_{a, b} \to C_{a, c}$
   satisfying the associativity and identity diagrams from the definition of enriched categories.
 \end{itemize}
@@ -124,7 +125,7 @@ The path from strict 2-categories to weak 2-categories is marched to the categor
 %\subsection{Spectra}
 %\input{spectra}
 \section{Syntax}
-The particular linear dependent type theory under consideration is a inspired by the work of Krishnaswami in \cite{krishnaswami} and Vákár in \cite{vakar14}. Types are either \textit{cartesian}, in which case we simply write $\Gamma \vdash A \text{ type}$, or \textit{linear}, written $\Gamma \vdash A \text{ linear}$. When making typing judgements of linear terms, contexts will be split into two parts, separated by a semicolon. The first part contains \textit{cartesian} assumptions, for which weakening and contraction is allowed, while the second part is the \textit{linear} part, containing ephemeral assumptions that we are also inclined to think of as resources. The deduction rules for linear types will force them to occur exactly once in the term of the conclusion. Dependent types are restricted to only depend on terms of cartesian types. 
+The particular linear dependent type theory under consideration is a inspired by the work of Krishnaswami in \cite{krishnaswami} and Vákár in \cite{vakar14}. Types are either \textit{cartesian}, in which case we simply write $\Gamma \vdash A \text{ type}$, or \textit{linear}, written $\Gamma \vdash A \text{ linear}$. When making typing judgements of linear terms, contexts will be split into two parts, separated by a semicolon. The first part contains \textit{cartesian} assumptions, for which weakening and contraction is allowed, while the second part is the \textit{linear} part, containing ephemeral assumptions that we are also inclined to think of as resources. The derivation rules for linear types will force the linear variables to occur exactly once in the conclusion. Dependent types are restricted to only depend on terms of cartesian types. 
 \subsection{Structural rules}
 We will be dealing with the following judgements:\\
 \begin{figure}[h]
@@ -193,6 +194,16 @@ The cartesian types that we will use are the standard $\Pi$, $\Sigma$ and $Id$-t
 \inference{\Gamma \vdash A \type \quad \Gamma, x : A \vdash B \type}
 {\Gamma \vdash \Sigma_{x : A}B \type}[$\Sigma$-F]
 \]\\
+\[
+\inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash 1 \type}[1-F]
+\]\\
+\[
+\inference{\Gamma \text{ ctxt}}{\Gamma \vdash \star : 1}[1-I]
+\]\\
+\[
+  \inference{\Gamma, x : 1 \vdash C \type \quad \Gamma \vdash c : C[\star/x]\quad  \Gamma \vdash M : 1}
+  {\Gamma \vdash \hat c[M] : C[M/x]}[1-E]
+\]\\
 \end{minipage}
 \begin{minipage}{.5\linewidth}
 \[
@@ -206,10 +217,10 @@ The cartesian types that we will use are the standard $\Pi$, $\Sigma$ and $Id$-t
 {\Gamma \vdash \hat c[s] : C[s/t]}[$\Sigma-$E$_1$]
 \]\\
 \[
-\inference{\Gamma, t : \Sigma_{x : A}B \vdash C \linear\\
+  \inference{\Gamma, t : \Sigma_{x : A}B \vdash C \linear\\
 \Gamma, x : A, y : B; \Xi \vdash c : C[(x, y)/t]\\
 \Gamma \vdash s : \Sigma_{x : A}B}
-{\Gamma; \Xi \vdash \hat c[s] : C[s/t]}[$\Sigma$-E$_2$]
+{\Gamma; \Xi[pr_1(s)/x][pr_2(s)/y] \vdash \hat c[s] : C[s/t]}[$\Sigma$-E$_2$]
 \]\\
 \[
 \inference{\Gamma \vdash \hat c[(a, b)] : C[(a, b)/t]}
@@ -218,6 +229,10 @@ The cartesian types that we will use are the standard $\Pi$, $\Sigma$ and $Id$-t
 \[
 \inference{\Gamma; \Xi \vdash \hat c[(a, b)] : C[(a, b)/t]}
 {\Gamma; \Xi \vdash \hat c[(a, b)] \equiv c[(a, b)/t] : C[(a, b)/t]}[$\Sigma$-C$_2$]
+\]\\
+\[
+  \inference{\Gamma \vdash \hat c[\star] : C[\star/x]}
+  {\Gamma \vdash \hat c[\star] \equiv c[\star/x] : C[\star/x]}[1-C]
 \]\\
 \end{minipage}
 }
@@ -268,7 +283,7 @@ The cartesian types that we will use are the standard $\Pi$, $\Sigma$ and $Id$-t
 \label{id}
 \end{figure}
 \subsection{Linear typing rules}
-Perhaps the most important linear types are the $\otimes$- and $I$-types, as they will provide an interpretation of linear contexts: we will think of the context $\Xi :\equiv x_1 : A_1, x_2 : A_2, \dots x_n : A_n$ as represented by the assumption $x_1 \otimes x_2 \otimes \dots x_n : A_1 \otimes A_2 \otimes \dots A_n$.
+Perhaps the most important linear types are the $\otimes$- and $I$-types, as they will provide an interpretation of linear contexts. Semantically, we will not distinguish between the context $\Xi :\equiv x_1 : A_1, x_2 : A_2, \dots x_n : A_n$ and $x_1 \otimes x_2 \otimes \dots x_n : A_1 \otimes A_2 \otimes \dots A_n$. 
 \begin{figure}[H]
 \fbox{
   \begin{minipage}{.5\linewidth}
@@ -385,13 +400,13 @@ The typing rules for the remaining linear rules are standard.
 
 
 \subsection{Linear-Cartesian interplay}
-We introduce two the modal operators $M$ and $L$, which transfers a linear type/term to its cartesian counterpart and vice versa. Semantically, this will establish a fiberwise adjunction between the categories of linear and cartesian types:
+We introduce two the modal operators $M$ and $L$, which transfers a linear type/term to its cartesian counterpart and vice versa. Semantically, this will establish a fiberwise monoidal adjunction between the categories of linear and cartesian types:
 \[
 \ti
 \mathcal{L}_{\Gamma} \ar[r, "M"{name=A, below}, bend right] & \mathcal{T}_{\Gamma} \ar[l, "L"{name=B, above}, bend right] \ar[from=A, to=B, symbol=\vdash]
 \kz
 \]
-where the exponential modality from traditional linear logic is understood as the comonad $! = LM$. The decomposition of the exponential into an adjunction goes back to at least \cite{bentonmixed}, and is given an interesting new light in \cite{licata2017fibrational}, where it is seen as a particular example of a more general way to encode structure in contexts.
+where the exponential modality from traditional linear logic is understood as the comonad $! = LM$. The decomposition of the exponential into an adjunction goes back to at least \cite{bentonmixed}, and is given an interesting new light in \cite{licata2017fibrational}, where it is seen as a particular case of a more general procedure of encoding structure in contexts.
 
 Below are the syntactic rules for the operators $M$ and $L$. \\
 \fbox{
@@ -410,8 +425,9 @@ Below are the syntactic rules for the operators $M$ and $L$. \\
 \inference{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t : B}{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t \equiv t[s/x]  : B}[L-C]
 \]\\
 \[
-    \inference{\Gamma; y : A_L, \Xi \vdash t, t' : B \\
-      \Gamma, x : A; \Xi \vdash t[x_L/y] \equiv t'[x_L/y]\\
+      \inference{\Gamma; y : A_L, \Xi \vdash t : B \\
+    \Gamma; y : A_L, \Xi \vdash t' : B \\
+      \Gamma, x : A; \Xi \vdash t[x_L/y] \equiv t'[x_L/y] : B\\
       \Gamma; \Xi' \vdash a : A_L }
     {\Gamma; \Xi, \Xi' \vdash t[a/y] \equiv t'[a/y]}[L-U]
 \]
@@ -440,7 +456,11 @@ Below are the syntactic rules for the operators $M$ and $L$. \\
 \]
 \end{minipage}
 }\\
-To motivate the semantic interpretation of $L$ and $M$ as adjoint functors, we should first of all expect them to satisfy basic functoriality conditions. For an arbitrary morphism, $\Gamma; x : A \vdash f : B$, the image of $f$ under $M$ is given by:\\
+As a motivation for the semantic interpretation of $L$ and $M$ as adjoint functors given in \ref{semanticML}, we will demonstrate that they already satisfy the relevant conditions from a syntactic point of view. That is, in the spirit of functional programming, we think of the cartesian and linear types (in a context $\Gamma$) of our theory forming the categories $\mathcal{T}$ and $\mathcal{L}$ whose morphisms are terms, and composition is given by substitution. Here, the canonical variable-as-term judgement $\Gamma, x : A \vdash x : A$, or, $\Gamma; y : A_L \vdash y : A_L$, correspond to the identity morphisms. \\
+\begin{thm}
+  $M$ is a (syntactic) functor
+  \begin{proof}
+$\Gamma; x : A \vdash f : B$, the image of $f$ under $M$ is given by:\\
 \[
   \begin{split}
   \Gamma; x : A &\vdash f : B\\
@@ -466,7 +486,7 @@ First, we check that $M(id_A) = id_{MA}$.  The image of the identity morphism $\
 Then, given morphisms $\Gamma; x : A \vdash f : B$ and $\Gamma; y : B \vdash g : C$, we see that functoriality of $M$ follows directly from functoriality of substitution. Corresponding to $M(g \circ f)$ we have the term:
 \[
 \Gamma, z : A_M \vdash g[f/y][\sigma(z)/x]_M : C_M
-\].
+\],
 while $M(g) \circ M(f)$ is given by:
 \[
   \begin{split}
@@ -475,48 +495,150 @@ while $M(g) \circ M(f)$ is given by:
     \Gamma, z : A_M &\vdash g[f/y][\sigma(z)/x]_M : C_M
   \end{split}
 \]
-proving functoriality of $M$.
-Functoriality of $L$ is not as immediate. The identity on $A$, $\Gamma, x : A \vdash x : A$ is mapped to:
+proving functoriality of $M$.\\
+\end{proof}
+\end{thm}
+Functoriality of $L$ is not as immediate. For this we really need to utilize the uniqueness rule L-U:
+\begin{thm}
+  $L$ is a (syntactic) functor
+  \begin{proof}
+The identity on $A$, $\Gamma, x : A \vdash x : A$ is mapped to:
 \[
   \Gamma; y : A_L \vdash \text{let $x$ be $y$ in $x_L$} : A_L
 \]
+Comparing this with the identity:
+\[
+  \Gamma; y : A_L \vdash y : A_L
+\]
+and the equality
+\[
+  \Gamma, x : A; \cdot \vdash \text{let $x_L$ be $x$ in $x_L$} \equiv x_L : A_L
+\]
+we conclude, using L-U, that $\text{let $x$ be $y$ in $x_L$} = y$.
 
-
-
-For $\Gamma \vdash A \type$, $\Gamma \vdash B \type$ and $\Gamma \vdash C \type$ and morphisms $\Gamma, x : A \vdash f : B$, $\Gamma, y : B \vdash g : C$ we want "$L(g \circ f)$":
+For types $A, B$ and $C$, and morphisms $\Gamma, x : A \vdash f : B$, $\Gamma, y : B \vdash g : C$, we want "$L(g \circ f)$":
 \[
   \Gamma; z : A_L \vdash \text{let $x$ be $z$ in $g[f/y]_L$} : C_L\\
 \]
 to equal "$L(g) \circ L(f)$":
 \[
-  \begin{split}
-    \Gamma; z : A_L &\vdash \text{let $y$ be (let $x$ be $z$ in $f_L$) in $g_L$} : C_L\\
-  \end{split}
+  \Gamma; z : A_L \vdash \text{let $y$ be (let $x$ be $z$ in $f_L$) in $g_L$} : C_L
 \]\\
-To reconcile with this we introduce the following commuting conversions:
+This is done in the same fashion. From the equality:
 \[
-\inference{\Gamma; \Xi \vdash \text{let $x$ be $t$ in $u_L$} : A_L}{\Gamma; \Xi \vdash \text{let $x$ be $t$ in $u_L$} \equiv (\text{let $x$ be $t$ in $u$})_L : A_L}[L-fun]
-\]\\
-This is not merely a semantic luxury, but is also syntactically motivated (TODO: WHAT IS SUBFORMULA PROPERTY?). It is now easily seen that $L$ respects the identity morphism, and so to show functoriality, it remains to show $L(g \circ f) = L(f) \circ L(g)$, i.e. that the terms
-\[
-  \Gamma; z : A_L \vdash \text{let $x$ be $z$ in }g[f/y]_L : C_L
+  \Gamma, x : A; \cdot \vdash \text{let $y$ be (let $x$ be $x_L$ in $f_L$) in $g_L$} \equiv \text{let $y$ be $f_L$ in $g_L$} \equiv g_L[f/y] \equiv \text{let $x$ be $x_L$ in $g[f/y]_L$}
+\]
+and applying L-U we get the desired equality.
+\end{proof}
+\end{thm}
+Furthermore, the categories of cartesian and monoidal types carry a natural monoidal structure, given by $(\times, 1)$ and $(\otimes, I)$, respectively, where $\times$ is simply $\Sigma$ where the second argument does not depend on the first. $M$ and $L$ are monoidal functors with respect to these.\\
+\begin{defn}Recall that a functor $F : \mathcal{C} \to \mathcal{D}$ is \textbf{monoidal} if there exists a natural transformation $\mu : F \times F \to F$ with components $\mu_{A,B} : \mathcal{F}(A) \otimes_{\mathcal{D}} \mathcal{F}(B) \to \mathcal{F}(A \otimes_{\mathcal{C}} B)$ and a morphism $I_{\mathcal{D}} \to \mathcal{F}(I_{\mathcal{C}})$. Satisfying the following naturality conditions:\\
+\begin{enumerate}%
+\item \textbf{(Associativity)} For all objects $x,y,z \in \mathcal{C}$ the following diagram commutes:
+  \[
+    \ti
+    (F(x) \otimes_{\mathcal{D}} F(y)) \otimes_{\mathcal{D}} F(Z)
+    \ar[rr,"{a^{\mathcal{D}}_{F(x),F(y),F(z)}}"]
+    \ar[d, "{\mu_{x,y} \otimes id}"] & &
+    F(x) \otimes_{\mathcal{D}}( F(y)\otimes_{\mathcal{D}} F(z) )
+    \ar[d, "{id\otimes \mu_{y,z}}"]\\
+    F(x \otimes_{\mathcal{C}} y) \otimes_{\mathcal{D}} F(z)
+    \ar[d, "{\mu_{x \otimes_{\mathcal{C}} y , z} }"]
+     &&
+     F(x) \otimes_{\mathcal{D}} ( F(y \otimes_{\mathcal{C}} z) )
+     \ar[d, "\mu_{ x, y \otimes_{\mathcal{C}} z  }"]
+     \\
+     F( ( x \otimes_{\mathcal{C}} y ) \otimes_{\mathcal{C}} z  )
+     \ar[rr, "F(a^{\mathcal{C}}_{x,y,z})"]&&
+    F( x \otimes_{\mathcal{C}} ( y \otimes_{\mathcal{C}} z ) )
+    \kz
+\]
+where $a^{\mathcal{C}}$ and $a^{\mathcal{D}}$ denote the associators of the monoidal categories;
+\item \textbf{(Unitality)} For all $x \in \mathcal{C}$ the following diagrams commutes:
+  \[
+    \ti
+    1_{\mathcal{D}} \otimes_{\mathcal{D}} F(x)
+    \ar[r, "\epsilon \otimes id"]
+    \ar[d, "\ell^{\mathcal{D}}_{F(x)}"]
+      &
+      F(1_{\mathcal{C}}) \otimes_{\mathcal{D}} F(x)
+      \ar[d, "\mu_{1_{\mathcal{C}}, x }"]
+      \\
+      F(x) &
+      \ar[l, "F(\ell^{\mathcal{C}}_x)"]
+      F( 1 \otimes_{\mathcal{C}} x)
+      \kz
 \]
 and
-\[
-  \Gamma; z : A_L \vdash g_L[(\text{let $x$ be $z$ in }f)/y] : C_L
+  \[
+    \ti
+     F(x) \otimes_{\mathcal{D}} 1_{\mathcal{D}} 
+    \ar[r, "id \otimes \epsilon"]
+    \ar[d, "r^{\mathcal{D}}_{F(x)}"]
+      &
+      F(x) \otimes_{\mathcal{D}}F(1_{\mathcal{C}}) 
+      \ar[d, "\mu_{x, 1_{\mathcal{C}}}"]
+      \\
+      F(x) &
+      \ar[l, "F(r^{\mathcal{C}}_x)"]
+      F( x \otimes_{\mathcal{C}} 1)
+      \kz
 \]
-are equal. TODO: this follows from the naturality conditions of substitution.
+where $\ell^{\mathcal{C}}$, $\ell^{\mathcal{D}}$, $r^{\mathcal{C}}$, $r^{\mathcal{D}}$ denote the left and right unitors of the two monoidal categories, respectively.
+\end{enumerate}
 
-We will ask for similar commuting conversions for most of our linear terms. A general schema for when they can be applied can be found in \cite{barber1996dual}.\\
-Equipped L-fun, we can state our claims about the semantic nature of $L$ and $M$ more precisely.
-\begin{thm}[$L \dashv M$]
-$L \dashv M$ is a fiberwise adjunction between $\mathcal{L}$ and $\mathcal{T}$.
-\begin{proof}
-We will show that there is a vertical natural transformation $\epsilon : LM \to 1$ satisying the following universal property: 
+As our current syntactic endeavors mainly serve as motivation for the semantic interpretation of these operators, given in \ref{semanticML}, we will not prove the complete statement here. We omit the naturality conditions and only prove the following:
+\end{defn}
+\begin{thm}
+There are terms $t_1, t_2, t_3, t_4$, relating the operators $M$ and $L$ so that the judgements:
+  \[
+    \begin{split}
+      \Gamma, x : 1 &\vdash t_2 : I_M\\
+      \Gamma, x : A_M \times B_M &\vdash t_1 : (A \otimes B)_M\\
+      \Gamma; x : I &\vdash t_4 : 1_L\\
+      \Gamma; x : A_L \otimes B_L &\vdash t_3 : (A \times B)_L
+    \end{split}
+  \]
+  hold.
+  \begin{proof}
+    $t_1$ is given by the following expression:
+    \[
+      \Gamma, x : 1 \vdash *_M : I_M\\
+    \]
+    and $t_2$ can easily be derived:
+    \[
+      \Gamma, x : A_M \times B_M \vdash \sigma(pr_1(x)) \otimes \sigma(pr_2(x)) : (A \otimes B)_M
+    \]
+$t_3$ is given by:
+    \[
+      \Gamma; x : I \vdash \text{let $x$ be $*$ in $\star_L$} : 1_L
+    \]
+$t_4$ is a bit more involved, as it requires two applications of L-E. For clarity, we display the complete proof tree of the term:
+\begin{prooftree}
+  \AxiomC{$\Gamma, x : A, y : B \vdash x : A$}\noLine
+  \UnaryInfC{$\Gamma, x : A, y : B \vdash y : B$}
+  \UnaryInfC{$\Gamma, x : A, y : B \vdash (x, y) : A \times B$}
+  \UnaryInfC{$\Gamma, x : A, y : B; \cdot \vdash (x, y)_L : (A \times B)_L$}
+  \AxiomC{}
+  \UnaryInfC{$\Gamma, x : A; y' : B_L \vdash y' : B_L$}
+  \BinaryInfC{$\Gamma, x : A; y' : B_L \vdash \text{let $y$ be $y'$ in $(x, y)_L$}: (A \times B)_L$}
+  \AxiomC{}
+\UnaryInfC{$\Gamma; x' : A_L \vdash x' : A_L$}\LeftLabel{L-E}
+\BinaryInfC{$\Gamma; x' : A_L, y' : B_L \vdash \text{let $x$ be $x'$ in (let $y$ be $y'$ in $(x, y)_L$)}: (A \times B)_L$}
+\AxiomC{}
+\UnaryInfC{$\Gamma; z : A_L \otimes B_L \vdash z : A_L \otimes B_L$}\LeftLabel{$\otimes$-E}
+\BinaryInfC{$\Gamma; z : A_L \otimes B_L \vdash \text{let $(x', y')$ be $z$ in (let $x$ be $x'$ in (let $y$ be $y'$ in $(x, y)_L$))} : (A \times B)_L$}
+\end{prooftree}
+
+\end{proof}
+\end{thm}
+Finally, we show that $M$ and $L$ can be thought of as adjoint functors, in any context. In other words, we will show that there exists a ``natural transformation'' $\epsilon : LM \to 1$ satisying the following universal property:\\
 For any $f : L(A) \to B$, there is a unique morphism $g : A \to B_M$, such that $\epsilon_B \circ L(g) = f$.\\
 Translated into the syntax of our type theory, the statement becomes the following:\\
-Let $\Gamma$ be a cartesian context and $\Gamma \vdash A \type$, $\Gamma \vdash B \linear$. There is a term $\Gamma; \beta_1 : B_{LM} \vdash \epsilon_B: B$ with the following property:\\
+\begin{thm}[$L \dashv M$]
+There is a term $\Gamma; \beta_1 : B_{LM} \vdash \epsilon_B: B$ with the following property:\\
 For any term: $\Gamma; y : A_L \vdash f : B$, there is a unique term $\Gamma, x : A \vdash g : B_{M}$ such that $\Gamma; y : A_L \vdash \epsilon_B[\text{let $x$ be $y$ in }g_L/\beta_1] \equiv f : B$.\\
+\begin{proof}
  The counit $\epsilon : LM \to 1_{\mathcal{L}_{\Gamma}}$ is at any component $B$ given by:
  \[
   \begin{split}
@@ -752,7 +874,7 @@ Since $A$ with projections $1_A$ and $hf$ forms a cone to the cospan, there exis
 \end{proof}
 \end{lem}
 \begin{thm}[Soundness]
-A split comprehension category $p : \mathcal{T} \to \mathcal{C}$ together with a split lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$ is a model for the linear dependent type theory consisting of the structural rules presented in Figure \ref{struc} and the $\otimes$- and $I$-types presented in Figure \ref{tensor}.
+A split comprehension category $p : \mathcal{T} \to \mathcal{C}$ together with a split lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$ is a model for the linear dependent type theory consisting of the structural rules presented in Figure \ref{struc}.
 \begin{proof}
   We construct an interpretation function $[[-]]$, which sends:
   \begin{itemize}
@@ -779,15 +901,15 @@ Proceeding by induction on the derivation rules, we will often abuse notation sl
 \]
 so by lifting $q$ to the monoidal functor $q^* : \mathcal{L}_{\Gamma.\Delta} \to \mathcal{L}_{\Gamma.A.\pi^*(\Delta)}$. The context we are looking for is the image of $\Xi$ under this functor.
 \item Case of C-lin-ext: For objects $\Xi$ and $A$ in $\mathcal{L}_{\Gamma}$, we let their tensor product $\Xi \otimes A$ denote the extended context $\Gamma; \Xi, x : A$.
-\item Case of Int-exch: For $A$ and $B$ in $\mathcal{T}_{\Gamma}$, $\Gamma.A.B\{\pi_A\}$ and $\Gamma.B.A\{\pi_B\}$ are both pullbacks of the cospan:
-\[
-\ti
-& \Gamma.B \ar[d, "\pi_B"]\\
-\Gamma.A \ar[r, "\pi_A"] & \Gamma
-\kz
-\]
-since the cartesian lifts of these arrows are sent to pullback squares in $\mathcal{C}^\to$. Hence they are isomorphic, and so any object $\Gamma'$ in $\mathcal{T}_{\Gamma.A.B\{\pi_A\}}$ may equally well be thought of as an object in $\mathcal{T}_{\Gamma.B.A\{\pi_B\}}$.
-\item Case of Lin-exch. Since our lax monoidal fibration is symmetric, we have $\Xi \otimes A \otimes B \otimes \Xi' \cong \Xi \otimes B \otimes A \otimes \Xi'$ in $\mathcal{L}_{\Gamma}$.
+%\item Case of Int-exch: For $A$ and $B$ in $\mathcal{T}_{\Gamma}$, $\Gamma.A.B\{\pi_A\}$ and $\Gamma.B.A\{\pi_B\}$ are both pullbacks of the cospan:
+%\[
+%\ti
+%& \Gamma.B \ar[d, "\pi_B"]\\
+%\Gamma.A \ar[r, "\pi_A"] & \Gamma
+%\kz
+%\]
+%since the cartesian lifts of these arrows are sent to pullback squares in $\mathcal{C}^\to$. Hence they are isomorphic, and so any object $\Gamma'$ in $\mathcal{T}_{\Gamma.A.B\{\pi_A\}}$ may equally well be thought of as an object in $\mathcal{T}_{\Gamma.B.A\{\pi_B\}}$.
+\item Case of Lin-exch. Since our lax monoidal fibration is symmetric, we have $\Xi \otimes A \otimes B \otimes \Xi' \cong \Xi \otimes B \otimes A \otimes \Xi'$ in $\mathcal{L}_{\Gamma}$. Applying exchange to a judgement corresponds to composing with this isomorphism.
 \item Case of Weak-L. For any $A \in \mathcal{T}_{\Gamma}$ and morphism $t : \Xi \to A$ in $\mathcal{L}_{\Gamma, \Gamma'}$, we can transfer $t$ along the functor $q_{A, \Gamma}^* : \mathcal{L}_{\Gamma, \Gamma'} \to \mathcal{L}_{\Gamma.A.\Gamma'\{\pi_A\}}$ induced by the map $q_{A, \Gamma'}$ arising from the following pullback diagram:
 \[
 \ti
@@ -822,10 +944,10 @@ and a section:
 &M : \Gamma \to \Gamma.A\\
 \end{split}
 \]
-of the projection $\pi_A$. We first lift $M$ to a cartesian arrow ${M^*} : \Gamma.\Gamma'\{M^*\} \to \Gamma'$, which is sent to the following pullback square by $\pi$:
+of the projection $\pi_A$. We first lift $M$ to a cartesian arrow $M^* : \Gamma.\Gamma'\{M\} \to \Gamma'$, which is sent to the following pullback square by $\pi$:
 \[
 \ti
-\Gamma.\Gamma'\{M^*\} \ar[d, "\pi_{\Gamma'\{M^*\}}"] \ar[r, "q_{(M, \Gamma')}"] & \Gamma.A.\Gamma' \ar[d, "\pi_{\Gamma'}"]\\
+\Gamma.\Gamma'\{M\} \ar[d, "\pi_{\Gamma'\{M^*\}}"] \ar[r, "q_{(M, \Gamma')}"] & \Gamma.A.\Gamma' \ar[d, "\pi_{\Gamma'}"]\\
 \Gamma \ar[r,"M"] & \Gamma.A
 \kz
 \]
@@ -841,50 +963,86 @@ Now suppose there is a section $b : \Gamma.A.\Gamma' \to \Gamma.A.\Gamma'.B$ of 
 \\
 Finally, if $B$ is an object of $\mathcal{L}_{\Gamma.A.\Gamma'}$, then the image of $B$ under the functor $q_{(M, \Gamma')}^* : \mathcal{L}_{\Gamma.A.\Gamma'} \to \mathcal{L}_{\Gamma.\Gamma'\{M^*\}}$ will be our interpretation of $B[M/x]$ as a linear type in the context $\Gamma,\Gamma[M/x]$.
 \item Case of Int-subst-2. The interpretation of Int-subst-2 is the image of $t$ under $q_{(M, \Gamma')}^*$.
-\item Case of Lin-subst. Given morphisms $t : \Xi \otimes A \to B$ and $M : \Xi' \to A$ we get a morphism $t \circ (id_\Xi \otimes M) : \Xi \otimes \Xi' \to B$
-\item Case of Int-var. For any $A \in \mathcal{T}_\Gamma$, there is a pullback:
+\item Case of Lin-subst. Given morphisms $t : \Xi \otimes A \to B$ and $M : \Xi' \to A$ we get a morphism $t \circ (id_\Xi \otimes M) : \Xi \otimes \Xi' \to B$. Precomposing with the isomorphism $\bigotimes \Xi, \Xi' \cong \Xi \otimes \Xi'$ yields the desired morphism $\bigotimes \Xi, \Xi' \to B$.
+\item Case of Int-var. For any $A \in \mathcal{T}_\Gamma$, the pullback:
   \[
     \ti
-    \Gamma.A.A\{\pi_A\} \ar[r, "\pi_{\{\pi_A\}}"] \ar[d, "\pi_{\{\pi_A\}}"] & \Gamma.A \ar[d, "\pi_A"]\\
+    \Gamma.A.A\{\pi_A\} \ar[r, "q"] \ar[d, "\pi_{A_{\{\pi_A\}}}"] & \Gamma.A \ar[d, "\pi_A"]\\
     \Gamma.A \ar[r, "\pi_A"] & \Gamma
     \kz
   \]
-  But since $\Gamma.A$ and the identity map obviously also forms a cone to the cospan, there is a unique map $v_A : \Gamma.A \to \Gamma.A.A\{\pi_A\}$ such that $\pi_{A\{\pi_A\}} \circ v_A = 1_{\Gamma.A}$. This map is thus the interpretation of the term $x : A$ in $\Gamma, x : A \vdash x : A$.
+  is in fact (isomorphic to) the product $\Gamma.A \times \Gamma.A$, and so the diagonal map $\Delta : \Gamma.A \to \Gamma.A \times \Gamma.A$ forms a section to both projections.
+  This map is thus the interpretation of the judgement $\Gamma, x : A \vdash x : A$.
 \item Case of Lin-var. The morphism corresponding to the linear variable term $\Gamma; x : A \vdash x : A$ is given by the identity morphism on $A$ in $\mathcal{L}_{\Gamma}$.
 \end{itemize}
 \end{proof}
 \end{thm}
 \subsection{Semantic type formers}
-In the following, we assume that the comprehension category comprising the core of our syntax is full.
-What it means for a model of linear dependent type theory to \textit{support} $\Pi$-, $\Sigma$ and $Id$-types is directly inhererited from the standard, non-linear case.
+In the following, we assume that the comprehension category comprising the core of our syntax is full. \begin{defn}A \textbf{model of LDTT} is a full, split comprehension category $\pi : \mathcal{T} \to \mathcal{C}^{\to}$ and a split lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$.
+\end{defn}
+\begin{defn}
+  A model of LDTT \textbf{supports $I$-types} if, for every $\Gamma$, there is exists an object $[[I]] \in \mathcal{L}_{\Gamma}$, equipped with a morphism $[[*]] : I \to [[I]]$, such that for every pair of maps $t : \Xi' \to [[I]]$ and $c : \Xi \to C$, there exists a map $[[\text{let $t$ be * in $c$}]] : \bigotimes \Xi, \Xi' \to C$ such that $[[\text{let * be * in $c$}]] = c$.
+\end{defn}
+This is trivially satisfied by every model by setting $[[I]] = I$, $[[*]] = 1_{I}$, and $[[\text{let $t$ be * in $c$}]]$ to the composite $\rho (c \otimes [[t]]) \alpha  : \bigotimes \Xi, \Xi' \cong \Xi \otimes \Xi' \to C \otimes I \cong C$, where $\rho$ is the right unitor for the monoidal structure of $\mathcal{L}_{\Gamma}$, and $\alpha$ is the isomorphism $\bigotimes \Xi, \Xi' \cong \Xi \otimes \Xi$. As for the identity $\rho(c \otimes 1_{I}) \alpha = c$, notice that $\alpha : \bigotimes \Xi \cong \Xi \otimes [[\cdot]] = \Xi \otimes I$ is given by $\rho^{-1}$, so we get $\rho (c \otimes 1_I) = c \rho$, from the naturality of $\rho$.\\
+\begin{defn}
+  A model of LDTT \textbf{supports $\otimes$-types}, if, for every $A, B \in \mathcal{L}_{\Gamma}$, there exists an object $[[A \otimes B]] \in \mathcal{L}_{\Gamma}$, such that for any arrows $a : \Xi \to A$, $b : \Xi' \to B$, there exists an arrow $[[(a \otimes b)]] : \bigotimes Xi, \Xi \to [[A \otimes B]]$ and for arrows $t : \Xi' \to [[A \otimes B]]$ and $c : \bigotimes \Xi \otimes A \otimes B \to C$, there exists an arrow $[[\text{let $x \otimes y$ be $t$ in $c : C$}]]$ such that $[[\text{let $x \otimes y$ be $a \otimes b$ in $c$}]] = c$.
+\end{defn}
+Again, it is not hard to see that there is a canonical interpretation of this in any model of LDTT sending $[[A \otimes B]]$ to $[[A]] \otimes [[B]]$. Some care is needed in order to always make sure contexts are left associated.\\
+Similarly, one can define what it means for a model of LDTT to support $\multimap, \oplus, \&, \top$ and $0$. This is well established and not particularly relevant for the interplay between linear and dependent types we explore here. For a more detailed treatment we refer the reader to \cite{mellies}. For our current purposes, we may think of these conditions as corresponding to weak versions of internal homs, binary products and coproducts, and terminal and initial object respectively. Therefore, whenever the fibers of our lax monoidal fibration is monoidal closed, complete or cocomplete, we know that it supports the corresponding type formers.\\
+What it means for a model of linear dependent type theory to \textit{support} $\Pi$-types is directly inhererited from the standard, non-linear case.
 \begin{defn}A model of LDTT \textbf{supports $\Pi$-types} if, for all $A \in \mathcal{T}_{\Gamma}$, the induced functor $\pi_A^* : \mathcal{T}_{\Gamma} \to \mathcal{T}_{\Gamma.A}$ has a right adjoint $\Pi_A : \mathcal{T}_{\Gamma.A} \to \mathcal{T}_{\Gamma}$ satisfying the following Beck-Chevalley condition:\\
-  For all cartesian morphisms $f : E \to E'$ in $\mathcal{T}$, assume without loss of generality that $E \in \mathcal{T}_{\Gamma}$ and $E' \in \mathcal{T}_{\Delta}$. We have the following pullback square in $\mathcal{C}$:
-  \[
+For all pullbacks in $\mathcal{C}$:
+  \begin{equation}\label{pb-diag}
     \ti
     \Gamma.E \ar[d, "\pi_E"] \ar[r, "q_{E, E'}"] & \Delta.E' \ar[d, "\pi_{E'}"] \\
-    \Gamma \ar[r, "pf"] & \Delta
+    \Gamma \ar[r, "f"] & \Delta
     \kz
-  \]
+  \end{equation}
 inducing the following functors between fibers:
-  \[
-    \begin{split}
-      q^*_{E, E'} &: \mathcal{T}_{\Delta.E'} \to \mathcal{T}_{\Gamma.E}\\
-      (pf)^* &: \mathcal{T}_{\Delta} \to \mathcal{T}_{\Gamma}\\
-      \Pi_E &: \mathcal{T}_{\Gamma.E} \to \mathcal{T}_{\Gamma}\\
-      \Pi_{E'} &: \mathcal{T}_{\Delta.E'} \to \mathcal{T}_{\Delta}
-    \end{split}    
-  \]
-  There is a canonical natural transformation $(pf)^*\Pi_{E'} \to \Pi_{E}q^*_{E, E'}$ which we ask for to be natural isomorphism.\\
-Analoguously, a model \textbf{supports $\Sigma$-types} if $\pi_A^*$ has a left adjoint satisfying a similar Beck-Chevalley condition for all $A$.
+\[
+  \begin{split}
+    q^*_{E, E'} &: \mathcal{T}_{\Delta.E'} \to \mathcal{T}_{\Gamma.E}\\
+    f^* &: \mathcal{T}_{\Delta} \to \mathcal{T}_{\Gamma}\\
+    \Pi_E &: \mathcal{T}_{\Gamma.E} \to \mathcal{T}_{\Gamma}\\
+    \Pi_{E'} &: \mathcal{T}_{\Delta.E'} \to \mathcal{T}_{\Delta}
+  \end{split}    
+\]
+The canonical natural transformation $f^*\Pi_{E'} \to \Pi_{E}q^*_{E, E'}$ induced by the adjunction is a natural isomorphism.\\
 \end{defn}
-The semantic counterpart for the mixed types $\sqcap$ and $\sqsubset$ is similar to that of $\Pi$ and $\Sigma$, but instead of $\mathcal{T}$, we ask for adjoints of the induced functors between fibers of $\mathcal{L}$.
-\begin{defn}
-A model of LDTT \textbf{supports $\sqcap$-types} if, for all $A \in \mathcal{T}_{\Gamma}$, the induced (monoidal) functor $\pi_A^* : \mathcal{L}_{\Gamma} \to \mathcal{L}_{\Gamma.A}$ has a monoidal right adjoint.
-It supports $\sqsubset$-types if every $\pi_A^*$ has a monoidal left adjoint.
+As the rules $\Sigma$ contains one more eliminator than usual ($\Sigma$-E$_2$ in Figure \ref{sigmaPi}), one might wonder whether this requires additional conditions for the semantic type formers to ensure that these are well behaved with respect to the linear fibers. We will shortly see that this is not the case.
+\begin{defn}A model of LDTT \textbf{supports $\Sigma$-types} if it satisfies the following:
+  \begin{enumerate}
+  \item For all $A \in \mathcal{T}_{\Gamma}$, the induced functor $\pi_A^* : \mathcal{T}_{\Gamma} \to \mathcal{T}_{\Gamma.A}$ has a left adjoint, $\Sigma_A$,
+  \item such that for all pullbacks (as in \ref{pb-diag}), the natural transformation: $\Sigma_Eq^* \to f^*\Sigma_{E'}$ is a natural isomorphism, and
+  \item the induced map $pair_{A,B} : \Gamma.A.B \to \Gamma.\Sigma_AB$ is an isomorphism
+  \end{enumerate}
 \end{defn}
+The map $pair_{A, B} : \Gamma.A.B \to \Gamma.\Sigma_AB$ such that $\pi_{\Sigma_AB}pair_{A,B} = \pi_A\pi_B$, arises as the image of the unit $\eta : B \to \pi_A^*(\Sigma_AB)$ in $\mathcal{T}_A$ under the comprehension functor $\pi : \mathcal{T} \to \mathcal{C}^{\to}$. The inverse of the pairing map will be denoted $(pr_1, pr_2) : \Gamma.\Sigma_AB \to \Gamma.A.B$.\\
+This structure is sufficient to support new elimination rule ($\Sigma$-E$_2$):
+\begin{thm}
+If a model of LDTT supports $\Sigma$-types, then for every object $C \in \mathcal{L}_{\Gamma.\Sigma_AB}$ and morphism $c : \Xi \to C\{pair_{A,B}\}$ in $\mathcal{L}_{\Gamma.A.B}$ and section $s : \Gamma \to \Gamma.\Sigma_AB$, there exists a morphism $\hat c_s : \Xi\{(pr_1, pr_2\} \to C\{s\}$ such that given sections $a : \Gamma \to \Gamma.A$ and $b : \Gamma.A \to \Gamma.A.B$, then $\hat c_{(a, b)} = c\{ba\} : \Xi\{ba\} \to C\{ba\}$.
+\begin{proof}
+  The situation is illustrated in the following diagram:
+    \[
+      \ti
+      \Gamma.A.B \ar[d, "\pi_{A,B}"] \ar[r,"pair_{A,B}",swap] & \Gamma.\Sigma_AB \ar[l,"{(pr_1, pr_2)}",bend right,swap] \ar[dl, "\pi_{\Sigma_AB}"]\\
+      \Gamma &
+      \kz
+    \]
+Let $\hat c_s = c\{((pr_1, pr_2)s)\}$. First, this morphism has the correct target since we have
+    \[
+      C\{((pr_1,pr_2)s)\}\{pair_{A,B}\} = C\{(pair_{A,B}(pr_1,pr_2)s)\} = C\{s\}
+    \]
+    , relying on the fact our lax monoidal fibration is split. Secondly, we need to show that given sections $a : \Gamma \to \Gamma.A$ and $b : \Gamma.A \to \Gamma.A.B$, we have $c\{((pr_1,pr_2)(a, b))\} = c\{a\}\{b\}$:
+    \[
+      \{(pr_1,pr_2)(a, b)\} = \{(pr_1,pr_2)pair_{A,B}ba\} = \{ba\} = \{a\}\{b\}
+    \]
+  \end{proof}
+\end{thm}
+When it comes to Id-types, the situation is not as fortunate. If one wants to keep the theory intensional, we need to add condition (3) to make sure that the semantic identity types satisfy the added elimination rules =-E$_2$ and =-E$_3$ in Figure \ref{id}.
 \begin{defn}[Id-types]
   A model of LDTT \textbf{supports Id-types} if, for all $A \in \mathcal{T}_{\Gamma}$, there exists an object $Id_A \in \mathcal{T}_{\Gamma.A.A\{\pi_A\}}$ and a morphism $r_A : \Gamma.A \to \Gamma.A.A\{\pi_A\}.Id_{A}$ such that:
-  \begin{itemize}
+  \begin{enumerate}
     \item The following diagram commutes:
   \[
     \ti
@@ -899,14 +1057,37 @@ It supports $\sqsubset$-types if every $\pi_A^*$ has a monoidal left adjoint.
     \Gamma.A.A\{\pi_A\}.Id_A \ar[r] & \Delta
     \kz
   \]
-  there exists a lift $\Gamma.A.A\{\pi_A\}.Id_A \to \Delta.C$ making the two triangles commute.
-\end{itemize}
+  there exists a lift $J: \Gamma.A.A\{\pi_A\}.Id_A \to \Delta.C$ making the two triangles commute.
+\item For any pair of objects, $C \in \mathcal{L}_{\Gamma.A.A^+.Id}$ and $\Xi \in \mathcal{L}_{\Gamma.A}$, sections $M, N : \Gamma \to \Gamma.A$, $P : \Gamma.A.A^+ \to \Gamma.A.A^+.Id$, and morphism $c : \Xi \to C\{r_A\}$, there exists morphisms $\hat c_{[M,N,P]}^1 : \Xi\{M\} \to C\{M\}\{N\}\{P\}$ and $\hat c_{[M, N, P]}^2 : \Xi\{N\} \to C\{M\}\{N\}\{P\}$ such that $\hat c_{[M,M,refl]}^1 = \hat c_{[M,M,refl]}^2 = c\{M\}$.
+\end{enumerate}
+\end{defn}
+
+A simpler, but stronger condition, implying condition (3) in the intensional setting is that for every $A \in \mathcal{T}_\Gamma$, there is an adjunction $\pi_{A,Id}^* \dashv r^*$ between the fibers of $\mathcal{L}$. This yields for every $c : \Xi \to C\{r\}$, a morphism $\hat c : \Xi\{\pi_{A,Id}\} \to C$, which, given sections $M, N : \Gamma \to \Gamma.A$ and $P : \Gamma.A.A^+ \to \Gamma.A.A^+.Id$, we can send to $\hat c\{M\}\{N\}\{P\} : \Xi\{M\}\{N\}\{P\}\{\pi_{A,Id}\} \to C\{M\}\{N\}\{P\}$, where $\Xi\{M\}\{N\}\{P\}\{\pi_{A,Id}\} = \Xi\{M\}$ since $\pi_{A,Id}PN = 1_{\Gamma.A}$.
+
+If one were to work within an extensional type theory, where the rule:
+\[
+  \inference{\Gamma \vdash p : a =_A b}{\Gamma \vdash a \equiv b : A}
+\]
+is added, then the third condition is not needed:
+\begin{thm}A model of LDTT with extensional equality supports Id-types if, for every $A \in \mathcal{T}_{\Gamma}$, there are objects $Id_A \in \mathcal{T}_{\Gamma.A}$ satisfying condtions 1 and 2 above.
+  \begin{proof}
+    In extensional type theory, every identity term $\Gamma,x, y : A \vdash P : x =_Ay$ can be shown to be equal to reflexivity by forming the identity type:
+    \[
+      \Gamma,x,y: A, p : x=_Ay \vdash p =_{x=_Ax}refl(x) \type
+    \]
+    this is well typed, since by $\Gamma,x,y : A, p : x=_Ay \vdash p : x=_Ay$, we conclude the definitional equality $x \equiv y$, so the types $x=_Ay$ and $x=_Ax$ are definitionally equal. We can then inhabit the type $p =_{x =_Ax}refl(x)$ using the elimination principle from the equality $\Gamma,x : A, refl(x) : x=_Ax \vdash refl(refl(x) : refl(x) =_{x=_Ax}refl(x)$. Since we have inhabited the propositional equality, the equality holds judgementally by extensionality.\\
+    Since we identify judgementally equal terms in our semantics, this implies that any section of $\pi_{A.Id} : \Gamma.A.A^+.Id \to \Gamma.A$ must be equal to $r_A : \Gamma.A \to \Gamma.A.A^+.Id$. Condition 3 then reads rather trivially that for any morphism $c : \Xi \to C\{r_A\}$ and section $M : \Gamma \to \Gamma.A$, there should exist a morphism $\hat c_{M} : Xi\{M\} \to C\{M\}\{r\}$ which we get by $\hat c_M = c\{M\}$.
+  \end{proof}
+\end{thm}
+
+The semantic counterpart for the mixed types $\sqcap$ and $\sqsubset$ is similar to that of $\Pi$ and $\Sigma$, but instead of $\mathcal{T}$, we ask for adjoints of the induced functors between fibers of $\mathcal{L}$.
 \begin{defn}
-  A model of linear depenendent type theory supports $[-,-]$-types, if, for all objects $A, B \in \mathcal{L}_{\Gamma}$, there exists an object $T[A, B] \in \mathcal{T}_{\Gamma}$ such that $\mathcal{T}_{\Gamma}(X, T[A, B]) \cong \mathcal{L}_{\Gamma.X}(A, B)$.
+A model of LDTT \textbf{supports $\sqcap$-types} if, for all $A \in \mathcal{T}_{\Gamma}$, the induced (monoidal) functor $\pi_A^* : \mathcal{L}_{\Gamma} \to \mathcal{L}_{\Gamma.A}$ has a monoidal right adjoint.
+It supports $\sqsubset$-types if every $\pi_A^*$ has a monoidal left adjoint.
 \end{defn}
-
-\end{defn}
-
+As outlined in
+\begin{defn}\label{semanticML}
+  \end{defn}
 \newpage
 \section{Models}
 \subsection{Set indexed families}
@@ -953,7 +1134,7 @@ Fam(\mathcal{V}) \ar[rd, "q"]  & Fam(\mathbf{Set}) \ar[d, "p"] \ar[r, "\pi"] & \
 
 \subsection{Syntactic enriched categories}
 As an in depth example construction in the families model of linear dependent type theory, recall the notion of an enriched category in as defined in \ref{enr-cat}.
-Our goal is to construct a syntactic analogue of this construction in the families model, such that the interpretation of this is an enriched category. There are two ways of doing this. The first is a kind of meta-construction, in which we ask for the existence of certain types and judgemental equalities to hold, whereas the second, internal definintion, is a type \textbf{Enr-Cat}, whose terms are interpreted as enriched categories. The type \textbf{Enr-Cat} allows us to formulate theorems about enriched categories directly in the syntax, but requires more involved type formers, such as universes, and the following type,
+Our goal is to construct a syntactic analogue of this construction in the families model, such that the interpretation of this is an enriched category. There are two ways of doing this. The first is a meta construction, in which we ask for the existence of certain types and judgemental equalities to hold, whereas the second, internal definintion, is a type \textbf{Enr-Cat}, whose terms are interpreted as enriched categories. The type \textbf{Enr-Cat} allows us to formulate theorems about enriched categories directly in the syntax, but requires more involved type formers, such as universes, and the following type,
 with which we can reason (non-linearly) about the hom-sets of $\mathcal{V}$:\\
 \fbox{
 \begin{minipage}{.5\linewidth}
@@ -977,7 +1158,11 @@ with which we can reason (non-linearly) about the hom-sets of $\mathcal{V}$:\\
   \]
 \end{minipage}
 }
-In the presence of linear function types ($\multimap$) and the $M$-functor, this type can be just as well be constructed as $(A \multimap B)_M$. However, adding it as a primitive allows us to talk about the hom-sets of $\mathcal{V}$ even when it is not closed.\\
+In the presence of linear function types ($\multimap$) and the $M$-functor, this type can be just as well be constructed as $(A \multimap B)_M$. However, adding it as a primitive allows us to talk about the hom-sets of $\mathcal{V}$ even when it is not closed. Instead, the semantics of $[-, -]$ will be an object in $\mathcal{T}$ which ``represents'' the morphisms of $\mathcal{L}$:
+\begin{defn}
+  A model of linear depenendent type theory supports $[-,-]$-types, if, for all objects $A, B \in \mathcal{L}_{\Gamma}$, there exists an object $T[A, B] \in \mathcal{T}_{\Gamma}$ such that $\mathcal{T}_{\Gamma}(X, T[A, B]) \cong \mathcal{L}_{\Gamma.X}(A, B)$.
+\end{defn}
+
 \begin{defn}[meta-theoretic enriched categories]
   A meta-theoretic $\mathcal{V}$-enriched category in a context $\Gamma$ consists of the following data:
  \begin{itemize}
@@ -988,14 +1173,13 @@ In the presence of linear function types ($\multimap$) and the $M$-functor, this
 \item judgemental equalities $\Gamma, x, y : A; f : B_{x, y} \vdash f \equiv M(j_y \otimes f)$ and $\Gamma, x, y : A; f : B_{x, y} \vdash f \equiv M(f \otimes j_x)$.
 \end{itemize}
 \end{defn}
-Notice that the equation asserting associativity of the composition law is not nessecary, since functions in type theory are inherently associative.
+The interpretation of this in the families model are precisely $\mathcal{V}$-enriched categories. The underlying set of objects will be $[[A]]$, the interpretation of $B$ is a function $B : [[A]] \times [[A]] \to \mathcal{V}$, which for each pair $x, y \in A$ assigns an object of $\mathcal{V}$. 
 \begin{defn}[Internal enriched categories]
   The type \textbf{Enr-cat} is defined as
   \[
     Enr-Cat :\equiv \Sigma_{A : \mathcal{U}} \Sigma_{B : \Pi_{x, y : A}\mathcal{L}} \Sigma_{M : \Pi_{x, y, z : A} [B_{y, z} \otimes B_{x, y}, B_{x,z}]} \Sigma_{j : \Pi_{x: A}[I, B_{x, x}]}[\lambda f. f] = [\lambda f. M_{x, x, y}(f \otimes j_x)] \times [\lambda f. f] = [\lambda f. M_{x, x, y}(j_y \otimes f)] \\
   \]
 \end{defn}
-The interpretation of this in the families model are precisely $\mathcal{V}$-enriched categories. A type $A$ in the empty context will be a family of sets indexed by a singleton, and the type $B$ is a function $B : A \times A \to \mathcal{V}$, which for each pair $x, y \in A$ assigns an object of $\mathcal{V}$.
 Since $Fam(\mathbf{Set})$ is an extensional model, whenever the $a =_A b$ is inhabited, we have $[[a]]=[[b]]$. Furthermore, since the equalities $p$, $q$ and $r$ are all identifying morphisms in the image of the faithful functor $M$, we have:
 \[
 [[f \circ 1_x ]] \equiv [[1_y \circ f]] \equiv [[f]]
