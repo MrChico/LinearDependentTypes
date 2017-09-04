@@ -10,7 +10,9 @@ The role that types play in type theory can be seen as a simoultaneous generalis
 \tableofcontents
 \newpage
 \section{TODO}
-Understand universes semantically\\
+$L$, $M$ and universe semantic type formers.\\
+Disclaimer about coherence issues.\\
+Another model: $q : Mon(Gph) \to Set$ (and sets with families)
 Let $\mathcal{L}$ be a (monoidal?) (2,1)-category. For $A, B \in \mathcal{L}_{\Gamma}$, can one define the type $f =_{[A, B]} g$ to consist of the 2-cells between f and g?\\
 Examples of such categories:\\
 Cat (with natural iso)\\
@@ -703,7 +705,9 @@ Since we allow linear types to dependend on terms of cartesian types, we can for
 \inference{\Gamma \vdash A \type \quad \Gamma, x : A \vdash B \linear}{\Gamma \vdash \sqcap_{x : A}B \linear}[$\sqcap$-F]
 \]\\
 \[
-\inference{\Gamma, x : A; \Xi \vdash b : B}
+  \inference{\vdash \Gamma; \Xi \text{ ctxt}\\
+    \Gamma, x : A; \Xi \vdash b : B
+  }
 {\Gamma; \Xi \vdash \lambda x. b : \sqcap_{x: A}B}[$\sqcap$-I]
 \]\\
 \[
@@ -723,15 +727,17 @@ Since we allow linear types to dependend on terms of cartesian types, we can for
 \inference{\Gamma \vdash s : A \quad \Gamma; \Xi \vdash b : B[s/x]}{\Gamma; \Xi \vdash (s, b) : \sqsubset_{x : A}B}[$\sqsubset$-I]
 \]\\
 \[
-\inference{\Gamma; \Xi \vdash t : \sqsubset_{x : A}B \quad \Gamma, x : A; \Xi', y : B \vdash c : C}{\Gamma; \Xi, \Xi' \vdash \text{let $x, y$ be $t$ in c : C}}[$\sqsubset$-E]
+  \inference{\vdash \Gamma;\Xi' \text{ ctxt}\\
+    \Gamma \vdash C \linear\\
+    \Gamma; \Xi \vdash t : \sqsubset_{x : A}B \quad \Gamma, x : A; \Xi', y : B \vdash c : C}{\Gamma; \Xi, \Xi' \vdash \text{let $x, y$ be $t$ in c : C}}[$\sqsubset$-E]
 \]\\
 \[
 \inference{\Gamma; \Xi \vdash \text{let $x, y$ be $(s, t)$ in c : C}}
-{\Gamma; \Xi \vdash \text{let $x, y$ be $(s, t)$ in c} \equiv c[s/x][t/y]}[$\sqsubset$-C]
+{\Gamma; \Xi \vdash \text{let $x, y$ be $(s, t)$ in c} \equiv c[s/x][t/y] : C}[$\sqsubset$-C]
 \]
 \end{minipage}
 }\\
-An example of a $\sqcap$ type, consider for any linear type $\Gamma \vdash A \linear$, the n-fold tensor product $A^n :\equiv A \otimes A \dots A$, which we can define by induction over the natural numbers (using universes) via:
+An example of a $\sqcap$ type, consider for any linear type $A$, the n-fold tensor product $A^n :\equiv A \otimes A \dots A$, which we can define by induction over the natural numbers (using universes) via:
 \[
   \begin{split}
   A^0 &:\equiv I\\
@@ -750,15 +756,25 @@ An example of the $\sqsubset$ type comes from Krishnaswami's treatment of linear
   \inference{\Gamma \vdash A \type}
   {\Gamma, x : Loc \vdash [x \mapsto A] \linear}
 \]
-Given a term $\Gamma \vdash t : A$, one can allocate a memory block of memory to store $t$ at a new location, returning a pointer:
+Given a location $a : Loc$ and a term $t : A$ in a context $\Gamma$, one may allocate some memory at $a$, and create a pointer $a \mapsto t$ at a certain fixed cost, $\Xi$:
 \[
-  \inference{\Gamma \vdash t : A}
-  {\Gamma; \cdot \vdash new_A (t) : \sqsubset_{x : Loc} [x \mapsto A]}
+  \inference{\Gamma \vdash t : A \quad \Gamma \vdash a : Loc}
+  {\Gamma; \Xi \vdash a \mapsto t : [a \mapsto A]}
+\]
+But if we want to reason more generally about our pointers, we might be interested in a more general pointer type, where the location variable is bound in a $\sqsubset$-type. This type is formed in any context $\Gamma$, for any type $A$:
+\[
+  \inference{\Gamma \vdash A \type \quad \Gamma, x : Loc \vdash [x \mapsto A] \linear} 
+  {\Gamma \vdash \sqsubset_{x : A}[x \mapsto A] \linear}
+\]
+with terms introduced by:
+\[
+  \inference{\Gamma \vdash t : A \quad \Gamma \vdash a : Loc \quad \Gamma; \Xi \vdash t : [a \mapsto A]}
+  {\Gamma; \Xi \vdash (a, t) : \sqsubset_{x : Loc} [x \mapsto A]}
 \]
 
 
 Another example takes inspiration from the realm of blockchain technology, where one deals with resources like bitcoin or ether balances. Say we model ownership of ether by a public address (generated from a cryptographic public key) having the linear type $addr_1 : ETH$. Then we can model a decentralized  mathematical prize comittee, which give out a reward of 1 ether to whoever proves the Goldbach conjecture.\\
-Since the reward is constant, this is ais not truly a dependent linear function and we abusively notate it by $\multimap$:
+Since the reward is constant, this is not truly a dependent linear function and we abusively notate it by $\multimap$:
 \[
 \cdot; x : ETH \vdash GoldbachReward: \Pi_{x : \mathbb{N}}\Sigma_{y, z : \mathbb{N}}Prime(y) \times Prime(z) \times y + z =_{\mathbb{B}} 2(suc(suc(x))) \multimap ETH
 \]
@@ -849,17 +865,34 @@ A \ar[r, "f"] & A'
 \]
 there is a unique arrow $u : E \to B$ such that $p' = p \circ u$ and $q'e = g \circ u$. This is precisely the universal property of the pullback.
 If $\mathcal{C}$ has all pullbacks, then $\text{cod} : \mathcal{C}^\to \to \mathcal{C}$ is a fibration and we immediately have a comprehension category.
-Maps of $\mathcal{C}$ that arise via $\pi(A)$ for some $A \in \mathcal{T}$ will be called \textit{projections}, and by the remark above, pullbacks of projections always exist. Terms of a type will be interpreted as sections of the corresponding projections. The pullbacks of $\mathcal{C}$ will play the role of substitutions in the type theory, and since substitution is strictly associative in the theory, we need pullbacks of $\mathcal{C}$ to be strictly associative too. This requirement forces us to restrict our attention to \textit{split comprehension categories}, i.e. comprehension categories such that $p$ is a split fibration.
+Maps of $\mathcal{C}$ that arise via $\pi(A)$ for some $A \in \mathcal{T}$ will be called \textit{projections}, and by the remark above, pullbacks of projections always exist. Terms of a type will be interpreted as sections of the corresponding projections and pullbacks of $\mathcal{C}$ will play the role of substitutions. Here we need to be careful, however:
 \end{defn}
-A semantics for linear dependent type theory consists of a split comprehension $p : \mathcal{T} \to \mathcal{C}$ and a split lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, illustrated in the following picture:
+\begin{rem}On Coherence. A sublety often overlooked in the construction of models of type theory are the various issues arising from the fact that from a categorical point of view, it is natural to consider objects up to isomorphism, whereas in type theory we speak of equality ``on the nose''. In particular, when interpreting substitution as a pullback, we need to take into account that substitution is strictly associative, while a priori, we only have that the pullback of $f$ along $g \circ h$ is \textit{isomorphic to} the pullback of $\pi_1$ along $h$, as illustrated in the diagram below:
+  \[
+    \ti
+    A \times_C B' \cong (A \times_C B) \times_C B'  \ar[r] \ar[d] & B' \ar[d, "h"]\\
+    A \times_C B \ar[r, "\pi_1"] \ar[d, "\pi_2"] & B \ar[d, "g"]\\
+    A \ar[r,"f"] & C
+    \kz
+  \]
+  This problem can generally be overcome by showing that there exists a suitable choice of pullbacks such that this isomorphism is an equality, and this is essentially why we are forcing our comprehension category to come equipped with liftings of every map in the base category, so that our fibration is \textit{split}.\\
+  In dealing with linear dependent type theory, we run into a similar problem. Equipped with a (lax) monoidal fibration, $q : \mathcal{L} \to \mathcal{C}$, we will interpret linear contexts $\Xi = a_1 : A_1, a_2 : A_2 \dots a_n : A_n$ over a cartesian context $\Gamma$ as the tensor product $[[\Xi]] = [[A_1]] \otimes [[A_2]] \dots \otimes [[A_n]]$ in the monoidal category $\mathcal{L}_\Gamma$. The weakening of a linear context $\Xi$, as given by the rule:
+  \[\inference{\vdash \Gamma; \Xi \text{ ctxt} \quad \Gamma \vdash A \type}{\vdash \Gamma, x : A; \Xi \text{ ctxt}}[C-Weak]
+  \]
+  will be interpreted as the image of the object $[[\Xi]] \in \mathcal{L}_\Gamma$ under the functor $\pi_A^* : \mathcal{L}_\Gamma \to \mathcal{L}_{\Gamma.A}$ induced by the projection morphism $\pi_A : \Gamma.A \to \Gamma$ in the base. But in general, we do not have an equality of $\pi_A^*(A) \otimes \pi_A^*(B)$ and $\pi_A^*(A \otimes B)$. To accomodate this discrepancy, we introduce the notion of a split monoidal fibration:
+\end{rem}
+\begin{defn}
+ A split monoidal fibration is a lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, equipped with a cleavage  $\{ u^*, \bar u \}_{u \in \mathcal{C}}$, so that every lift $u^*$ is a strict monoidal functor, and $u^*v^* = (vu)^*$ for all compatible liftings $u^*$ and $v^*$.
+\end{defn}
+Equipped with these notions, we can define the general structure of the structural core of our type theory:\\
+A model for linear dependent type theory consists of a split comprehension $p : \mathcal{T} \to \mathcal{C}$ and a split monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, illustrated in the following picture:
 \[
 \ti
 \mathcal{L} \ar[rd, "q"] & \mathcal{T} \ar[d, "p"] \ar[r, "\pi"] & \mathcal{C^\rightarrow} \ar[ld, "\text{cod}"]\\
 & \mathcal{C}
 \kz
 \]
-
-This structure is sufficient for interpreting the structural core of our theory. We make this precise by proving soundness by induction on the derivation rules of Figure \ref{struc}. The following lemma will come in handy:
+Before proving soundness by induction on the derivation rules of Figure \ref{struc}, we will need the following lemma:
 \begin{lem}\label{pb-lem}
   The pullback of an arrow, $g$, has a section if $g$ does. In other words, given a pullback of $g$:
   \[
@@ -873,13 +906,14 @@ This structure is sufficient for interpreting the structural core of our theory.
 Since $A$ with projections $1_A$ and $hf$ forms a cone to the cospan, there exists a unique map $u : A \to A \times_{C} B$ such that $hfu = k$ and $g^*u = 1_A$, making $u$ a section of $g^*$.
 \end{proof}
 \end{lem}
+
 \begin{thm}[Soundness]
-A split comprehension category $p : \mathcal{T} \to \mathcal{C}$ together with a split lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$ is a model for the linear dependent type theory consisting of the structural rules presented in Figure \ref{struc}.
+A split comprehension category $p : \mathcal{T} \to \mathcal{C}$ together with a split monoidal fibration $q : \mathcal{L} \to \mathcal{C}$ is a model for the linear dependent type theory consisting of the structural rules presented in Figure \ref{struc}.
 \begin{proof}
   We construct an interpretation function $[[-]]$, which sends:
   \begin{itemize}
   \item Cartesian contexts $\Gamma$ to objects of $\mathcal{C}$, considered up to definitional equality and renaming of bound variables.
-  \item Mixed contexts $\Gamma; \Xi$ to objects of $\mathcal{C}_{[[\Gamma]]}$.
+  \item Linear contexts $\Xi$ in $\Gamma$ to objects of $\mathcal{L}_{[[\Gamma]]}$.
   \item Cartesian types $A$ in $\Gamma$ to objects of $\mathcal{T}_{[[\Gamma]]}$.
   \item Linear types $B$ in $\Gamma$ to objects of $\mathcal{L}_{[[\Gamma]]}$.
   \item Cartesian terms $M : A$ in $\Gamma$ to sections of $\pi([[A]]) : [[\Gamma,A]] \to [[\Gamma]]$.
@@ -889,8 +923,9 @@ Proceeding by induction on the derivation rules, we will often abuse notation sl
 \begin{itemize}
 \item Case of CI-Base: $[[\cdot]]$ is the terminal object $\mathbf{1}$ of $\mathcal{C}$.
 \item Case of CM-Base: $[[\cdot; \cdot]]$ is the unit of $\mathcal{L}_{\mathbf{1}}$.
-\item Case of C-cart-ext: By the induction hypothesis, we are given $A$ in $\mathcal{T}_{\Gamma}$ and need to display an object $\Gamma.A$ in $\mathcal{C}$. This object is the domain of the morphism that $A$ is mapped to via $\pi$:
-\[\Gamma.A \xrightarrow {\pi_A} \Gamma\]
+\item Case of C-int-ext: By the induction hypothesis, we are given $A$ in $\mathcal{T}_{\Gamma}$ and need to display an object $\Gamma.A$ in $\mathcal{C}$. This object is the domain of the morphism that $A$ is mapped to via $\pi$:
+  \[\Gamma.A \xrightarrow {\pi_A} \Gamma\]
+\item Case of C-lin-ext: Given objects $[[\Xi]]$ and $[[A]]$ in $\mathcal{L}_{[[\Gamma]]}$, the extended context $\Gamma; \Xi, x : A$ is interpreted as the object $[[\Xi]] \otimes [[A]] \in \mathcal{L}_{[[\Gamma]]}$.
 \item Case of C-weak-1: Given $A, \Delta \in \mathcal{T}_{\Gamma}$, we send $\Delta$ through the functor $\pi_A^* : \mathcal{T}_\Gamma \to \mathcal{T}_{\Gamma.A}$ induced by lifting the morphism $\pi_A : \Gamma.A \to \Gamma$. The resulting object $\pi_A^*(\Delta)$ will be sent to the context $p(\pi_A^*(\Delta)) = \Gamma.A.\Delta\{\pi_*\}$ via $p$, which is the interpretation of the conclusion of the rule C-weak-1.
 \item Case of C-weak-2: Notice that since $\pi$ is a cartesian functor, the context above fits into the following pullback:
 \[
@@ -1009,11 +1044,12 @@ inducing the following functors between fibers:
 \]
 The canonical natural transformation $f^*\Pi_{E'} \to \Pi_{E}q^*_{E, E'}$ induced by the adjunction is a natural isomorphism.\\
 \end{defn}
+The Beck-Chevalley condition is in effect saying that substitution commutes with the $\Pi$-type. For example, if $E' = E[\bar t/\bar y]$, with the map $f^*$ representing the substitution $[\bar t/\bar y]$, then the Beck-Chevalley condition reads that for all $B \in \mathcal{T}_{\Gamma}$, we have $(\Pi_{x : E}B)[\bar t/\bar y] \cong \Pi_{x : E[\bar t/\bar y]}B[\bar t/\bar y]$.\\
 As the rules $\Sigma$ contains one more eliminator than usual ($\Sigma$-E$_2$ in Figure \ref{sigmaPi}), one might wonder whether this requires additional conditions for the semantic type formers to ensure that these are well behaved with respect to the linear fibers. We will shortly see that this is not the case.
 \begin{defn}A model of LDTT \textbf{supports $\Sigma$-types} if it satisfies the following:
   \begin{enumerate}
   \item For all $A \in \mathcal{T}_{\Gamma}$, the induced functor $\pi_A^* : \mathcal{T}_{\Gamma} \to \mathcal{T}_{\Gamma.A}$ has a left adjoint, $\Sigma_A$,
-  \item such that for all pullbacks (as in \ref{pb-diag}), the natural transformation: $\Sigma_Eq^* \to f^*\Sigma_{E'}$ is a natural isomorphism, and
+  \item such that for all pullbacks (as in \ref{pb-diag}), these satisfy the Beck-Chevalley condition, i.e. the natural transformation: $\Sigma_Eq^* \to f^*\Sigma_{E'}$ is a natural isomorphism, and
   \item the induced map $pair_{A,B} : \Gamma.A.B \to \Gamma.\Sigma_AB$ is an isomorphism
   \end{enumerate}
 \end{defn}
@@ -1061,7 +1097,6 @@ When it comes to Id-types, the situation is not as fortunate. If one wants to ke
 \item For any pair of objects, $C \in \mathcal{L}_{\Gamma.A.A^+.Id}$ and $\Xi \in \mathcal{L}_{\Gamma.A}$, sections $M, N : \Gamma \to \Gamma.A$, $P : \Gamma.A.A^+ \to \Gamma.A.A^+.Id$, and morphism $c : \Xi \to C\{r_A\}$, there exists morphisms $\hat c_{[M,N,P]}^1 : \Xi\{M\} \to C\{M\}\{N\}\{P\}$ and $\hat c_{[M, N, P]}^2 : \Xi\{N\} \to C\{M\}\{N\}\{P\}$ such that $\hat c_{[M,M,refl]}^1 = \hat c_{[M,M,refl]}^2 = c\{M\}$.
 \end{enumerate}
 \end{defn}
-
 A simpler, but stronger condition, implying condition (3) in the intensional setting is that for every $A \in \mathcal{T}_\Gamma$, there is an adjunction $\pi_{A,Id}^* \dashv r^*$ between the fibers of $\mathcal{L}$. This yields for every $c : \Xi \to C\{r\}$, a morphism $\hat c : \Xi\{\pi_{A,Id}\} \to C$, which, given sections $M, N : \Gamma \to \Gamma.A$ and $P : \Gamma.A.A^+ \to \Gamma.A.A^+.Id$, we can send to $\hat c\{M\}\{N\}\{P\} : \Xi\{M\}\{N\}\{P\}\{\pi_{A,Id}\} \to C\{M\}\{N\}\{P\}$, where $\Xi\{M\}\{N\}\{P\}\{\pi_{A,Id}\} = \Xi\{M\}$ since $\pi_{A,Id}PN = 1_{\Gamma.A}$.
 
 If one were to work within an extensional type theory, where the rule:
@@ -1079,14 +1114,47 @@ is added, then the third condition is not needed:
     Since we identify judgementally equal terms in our semantics, this implies that any section of $\pi_{A.Id} : \Gamma.A.A^+.Id \to \Gamma.A$ must be equal to $r_A : \Gamma.A \to \Gamma.A.A^+.Id$. Condition 3 then reads rather trivially that for any morphism $c : \Xi \to C\{r_A\}$ and section $M : \Gamma \to \Gamma.A$, there should exist a morphism $\hat c_{M} : Xi\{M\} \to C\{M\}\{r\}$ which we get by $\hat c_M = c\{M\}$.
   \end{proof}
 \end{thm}
-
-The semantic counterpart for the mixed types $\sqcap$ and $\sqsubset$ is similar to that of $\Pi$ and $\Sigma$, but instead of $\mathcal{T}$, we ask for adjoints of the induced functors between fibers of $\mathcal{L}$.
+The semantic type formers for the linear dependent $\sqcap$ and $\sqsubset$ is akin to that of $\Pi$ and $\Sigma$. They are given by adjoints to the functors between fibers of $\mathcal{L}$ induced by the projection maps in $\mathcal{C}$.
 \begin{defn}
-A model of LDTT \textbf{supports $\sqcap$-types} if, for all $A \in \mathcal{T}_{\Gamma}$, the induced (monoidal) functor $\pi_A^* : \mathcal{L}_{\Gamma} \to \mathcal{L}_{\Gamma.A}$ has a monoidal right adjoint.
-It supports $\sqsubset$-types if every $\pi_A^*$ has a monoidal left adjoint.
+  A model of LDTT \textbf{supports $\sqcap$-types} if, for all $A \in \mathcal{T}_{\Gamma}$, the induced monoidal functor $\pi_A^* : \mathcal{L}_{\Gamma} \to \mathcal{L}_{\Gamma.A}$ has a monoidal right adjoint, $\sqcap_A$ satisfying the following Beck-Chevalley condition:\\
+  For all pullback squares in $\mathcal{C}$ of the following form:
+  \[
+      \ti
+    \Gamma.E \ar[d, "\pi_E"] \ar[r, "q_{E, E'}"] & \Delta.E' \ar[d, "\pi_{E'}"] \\
+    \Gamma \ar[r, "f"] & \Delta
+    \kz
+  \],
+the canonical natural transformation $f^*\sqcap_{E'} \to \sqcap_{E}q^*_{E, E'}$ is a natural isomorphism.\\
 \end{defn}
-As outlined in
+\begin{defn}
+  It \textbf{supports $\sqsubset$-types} if, for all $A \in \mathcal{T}_{\Gamma}$, the functor every $\pi_A^*$ has a monoidal left adjoint, satisfying the following:
+  \begin{enumerate}
+  \item (Beck-Chevalley): For all pullbacks squares as above, the natural transformation $\sqsubset_Eq^* \to f^*\sqsubset_{E'}$ is a natural isomorphism.
+  \item (Frobenius reciprocity): For all objects $\Xi \in \mathcal{L}_{\Gamma}$ and $B \in \mathcal{L}_{\Gamma.A}$, the canonical morphism $\sqsubset_A(\Xi\{\pi_A\} \otimes B) \to \Xi \otimes \sqsubset_AB$ is an isomorphism.
+  \end{enumerate}
+\end{defn}
+To illustrate why these conditions form the appropriate semantic counterpart to the derivation rules, we will outline the case for $\sqsubset$ in detail.\\
+For every object $B \in \mathcal{L}_{\Gamma.A}$, we get a type $\sqsubset_AB \in \mathcal{L}_{\Gamma}$, such that, given any section $s : \Gamma \to \Gamma.A$, and map $b : \Xi \to B\{s\}$ in $\mathcal{L}_{\Gamma}$, we get a map:
+\[
+  s^*\eta_B \circ b : \Xi \to B\{s\} \to s^*\pi_A^*(\sqsubset_AB) = \sqsubset_AB
+\]
+where $\eta_B : B \to \pi^*(\sqsubset_AB)$ is the unit of the adjunction.
+This map is the interpretation of the term $(s, b)$ given by the introduction rule $\sqsubset$-I.\\
+To interpret the elimination rule, we are given maps $t : \Xi \to \sqsubset_AB$ in $\mathcal{L}_{\Gamma}$ and $c : \Xi'\{\pi_A\} \otimes B \to C\{\pi_A\}$ in $\mathcal{L}_{\Gamma.A}$. By the adjunction, there exists a map $\hat c : \sqsubset_A(\Xi\{\pi_A\} \otimes B) \to C$ such that $\eta_{\Xi'\{\pi_A\}\otimes B}\circ \pi^*_A\hat c = c$. By the Frobenius reciprocity condition, we have an isomorphism: $\beta_{\Xi', B} : \Xi' \otimes \sqsubset_AB \to \sqsubset_A(\Xi\{\pi_A\} \otimes B)$, and we get a map:
+\[
+  \hat c \beta : \Xi' \otimes \sqsubset_AB \cong \sqsubset_A(\Xi'\{\pi_A\} \otimes B) \to C
+\]
+which we can precompose with $1_{\Xi'} \otimes t$ to get a map from $\Xi' \otimes \Xi$ to $C$. We can then precompose with an appropriate isomorphism $\alpha' : \bigotimes (\Xi', \Xi) \to \Xi' \otimes \Xi$ to get a map from $\bigotimes \Xi', \Xi$ to $C$, which will be the interpretation of the elimination term from the rule $\sqsubset$-E.\\
+The computation rule boils down to showing that the following triangle commutes:
+\[
+  \ti
+\{s\}(\Xi'\{\pi_A\}\otimes B) \ar[rd, "s^*c"] \ar[d,"s^*\eta_{(\Xi'\{\pi_A\}\otimes B)}",swap] & \\
+s^*\pi_A^*\sqsubset_A(\Xi'\{\pi_A\} \otimes B) = \sqsubset_A(\Xi'\{\pi_A\} \otimes B) \ar[r,"\hat c"] & C
+\kz
+\]
+which follows from applying the functor $s^*$ to the equality $\eta_{\Xi'\{\pi_A\}\otimes B}\circ \pi^*_A\hat c = c$.
 \begin{defn}\label{semanticML}
+  A model of LDTT \textbf{supports the operators $M$ and $L$} if there exists monoidal functors $M : \mathcal{L}_{\Gamma} \leftrightarrow \mathcal{T}_{\Gamma} : L$ over every fiber $\Gamma$ such that $L \dashv M$.
   \end{defn}
 \newpage
 \section{Models}

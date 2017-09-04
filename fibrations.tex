@@ -77,10 +77,10 @@ A \textbf{monoidal fibration} is a functor $\Phi\colon E\to B$ such that
 \item the tensor product of $E$ preserves cartesian arrows.
 \end{itemize}
 \end{defn}
-From this it can be shown that maps in the base induce monoidal functors in between the fibers. See \cite{shulmanmonoidal} for details.
+In particular, when $B$ is a cartesian monoidal category, an arrow $f : b \to p(e)$ induces a strong monoidal functor $f^* : B_e \to B_{f^*e}$ between the fibers \cite{shulmanmonoidal}.
 
 
-A weaker notion that does not require the base category to be monoidal is that of a lax monoidal fibration \cite{zawadowski}. We simply want each fiber to be a monoidal category and that funcotrs between fibers are monoidal.
+The more general structure of a lax monoidal fibration \cite{zawadowski}, does not require neither $E$ nor $B$ to be monoidal. We simply want each fiber of $E$ to carry a monoidal structure, and that the induced functors between fibers are monoidal.
 \begin{defn}
 A \textbf{lax monoidal fibration} is a fibration $p : E \to B$ along with
 \begin{enumerate}
@@ -110,4 +110,16 @@ B \times_B E \ar[r, "I \times_B 1_{E}"] \ar[rdd, "\pi_2",swap] & E \times_B E  \
 \item for every $b \in B$, $\rho_{I_b} = \lambda^{-1}_{I_b} : I_b \otimes I_b \to I_b$
 \end{enumerate}
 \end{defn}
-These conditions are sufficient for each fiber to be a monoidal category and for the induced functors between fibers to be monoidal. More detais are given in \cite{zawadowski}.
+These conditions are sufficient for each fiber to be a monoidal category and for the induced functors between fibers to be (lax) monoidal \cite{zawadowski}..\\
+An example of a fibration that is lax monoidal but not monoidal is the fibration $\mathbf{Gph} \to \mathbf{Set}$ taking a directed graph defined by $(V, E, dom, cod : E \to V)$ to its underlying set of verticies, $V$. For two graphs $\mathcal{A}= (A, O, dom_A, cod_A)$ and $\mathcal{B} = (B, O, dom_B, cod_B)$ over the same fiber $\mathbf{Gph}_O$, we define their tensor product by:
+\[
+  \mathcal{A} \otimes \mathcal{B} = (A \times_O B, cod_A \circ \pi_1, dom_B \circ \pi_2)
+\]
+where $A \times_O B$ is the pullback in the following diagram:
+\[
+  \ti
+  A \times_O B \ar[r, "\pi_2"] \ar[d, "\pi_1"] & B \ar[d, "cod_B"]\\
+  A \ar[r, "dom_A"] & O
+  \kz
+\]
+This tensor product is only defined over graphs with the same underlying set, i.e. living in the same fiber. 
