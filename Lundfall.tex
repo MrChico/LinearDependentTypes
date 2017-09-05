@@ -1,5 +1,13 @@
 \input{../preamble.tex}
 \usepackage[margin=0.5in]{geometry}
+%\newtheorem{defn}[thm]{Definition}
+\newtheorem{lemm}[thm]{Lemma}
+%\newtheorem{cor}[thm]{Corollary}
+%\newtheorem{prop}[thm]{Proposition}
+\newtheorem{remrk}[thm]{Remark}
+\newtheorem{corl}[thm]{Corollary}
+%\newtheorem{ill}[thm]{Illustration}
+\newtheorem{expl}[thm]{Example}
 \begin{document}
 \title{Models of linear dependent type theory}
 \author{Martin Lundfall}
@@ -19,8 +27,7 @@ Cat (with natural iso)\\
 Grp\\
 SMC\\
 Kelly's enriched categories for more on enriched cats\\
-\section{Introduction}
-
+%\section{Introduction}
 \section{Preliminaries}
 The paper is largely split into two sections; syntax and semantics. 
 Familiarity with basic category theoretic concepts like limits, adjoints, monoidal categories is assumed.
@@ -36,19 +43,22 @@ Linear logic is a substructural logic in which the rules of weakening and contra
 \]
 are not admissable.\\
 In other words, assumptions cannot be freely assumed or dismissed; they must be used exactly once in the conclusion. In linear logic, we are inclined to think of a sequent $A_1, A_2, \dots, A_n \vdash B$ as modelling a function or process in which the assumptions $A_1, A_2, \dots A_n$ are \textit{resources used} to yield $B$. As a first, toy example, we consider the chemical process of burning hydrogen:
-\begin{ex}\label{burn}
+%\begin{comment}
+\begin{expl}\label{burn}
 Consider the following primitive derivation rule: 
 \[
   O_2 \otimes H_2 \otimes H_2 \vdash H_2O \otimes H_2O
 \]
 stating that given an oxygen molecule and two hydrogen molecules, burning yields two water molecules. If weakening was admissable, we would be able to assume an additional hydrogen molecule without changes the antecedent, which does not make sense under the resource interpretation of linear logic.\\
+\end{expl}
+%\end{comment}
 Just as inuitionistic logic naturally extends to (dependent) type theory under the slogan of propositions as types, linear logic can be extended to a linear type theory, where sequents are decorated with proof terms:
 \[
   x_1 : A_1, x_2 : A_2, \dots x_n : A_n \vdash t : B
 \]
 and here linearity implies that the free variables of $t$ are $x_1, x_2, \dots x_n$, each appearing exactly once.\\
 Interest in linear type theory stems from disparate sources. From the perspective of (classical) computer science, it can be used for modelling state and storage, with linear variables denoting resources like pointers or files \cite{krishnaswami}, or even as a theoretical description of the resource handling of a blockchain \cite{meredith2015linear}. In quantum physics, linear types respect the no cloning theorem of quantum states, and are also proposed as a syntax for quantum computation \cite{duncan2006types}. From a semantic perspective, linear type theory can be interpreted in a symmetric monoidal closed categories, generalising the structure of a cartesian closed categories in which (non-dependent) type theories are interepreted.\\
-\end{ex}
+
 \input{fibrations}
 \subsection{Enriched and higher categories}
 The concept of a category can be generalized in a few different directions. In exploring semantics of linear type theory, our first encounter with such structures will be  enriched categories, where hom-sets are generalized to ``hom-objects'' of a monoidal category $\mathcal{V}$.
@@ -780,7 +790,7 @@ Since the reward is constant, this is not truly a dependent linear function and 
 \]
 To execute the transaction, one would need to exhibit that there is an address $x$ with one ether to begin with and provide a proof of the Goldbach conjecture.\\
 \subsection{Universes}
-Our cartesian and linear types live in separate universes, $U$ and $L$. Since linear types are type checked in a purely cartesian context, the linear universe is a cartesian type. Our universes are given á la Tarski and are closed under the type formers associated with them. Below, we only outline the closure over the type formers $\Pi$, $\otimes$ and $\sqcap$, but this should be sufficient to give the idea. For more detail we refer to Hofmann's \textit{Syntax and Semantics of Dependent types}, \cite{hofmann1997syntax}, or Krishnaswami's \textit{Integrating Linear and Dependent types}, \cite{krishnaswami}.\\
+Our cartesian and linear types live in separate universes, $U$ and $L$. Since linear types are type checked in a purely cartesian context, the linear universe is a cartesian type. Our universes are given á la Tarski and are closed under all previously introduced type formers. Below, we only outline the closure over the type formers $\Pi$, $\otimes$ and $\sqcap$, but this should be sufficient to give the idea. For more detail we refer to Hofmann's \textit{Syntax and Semantics of Dependent types}, \cite{hofmann1997syntax}, or Krishnaswami's \textit{Integrating Linear and Dependent types}, \cite{krishnaswami}.\\
 \fbox{
   \begin{minipage}{.5\linewidth}
     \[
@@ -792,7 +802,7 @@ Our cartesian and linear types live in separate universes, $U$ and $L$. Since li
     \[
       \inference{\Gamma \vdash t : U \\
         \Gamma, x : El(t) \vdash v : U}
-        {\Gamma \vdash \hat \Pi_{x : El(t)}v}[U-$\Pi$]
+        {\Gamma \vdash \hat \Pi_{x : El(t)}v : U}[U-$\Pi$]
       \]\\
       \[
         \inference{\Gamma \vdash t : U \\
@@ -867,7 +877,7 @@ there is a unique arrow $u : E \to B$ such that $p' = p \circ u$ and $q'e = g \c
 If $\mathcal{C}$ has all pullbacks, then $\text{cod} : \mathcal{C}^\to \to \mathcal{C}$ is a fibration and we immediately have a comprehension category.
 Maps of $\mathcal{C}$ that arise via $\pi(A)$ for some $A \in \mathcal{T}$ will be called \textit{projections}, and by the remark above, pullbacks of projections always exist. Terms of a type will be interpreted as sections of the corresponding projections and pullbacks of $\mathcal{C}$ will play the role of substitutions. Here we need to be careful, however:
 \end{defn}
-\begin{rem}On Coherence. A sublety often overlooked in the construction of models of type theory are the various issues arising from the fact that from a categorical point of view, it is natural to consider objects up to isomorphism, whereas in type theory we speak of equality ``on the nose''. In particular, when interpreting substitution as a pullback, we need to take into account that substitution is strictly associative, while a priori, we only have that the pullback of $f$ along $g \circ h$ is \textit{isomorphic to} the pullback of $\pi_1$ along $h$, as illustrated in the diagram below:
+\begin{remrk}On Coherence. A sublety often overlooked in the construction of models of type theory are the various issues arising from the fact that from a categorical point of view, it is natural to consider objects up to isomorphism, whereas in type theory we speak of equality ``on the nose'' \cite{lccc}. In particular, when interpreting substitution as a pullback, we need to take into account that, in the syntax, substitution is strictly runctorial, while pullbacks, in general, are not. For example, the pullback of $f$ along $g \circ h$ is \textit{isomorphic to} the pullback of $\pi_1$ along $h$, below, but not necessarily equal to it.
   \[
     \ti
     A \times_C B' \cong (A \times_C B) \times_C B'  \ar[r] \ar[d] & B' \ar[d, "h"]\\
@@ -875,25 +885,26 @@ Maps of $\mathcal{C}$ that arise via $\pi(A)$ for some $A \in \mathcal{T}$ will 
     A \ar[r,"f"] & C
     \kz
   \]
-  This problem can generally be overcome by showing that there exists a suitable choice of pullbacks such that this isomorphism is an equality, and this is essentially why we are forcing our comprehension category to come equipped with liftings of every map in the base category, so that our fibration is \textit{split}.\\
+  This problem can generally be overcome by showing that there exists a suitable choice of pullbacks such that this isomorphism is an equality, and this is essentially why we are forcing our comprehension category to come equipped with liftings of every map in the base category, so that our fibration is \textit{split}. In fact, every comprehension category is equivalent to a strict one, and if a full comprehension category supports various type formers, then these will also be supported in the corresponding split version. \cite{pllcoherence}\\
   In dealing with linear dependent type theory, we run into a similar problem. Equipped with a (lax) monoidal fibration, $q : \mathcal{L} \to \mathcal{C}$, we will interpret linear contexts $\Xi = a_1 : A_1, a_2 : A_2 \dots a_n : A_n$ over a cartesian context $\Gamma$ as the tensor product $[[\Xi]] = [[A_1]] \otimes [[A_2]] \dots \otimes [[A_n]]$ in the monoidal category $\mathcal{L}_\Gamma$. The weakening of a linear context $\Xi$, as given by the rule:
   \[\inference{\vdash \Gamma; \Xi \text{ ctxt} \quad \Gamma \vdash A \type}{\vdash \Gamma, x : A; \Xi \text{ ctxt}}[C-Weak]
   \]
   will be interpreted as the image of the object $[[\Xi]] \in \mathcal{L}_\Gamma$ under the functor $\pi_A^* : \mathcal{L}_\Gamma \to \mathcal{L}_{\Gamma.A}$ induced by the projection morphism $\pi_A : \Gamma.A \to \Gamma$ in the base. But in general, we do not have an equality of $\pi_A^*(A) \otimes \pi_A^*(B)$ and $\pi_A^*(A \otimes B)$. To accomodate this discrepancy, we introduce the notion of a split monoidal fibration:
-\end{rem}
+\end{remrk}
 \begin{defn}
- A split monoidal fibration is a lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, equipped with a cleavage  $\{ u^*, \bar u \}_{u \in \mathcal{C}}$, so that every lift $u^*$ is a strict monoidal functor, and $u^*v^* = (vu)^*$ for all compatible liftings $u^*$ and $v^*$.
+ A \textbf{split monoidal fibration} is a lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, equipped with a cleavage  $\{ u^*, \bar u \}_{u \in \mathcal{C}}$, so that every lift $u^*$ is a strict monoidal functor, and $u^*v^* = (vu)^*$ for all compatible liftings $u^*$ and $v^*$.
 \end{defn}
-Equipped with these notions, we can define the general structure of the structural core of our type theory:\\
-A model for linear dependent type theory consists of a split comprehension $p : \mathcal{T} \to \mathcal{C}$ and a split monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, illustrated in the following picture:
+Notice that this condition is quite strong, as the induced functors of a lax monoidal fibration are generally only lax monoidal. However, every lax monoidal fibration where the induced functors are strong will be equivalent to a split monoidal fibration. Equipped with these notions, we define the general structure of the structural core of our type theory:
+
+A model for linear dependent type theory consists of a split comprehension category $p : \mathcal{T} \to \mathcal{C}$ and a split monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, as illustrated in the following picture:
 \[
 \ti
 \mathcal{L} \ar[rd, "q"] & \mathcal{T} \ar[d, "p"] \ar[r, "\pi"] & \mathcal{C^\rightarrow} \ar[ld, "\text{cod}"]\\
 & \mathcal{C}
 \kz
 \]
-Before proving soundness by induction on the derivation rules of Figure \ref{struc}, we will need the following lemma:
-\begin{lem}\label{pb-lem}
+Before showing how this works in detail, the following lemma will come in handy:
+\begin{lemm}\label{pb-lem}
   The pullback of an arrow, $g$, has a section if $g$ does. In other words, given a pullback of $g$:
   \[
     \ti
@@ -905,8 +916,8 @@ Before proving soundness by induction on the derivation rules of Figure \ref{str
 \begin{proof}
 Since $A$ with projections $1_A$ and $hf$ forms a cone to the cospan, there exists a unique map $u : A \to A \times_{C} B$ such that $hfu = k$ and $g^*u = 1_A$, making $u$ a section of $g^*$.
 \end{proof}
-\end{lem}
-
+\end{lemm}
+We prove soundness by defining an interpretation function by induction on the derivation rules of Figure \ref{struc}.
 \begin{thm}[Soundness]
 A split comprehension category $p : \mathcal{T} \to \mathcal{C}$ together with a split monoidal fibration $q : \mathcal{L} \to \mathcal{C}$ is a model for the linear dependent type theory consisting of the structural rules presented in Figure \ref{struc}.
 \begin{proof}
@@ -1154,8 +1165,34 @@ s^*\pi_A^*\sqsubset_A(\Xi'\{\pi_A\} \otimes B) = \sqsubset_A(\Xi'\{\pi_A\} \otim
 \]
 which follows from applying the functor $s^*$ to the equality $\eta_{\Xi'\{\pi_A\}\otimes B}\circ \pi^*_A\hat c = c$.
 \begin{defn}\label{semanticML}
-  A model of LDTT \textbf{supports the operators $M$ and $L$} if there exists monoidal functors $M : \mathcal{L}_{\Gamma} \leftrightarrow \mathcal{T}_{\Gamma} : L$ over every fiber $\Gamma$ such that $L \dashv M$.
+  A model of LDTT \textbf{supports the operators $M$ and $L$} if there exists monoidal functors $M : \mathcal{L}_{\Gamma} \leftrightarrow \mathcal{T}_{\Gamma} : L$ over every fiber $\Gamma$ such that $L$ is monoidal left adjoint to $M$.
+\end{defn}
+I cannot make this work.\\
+There are various degrees to which a model can support universes. The baseline condition is an object $U$ in every fiber such there is an object in the same fiber for every section of the corresponding projection. In order to even state what it means for a universe to be closed under various types, we need to assume that our model supports such types.
+\begin{defn}A model of LDTT \textbf{supports cartesian universes}, if for every $\Gamma \in \mathcal{C}$, there exists an object $U \in \mathcal{T}_{\Gamma}$, such that, for every section $t : \Gamma \to \Gamma.U$ to the corresponding projection, there exists an object $El(t) \in \mathcal{T}_{\Gamma}$. For a model that supports the type former in question, the universe is closed under this type if:
+  \begin{itemize}
+  \item $\Pi$-types (or $\Sigma$). For sections $t : \Gamma \to \Gamma.U$ and $v : \Gamma.El(t) \to \Gamma.El(t).U$, there is a section $\hat \Pi_{El(t)}v : \Gamma \to \Gamma.U$ such that $El(\hat \Pi_{El(t)}) = \Pi_{El(t)}El(v)$ (or $\Sigma$) i.e. if the object corresponding to $\hat \Pi_{El(t)}v$ is equal the image of $El(v)$ under the functor corresponding to the semantic type former.
+  \item $Id$-types. For sections $A : \Gamma \to \Gamma.U$, $a, b : \Gamma \to \Gamma.El(A)$, there is a section $\hat Id(a, b) : \Gamma \to \Gamma.U$, such that $El(\hat Id(a, b)) = Id_A$.
+  \end{itemize}
+\end{defn}
+Linear universes are defined in the same fashion, keeping in mind that the linear universe is a cartesian type.
+\begin{defn}
+  A model of LDTT \textbf{supports linear universes}, if, for every $\Gamma \in \mathcal{C}$, there is an object $L \in \mathcal{T}_{\Gamma}$, such that for every section $t : \Gamma \to \Gamma.L$ to the corresponding projection, there exists an object $El(t)$ in $\mathcal{L}_{\Gamma}$. For a model that supports the type former in question, the linear universe is closed under this type if:
+  \begin{itemize}
+    \item $I$, (or $\top$, $0$): There is a section $\hat I : \Gamma \to \Gamma.L$, (or $\top$, $0$) such that $El(\hat I) = I$ in $\mathcal{L}_\Gamma$.
+    \item $\otimes$ (or $\multimap$, $\&$): For every pair of sections $a, b : \Gamma \to \Gamma.L$, there is a section $\hat{a\otimes b}$ (or $\hat \multimap$, $\hat \&$) such that $El(\hat{a\otimes b}) = El(a)\otimes El(b)$
+    \end{itemize}
   \end{defn}
+  \begin{defn}
+    Given a model supporting both cartesian and linear universes, these are closed under:
+    \begin{itemize}
+    \item $M$, if, for every section $x : \Gamma \to \Gamma.L$, there exists an element $\hat M(x) : \Gamma \to \Gamma.U$ such that $El(\hat M(x)) = M(El(x))$.
+    \item $L$, if, for every section $x : \Gamma \to \Gamma.U$, there exists an element $\hat L(x) : \Gamma \to \Gamma.L$ such that $El(\hat L(x)) = L(El(x))$.
+    \item $\sqcap$ (or $\sqsubset$), if, for sections $t : \Gamma \to \Gamma.U$ and $s : \Gamma.El(t) \to \Gamma.El(t).L$, there exists a section $\hat \sqcap_{El(t)}s : \Gamma \to \Gamma.L$ (or $\hat \sqsubset$), such that $El(\hat \sqcap_{El(t)}s) = \sqcap_{El(t)}El(s)$.
+    \end{itemize}
+\end{defn}
+
+
 \newpage
 \section{Models}
 \subsection{Set indexed families}
@@ -1320,7 +1357,7 @@ G(f) &= F(f)
 \]
 where $g_c : I \to F(c)$ is some morphism satisfying the commutativity conditions above. This uniqely defines a natural transformation $g \in \diag(\mathcal{V})(\mathcal{C})(I, J\{F\})$. Furthermore, for any natural transformation $\eta \in \diag(\mathcal{V})(\mathcal{C})(I, J\{F\}$, there is a corresponding functor $\hat \eta : \mathcal{C} \to (I \downarrow J)$ mapping $c \mapsto (F(c), \eta_c)$.
 \end{proof}
-\begin{lem}
+\begin{lemm}
 For any groupoid $G$ and functor $A \in [G, \mathcal{V}]$ the comma category $(I \downarrow A)$ is a groupoid, and its associated projection $p_{G.A} : (I \downarrow A) \to G$ is a fibration.
 \begin{proof}
 A morphism between objects $(g, i)$, $(g', i')$ in $(I \downarrow A)$ are given by a morphism $f : g \to g'$ in $G$ such that $A(f) \circ i = i'$. Since $G$ is a groupoid there exists an inverse $f^{-1}$. That this map yields an inverse of $(I \downarrow A)$ is immediate from the fact that the following diagram in $\mathcal{V}$ commutes:
@@ -1332,10 +1369,10 @@ I \ar[rd,"i'",swap] \ar[r, "i"] & A(g) \ar[d, "A(f)", bend right,swap] \\
 \]
 To see that $p$ is a fibration, let $(g, i)$ be an object of $(I \downarrow A)$ and $f : g \to g'$ an arrow in $G$. Then the object $(g', A(f)\circ i)$ together with $f$ seen as a morphism of $(I \downarrow A)$ form an immediate commutative diagram in $\mathcal{V}$.
 \end{proof}
-\end{lem}
-\begin{cor}
+\end{lemm}
+\begin{corl}
 The restriction of $\diag(\mathcal{V})$ to the category of groupoids is also a model for IDLTT.
-\end{cor}
+\end{corl}
 
 \end{thm}
 The functor $p_{\mathcal{D}.J}$ will sometimes be referred to as the \textbf{projection} associated to $J$.
@@ -1351,7 +1388,7 @@ p(e_1) \ar[r, "p(f)"] \ar[rd, "p(h)"] & p(e_2) \ar[d, "g"] \\
 \]
 there exists a unique morphism $\hat g : e_2 \to e_3$ such that $p(\hat g) = g$ and $\hat g f = h$.
 \end{defn}
-\begin{lem}{unique-target}
+\begin{lemm}{unique-target}
 For a functor $p : E \to B$ and $f_1 : e_1 \to e_2$, $f_2 : e_1 \to e_3$ two coCartesian morphisms such that $p(f_1) = p(f_2) = \alpha : b_1 \to b_2$, there is a unique isomorphisms $\phi : e_2 \to e_3$ such that the following diagram commutes:
 \[
 \ti
@@ -1362,7 +1399,7 @@ e_2 \ar[r,"\phi"] &  e_3
 \begin{proof}
 Since $f_1$ coCartesian, the composition $Id_{b_2} \circ p(f_1) = p(f_2)$ has a unique lift $\phi : e_2 \to e_3$ in $E$ such that $\phi f_1 = f_2$. Similarly, there is a unqie morphism $\psi : e_3 \to e_2$ such that $\psi f_2 = f_1$. Composing, we get an arrow $\psi \phi f_1 = f_1$. But since we also have $Id_{b_2} \circ p(f_1) = p(f_1)$, the only arrow $\pi : e_2 \to e_2$ such that $\pi f_1 = f_1$ must be the identity on $e_2$, so $\phi$ is a isomorphism.
 \end{proof}
-\end{lem}
+\end{lemm}
 \begin{defn}[Opfibration]
 A functor $p : E \to B$ is an \textbf{opfibration} if for every $e_1 \in E$ and arrow $\alpha : p(e_1) \to b$ in the base $B$, there exists a coCartesian arrow $f : e_1 \to e_2$ in $E$ such that $p(f) = \alpha$.
 \end{defn}
