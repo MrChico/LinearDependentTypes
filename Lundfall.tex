@@ -438,18 +438,21 @@ Below are the syntactic rules for the operators $M$ and $L$. \\
 \inference{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t : B}{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t \equiv t[s/x]  : B}[L-C]
 \]\\
 \[
-      \inference{\Gamma; y : A_L, \Xi \vdash t : B \\
+  \inference{
+    \Gamma; y : A_L, \Xi \vdash t : B \\
     \Gamma; y : A_L, \Xi \vdash t' : B \\
-      \Gamma, x : A; \Xi \vdash t[x_L/y] \equiv t'[x_L/y] : B\\
-      \Gamma; \Xi' \vdash a : A_L }
-    {\Gamma; \Xi, \Xi' \vdash t[a/y] \equiv t'[a/y]}[L-U]
+    \Gamma, x : A; \Xi' \vdash t[x_L/y] \equiv t'[x_L/y] : B\\
+    \Gamma \vdash a : A_L \\}
+  {
+    \Gamma; \Xi, \Xi' \vdash t[a/y] \equiv t[a/y] : B\\
+  }[L-U]
   \]\\
 \[
   \inference{\Gamma; y : A_L, \Xi \vdash t : B \\
     (\Gamma, x : A; \Xi \vdash t[x_L/y] : B)\\
     \Gamma; \Xi' \vdash a : A_L 
   }
-  {\Gamma; \Xi, \Xi' \vdash \text{let $a$ be $x$ in $t[x_L/y]$} \equiv t[a/y] : B}[L-U]
+  {\Gamma; \Xi, \Xi' \vdash \text{let $x$ be $a$ in $t[x_L/y]$} \equiv t[a/y] : B}[L-U]
 \]
 
 \end{minipage}
@@ -479,8 +482,30 @@ Below are the syntactic rules for the operators $M$ and $L$. \\
 }\\
 As a motivation for the semantic interpretation of $L$ and $M$ as adjoint functors given in \ref{semanticML}, we will demonstrate that they already satisfy the relevant conditions from a syntactic point of view. That is, in the spirit of functional programming, we think of the cartesian and linear types (in a context $\Gamma$) of our theory forming the respective categories $\mathcal{T}$ and $\mathcal{L}$ whose morphisms are functions, composition given by function composition. Here, the canonical variable-as-term judgement $\Gamma, x : A \vdash x : A$, or, $\Gamma; z : B \vdash z : B$, yields the identity on a cartesian type $A$ or a linear type $B$, respectively.
 \begin{thm}
-  $M$ is a (syntactic) functor
+  $M$ is a functor. I.e. for any linear types, $\Gamma \vdash A \linear$ and $\Gamma \vdash B \linear$, there is a term $fmap : M(A \multimap B) \to MA \to MB$ such that $fmap M(id_A) \equiv id_{MA}$.
   \begin{proof}
+  Define:
+  \[
+    \Gamma, f : M(A \multimap B), a : A_M \vdash (\sigma(f)\sigma(a))_M : B_M
+  \]
+  and see that for $f = M(id_A)$, we have $\sigma(f)(\sigma(a)) \equiv id_A\sigma(a)_M \equiv a : A_M$.
+\end{proof}
+\end{thm}
+\begin{thm}
+  $L$ is a functor. I.e. for any cartesian types, $\Gamma \vdash A \type$ and $\Gamma \vdash B \type$, there is a term $fmap : L(A \to B) \multimap LA \multimap LB$ such that $fmap L(id_A) \equiv id_{LA}$.
+  \begin{proof}
+  Define:
+  \[
+    \begin{split}
+    \Gamma, f : L(A \to B), y : A; \cdot &\vdash f(y)_L : B_L\\
+    \Gamma, f : L(A \to B); a : A_L &\vdash \text{let $y$ be $a$ in $f(y)_L$} : B_L\\
+    \Gamma; \hat f : L(A \to B), a : A_L &\vdash \text{let $\hat f$ be $f$ in (let $y$ be $a$ in $f(y)_L$)}\\
+  \end{split}
+  \]
+\end{proof}
+\end{thm}
+and now for $\hat f = L(id_A)$, we have $\text{let $\hat f$ be $(id_A)_L$ in (let $y$ be $a$ in $f(y)_L$)} \equiv \text{let $y$ be $a$ in $\hat f(y)_L$}$\\
+
 $\Gamma; x : A \vdash f : B$, the image of $f$ under $M$ is given by:\\
 \[
   \begin{split}
@@ -517,8 +542,8 @@ while $M(g) \circ M(f)$ is given by:
   \end{split}
 \]
 proving functoriality of $M$.\\
-\end{proof}
-\end{thm}
+%\end{proof}
+%\end{thm}
 Functoriality of $L$ is not as immediate. For this we really need to utilize the uniqueness rule L-U:
 \begin{thm}
   $L$ is a (syntactic) functor
@@ -663,9 +688,8 @@ For any term: $\Gamma; y : A_L \vdash f : B$, there is a unique term $\Gamma, x 
  The counit $\epsilon : LM \to 1_{\mathcal{L}_{\Gamma}}$ is at any component $B$ given by:
  \[
   \begin{split}
-    \Gamma, \beta_1 : B_{M} &\vdash \beta_1 : B_{M}\\
-    \Gamma, \beta_2 : B_{M} &\vdash \beta_2 : B_{M}\\
-    \Gamma, \beta_2 : B_{M}; &\cdot \vdash \sigma(\beta_2) : B\\
+    \Gamma, \beta_1 : B_{LM} &\vdash \beta_1 : B_{LM}\\
+    \Gamma, \beta_2 : B_{M}; \cdot &\vdash \sigma(\beta_2) : B\\
     \Gamma; \beta_1 : B_{LM} &\vdash \text{let $\beta_2$ be $\beta_1$ in }\sigma(\beta_2) : B 
   \end{split}
 \]
@@ -716,6 +740,60 @@ so by L-U, we can transform this equality to the desired
     \]
 \end{proof}
 \end{thm}
+It is hard to reason about equality of linear terms since the ordinary $Id$-type is a dependent type, and in the theory we do not allow for type dependency on linear terms. In the presence of the $M$ operator, however, we can form the type $a_M = b_M$ for two terms of the same linear type, which, if $M$ is faithful, serves as a surrogate for linear equality. However, as will be demonstrated by theorem \ref{M-faith}, faithfulness of $M$ is independent of the rest of the theory. This means that one can consistently assume the following theorem (or its negation):
+\[
+  \inference{
+    \Gamma \vdash A \linear\\
+    \Gamma; \cdot \vdash a : A\\
+    \Gamma; \cdot \vdash b : A\\
+    \Gamma \vdash a_M \equiv b_M : A_M}
+  {\Gamma \vdash a \equiv b : A}[M-faith]
+\]
+\begin{comment}
+This is true if and only if the counit of the adjunction is an epimorphism. Syntactically, this means that for any $\Gamma; x : B \vdash f, g : A$
+\[
+  \Gamma; \beta_1 : B_{LM} \vdash f[\text{let $\beta_2$ be $\beta_1$ in $\sigma(\beta_2)$})/x] \equiv g[\text{let $\beta_2$ be $\beta_1$ in $\sigma(\beta_2)$})/x] : A
+\]
+implies
+\[
+\Gamma; x : B \vdash f \equiv g : A
+\]
+Remember, get $\epsilon$ by
+\[
+  \begin{split}
+  \Gamma; \beta_1 : B_{LM} &\vdash \beta_1 : B_{LM}\\
+  \Gamma, \beta_2 : B_M; \cdot &\vdash \sigma(\beta_2) : B\\
+  \Gamma; \beta_1 : B_{LM} &\vdash \text{let $\beta_2$ be $\beta_1$ in $\sigma(\beta_2)$} \equiv : B
+    \end{split}
+  \]
+  (Have:
+  $\Gamma, b : B_M; \cdot \vdash f[\text{let $\beta_2$ be $\beta_1$ in $\sigma(\beta_2)$}/x][b_L/\beta_1] \equiv f[\sigma(b)/x] : A$)
+  which yields:
+  \[
+    \Gamma; \beta_1 : B_{LM} \vdash \text{let $\beta_1$ be $b$ in $f[\sigma(b)/x]$} \equiv f[\text{let $\beta_2$ be $\beta_1$ in $\sigma(\beta_2)$}/x][\beta_1/\beta_1]
+  \]
+  can also get $\Gamma, \beta_2 : B_M; \cdot \vdash (\beta_2)_L : B_{LM}$
+
+
+  as well as:
+  \[
+    \begin{split}
+      \Gamma; b : B_{LM} &\vdash b : B_{LM}\\
+      \Gamma, z : B_M; \cdot &\vdash z_L : B_{LM}\\
+      \Gamma; b : B_{LM} &\vdash \text{let $z$ be $b$ in $z_L$} \equiv b : B_{LM}
+    \end{split}
+  \]
+  Yield by L-U (2):
+  \[
+    \Gamma; \beta_1 : B_{LM} \vdash \text{let $x$ be $\beta_1$ in $\sigma(x)$} \equiv \text{let $\beta_2$ be $\beta_1$ in $\sigma(\beta_2)$}[\beta_1/\beta_1]
+  \]
+  We have:
+  $(\Gamma, c : B_{LM} \vdash $.
+  $\Gamma, b : B_M \vdash f[(\sigma(b)/x] : A$\\
+  $\Gamma; \beta_1 : B_{LM} \vdash \beta_1 : B_{LM}$, yield:\\
+  $\Gamma; \beta_1 : B_{LM} \vdash $
+
+  \end{comment}
 \subsubsection{Linear dependent types}
 Since we allow linear types to dependend on terms of cartesian types, we can form new versions of the $\Pi$- and $\Sigma$-types. We will denote these linear variants of $\Pi$- and $\Sigma$-types by $\sqcap$ and $\sqsubset$, respectively.\\
 \fbox{
@@ -845,6 +923,16 @@ Our cartesian and linear types live in separate universes, $U$ and $L$. Since li
     \]\\
   \end{minipage}
 }\\
+But with linear universes, we can formulate a type level equality of linear types. This means that we can also formulate a univalence axiom \cite{voed} for linear types. First, we define the identity function:
+\[
+  id : \sqcup_{A : \mathcal{L}}
+\]
+
+
+\[
+  equiv(A, B) = \Pi_{f : A \multimap B}
+\]
+
 \section{Semantics}
 \subsection{Structural semantic core}
 To explore the models of linear dependent type theory we begin by constructing a categorical structure which abstracts the key features of the theory. We will utilize the notion of a \textit{comprehension category}, which provides the most general structure in which we can deal with the structural rules like context extensions and substitutions. Once this has been taken care of we may consider what extra conditions have to be imposed in order for the model to support various type constructors, and then provide concrete models that satisfy these conditions.\\
@@ -1033,8 +1121,32 @@ Finally, if $B$ is an object of $\mathcal{L}_{\Gamma.A.\Gamma'}$, then the image
 \end{proof}
 \end{thm}
 \subsection{Semantic type formers}
-In the following, we assume that the comprehension category comprising the core of our syntax is full. \begin{defn}A \textbf{model of LDTT} is a full, split comprehension category $\pi : \mathcal{T} \to \mathcal{C}^{\to}$ and a split monoidal fibration $q : \mathcal{L} \to \mathcal{C}$. In some cases we also assume that the comprehension category has a unit, i.e. that there is a functor $\mathbf{1} : \mathcal{C} \to \mathcal{T}$, assigning a terminal object to every fiber which is a left adjoint to the functor $s(\pi) : \mathcal{T} \to \mathcal{C}$, selecting the source of the morphism assigned by $\pi$. This yields the nice property that $\mathcal{C}_{/\Gamma}(\Gamma.A, \Gamma.B) \cong \mathcal{T}_{\Gamma.A}(1, \pi_A^*(B))$, allowing us to shift in perspective to think of terms depending on $\Gamma$ and $A$ as either living in the slice category $\mathcal{C}_{/\Gamma}$ or in the fiber $\mathcal{T}_{\Gamma.A}$.
+In the following, we assume that the comprehension category comprising the core of our syntax is full, i.e. that the functor $\pi : \mathcal{T} \to \mathcal{C}^{\to}$ is full and faithful. This allows us to think of homsets $\mathcal{T}_\Gamma(A, B)$ as living over the base category projections $\mathcal{C}_\Gamma(\pi_A : \Gamma.A \to \Gamma, \pi_B : \Gamma.B \to \Gamma)$.
+\begin{defn}A \textbf{model of LDTT} is a full, split comprehension category $\pi : \mathcal{T} \to \mathcal{C}^{\to}$ and a split monoidal fibration $q : \mathcal{L} \to \mathcal{C}$.\\
 \end{defn}
+  It will sometimes be useful to also assume that the comprehension category has a \textit{unit}, as this give us an isomorphism $\mathcal{C}_\Gamma(\pi(A), \pi(B)) \cong \mathcal{T}_{\Gamma.A}(1, \pi^*_A*(B))$ \cite{jacobs}.
+\begin{defn}
+    A fibration $p : \mathcal{T} \to \mathcal{C}$ \textbf{admits a terminal object} if there is a functor $\mathbf{1} : \mathcal{C} \to \mathcal{T}$, such that for every $\Gamma \in \mathcal{C}$, $\mathbf{1}(\Gamma)$ is a terminal object of the fiber $\mathcal{T}_{\Gamma}$, and for every $f : \Delta \to \Gamma$, the canonical map $\alpha : f^*(\mathbf{1}(\Gamma)) \to \mathbf{1}(\Delta)$ is an isomorphism.
+  \end{defn}
+  As a result of this definition, the functor $\mathbf{1}$ is full and faithful.
+  \begin{defn}
+    A comprehension category $\pi : \mathcal{T} \to \mathcal{C}^{\to}$ \textbf{has a unit} if the fibration $p : \mathcal{T} \to \mathcal{C}$ admits a terminal object functor $\mathbf{1}$ which is left adjoint to the functor $s(\pi) : \mathcal{T} \to \mathcal{C}$, selecting the source of the morphism assigned by $\pi$.
+  \end{defn}
+  Most of our models will naturally be equipped with such a structure, and this yields the nice property that $\mathcal{C}_{/\Gamma}(\Gamma.A, \Gamma.B) \cong \mathcal{T}_{\Gamma.A}(1, \pi_A^*(B))$, allowing us to shift in perspective to think of terms depending on $\Gamma$ and $A$ as either living in the slice category $\mathcal{C}_{/\Gamma}$ or in the fiber $\mathcal{T}_{\Gamma.A}$. Importantly, since $\mathbf{1}$ is full and faithful, the unit of the adjunctionis an isomorphism, meaning that for every $A \in \mathcal{T}_\Gamma$, we have $eta_A : A_{\Gamma} \cong 1_{\Gamma.A}$. But as these objects live in different slices, the following result is more convenient
+  \begin{thm}
+    For any $A$ over $\Gamma$, we have that $1_{\Gamma.A} \cong \pi_A^*(A)$.
+    \begin{proof}
+The cartesian property of the lift of $\pi_A$ gives rise to the unique arrow $v$ in the following diagram:
+      \[
+        \ti
+        1_{\Gamma.A} \ar[rd, "\eta_A^{-1}"] \ar[d, "\exists!v"] & \\
+        \pi^*_A(A) \ar[r, "\pi_A^*"] & A\\
+        \kz
+        \]
+    \end{proof}
+      Since $1_{\Gamma.A}$ is a terminal object in the same slice as $\pi_A^*(A)$, there also exists a unique arrow $v$ in the other direction. Since $uvu = u$ and $vuv = v$ they form an isomorphism.
+  \end{thm}
+  
 \begin{defn}
   A model of LDTT \textbf{supports $I$-types} if, for every $\Gamma$, there is exists an object $[[I]] \in \mathcal{L}_{\Gamma}$, equipped with a morphism $[[*]] : I \to [[I]]$, such that for every pair of maps $t : \Xi' \to [[I]]$ and $c : \Xi \to C$, there exists a map $[[\text{let $t$ be * in $c$}]] : \bigotimes \Xi, \Xi' \to C$ such that $[[\text{let * be * in $c$}]] = c$.
 \end{defn}
@@ -1175,12 +1287,10 @@ s^*\pi_A^*\sqsubset_A(\Xi'\{\pi_A\} \otimes B) = \sqsubset_A(\Xi'\{\pi_A\} \otim
 \]
 which follows from applying the functor $s^*$ to the equality $\eta_{\Xi'\{\pi_A\}\otimes B}\circ \pi^*_A\hat c = c$.
 \begin{defn}\label{semanticML}
-  A model of LDTT which supports simple products \textbf{supports the operators $M$ and $L$} if there exists strong monoidal functors $M : \mathcal{L} \leftrightarrow \mathcal{T} : L$ which are cartesian with respect to the fibrations $p : \mathcal{T} \to \mathcal{C}$ and $q : \mathcal{L} \to \mathcal{C}$, such that the following conditions hold:
+  A model of LDTT with unit and simple products \textbf{supports the operators $M$ and $L$} if there exists monoidal functors $M : \mathcal{L} \leftrightarrow \mathcal{T} : L$ which are cartesian with respect to the fibrations $p : \mathcal{T} \to \mathcal{C}$ and $q : \mathcal{L} \to \mathcal{C}$, such that $L \dashv M$ is a fibred, monoidal adjunction such that:
   \begin{enumerate}
-    \item $L \dashv M$ is a fibred, monoidal adjunction
-    \item For $A \in \mathcal{T}_\Gamma$ and morphisms $t : \pi^*_A(\Xi') \to \pi^*_A(B)$ in $\mathcal{L}_{\Gamma.A}$ and $y : \Xi \to L(A)$ in $\mathcal{L}_\Gamma$, there exists a morphism $e(y, t) : \Xi \otimes \Xi' \to B$ in $\mathcal{L}_\Gamma$, such that for any section $s : \Gamma \to \Gamma.A$, we have $e(L(\hat s),t) = s^*(t)$, where $\hat s \in \mathcal{T}(1, A)$ arises out of the section.
-    \item The map $\pi^*_A(-) \circ (u \otimes 1_{\pi^*_A \Xi}) : \mathcal{L}_\Gamma(LA \otimes \Xi, B) \to \mathcal{L}_{\Gamma.A}(\pi^*_A(\Xi), \pi^*_A(B))$ is injective, where $u : I \to \pi^*_A(L_{\Gamma}A)$ corresponds to the image of the canonical $\hat {var_A} : 1 \to \pi^*_A(A)$ in $\mathcal{T}_{\Gamma.A}$ under $L$.
-      \end{enumerate}
+  \item There is an isomorphism of hom-sets $\mathcal{L}_{\Gamma.A}(\pi_A^*(\Xi'), \pi_A^*(B)) \cong \mathcal{L}_\Gamma(LA \otimes \Xi', B)$.
+    \end{enumerate}
 \end{defn}
 Recall that a fibred adjunction implies that there are natural isomorphisms making the following diagram commute:
 \[
@@ -1189,26 +1299,71 @@ Recall that a fibred adjunction implies that there are natural isomorphisms maki
   \mathcal{L}_{\Gamma.A} \ar[r, "M_{\Gamma.A}", bend right] & \mathcal{T}_{\Gamma.A} \ar[l, "L_{\Gamma.A}", bend right]\\
   \kz
 \]
-which from a syntactic perspective ensures that $M$ and $L$ commute with substitution. This is how $u$ is constructed. We have a morphism $\hat {var_A} : \mathcal{T}_{\Gamma.A}(1, \pi_A^*(A))$ corresponding to the canonical section $var_A : \Gamma.A \to \Gamma.A.A^+$, so that $L(\hat {var_A}) : L(1) \to L_{\Gamma.A}\pi_A^*(A)$ corresponds to a $u : I \to \pi_A^*L_\Gamma(A)$ via the isomorphisms above and the fact that $L$ is strongly monoidal.\\
-\begin{comment}
-We can therefore get the map $u$ by translating $var_A : \Gamma.A \to \Gamma.A.A^+$ through the isomorphisms:
-\[
-\mathcal{C}_\Gamma(A, A.^+) \cong \mathcal{T}_{\Gamma.A}(1, \pi  \mathcal{T}_\Gamma(A, M_\Gamma L_\Gamma A) \cong \mathcal{T}_{\Gamma.A}(1, \pi^{(*)\mathcal{T}}_A(M_\Gamma L_\Gamma A)) \cong \mathcal{T}_{\Gamma.A}(1, M_{\Gamma.A}(\pi^{(*)\mathcal{L}}_A L_\Gamma A))) \cong \mathcal{L}_{\Gamma.A}(L(1), \pi^{*(\mathcal{L})}_AL_\Gamma A) \cong \mathcal{L}_{\Gamma.A}(I, \pi^{*(\mathcal{L})}_AL_\Gamma A)
-\]
-\end{comment}
-Conditions 2 and 3 correspond to the elimination and computation rules for the $L$ operator respectively, and while they might appear somewhat unnatural semantically, they turn out to be hold in a large class of models, thanks to the following result:
-\begin{thm}If the reindexing functors $\pi_A^*$ of the monoidal fibration $q : \mathcal{L} \to \mathcal{C}$ of a model of LDTT with unit are full and faithful, then any strong fibred monoidal adjunction $L \dashv M$ satisfies conditions 2 and 3.
+which from a syntactic perspective ensures that $M$ and $L$ commute with substitution.\\
+The final condition of the definition is what yields the elimination and computation rules L-U, and while it might appear somewhat unnatural semantically, it turns out to hold in a large class of models, satisfying that the reindexing functors $\pi_A^*$ of the monoidal fibration are full and faithful.
+\begin{thm}For all $A \in \mathcal{T}_\Gamma$, if $\pi_A^* : \mathcal{L}_\Gamma \to \mathcal{L}_{\Gamma.A}$ is full and faithful, then any strong monoidal fiber adjunction $L \vdash M$ satisfies $\mathcal{L}_{\Gamma.A}(\pi^*(\Xi'), \pi^*(B)) \cong \mathcal{L}_\Gamma(LA \otimes \Xi', B)$.
   \begin{proof}
-    Let $\phi_A : \mathcal{L}_{\Gamma.A}(\pi^*_A(E),\pi^*_A(D)) \to \mathcal{L}_\Gamma(E, D)$ be the inverse to the function induced on homsets by $\pi_A$. By sending the unique map from $\pi^*_A(A)$ to $1$ in $\mathcal{T}_{\Gamma.A}$ through the isomorphisms
+    Since $1_{\Gamma.A} \cong \pi^*_A A$ in $\mathcal{T}_{\Gamma.A}$, we have $I \cong L(1) \cong L_{\Gamma.A}(\pi_A^* A) \cong \pi_A^*(L_{\Gamma}A)$ in $\mathcal{L}_{\Gamma.A}$. By this there is an isomorphism of homsets:
+    \[
+      \begin{split}
+        \mathcal{L}_{\Gamma.A}(\pi^*_A\Xi', \pi^*_AB) \cong \\
+        \mathcal{L}_{\Gamma.A}(I \otimes \pi^*_A\Xi', \pi^*_AB) \cong \\
+        \mathcal{L}_{\Gamma.A}(\pi^*LA \otimes \pi^*_A\Xi', \pi^*_AB) \cong \\
+        \mathcal{L}_{\Gamma}(LA \otimes \Xi', B)
+        \end{split}
+    \]
+  \end{proof}
+\end{thm}
+The requirement that the reindexing functors are full and faithful is a reasonable requirement from a syntactic perspective, as it says that no terms are lost nor gained from weakening the cartesian part of the context in a linear judgement. It comes as no surprise then, that another sitatution when we can support $M$ and $L$ ``for free'' is in the presence of semantic $[-,-]$ type formers.
+\begin{thm}In a model of LDTT that supports $[-,-]$ type formers, then any strong fibred monoidal adjunction $L \dashv M$ satisfies $\mathcal{L}_{\Gamma.A}(\pi^*_A(\Xi'), \pi^*(B)) \cong \mathcal{L}_{\Gamma}(LA \otimes \Xi', B)$.
+  \begin{proof}
+    A model supporting internal homs must have reindexing functions which preserve these. That is, we havean isomorphism $\pi_A^*[A, B] \cong [\pi_A^*A, \pi^*B]$. We get a chain of isomorphisms:
+\[
+      \begin{split}
+&        \mathcal{L}_{\Gamma}(LA \otimes \Xi, B) \cong \\
+ &       \mathcal{L}_{\Gamma}(LA, [\Xi, B]) \cong \\
+  &      \mathcal{T}_{\Gamma}(A, M_{\Gamma}[\Xi, B]) \cong \\
+ &\mathcal{T}_{\Gamma.A}(1, \pi_A^*(M_{\Gamma}[\Xi, B])) \cong \\
+ &\mathcal{T}_{\Gamma.A}(1, M_{\Gamma.A}\pi_A^*[\Xi, B])) \cong \\
+ &\mathcal{L}_{\Gamma.A}(I, \pi_A^*[\Xi, B])) \cong \\
+ &\mathcal{L}_{\Gamma.A}(I, [\pi_A^*\Xi, \pi_A^*B])) \cong \\
+ &\mathcal{L}_{\Gamma.A}(\pi_A^*\Xi, \pi_A^*B).
+      \end{split}
+\]
+  \end{proof}
+\end{thm}
+\begin{comment}
+Since epimorphisms are preserved by left adjoints, we can precompose with $L_{\Gamma.A}(var)$ to get an isomorphism:
+    \[
+      \mathcal{L}_{\Gamma.A}(\pi_A^*\Xi', \pi^*_AB) \cong  \mathcal{L}_{\Gamma.A}((L_{\Gamma.A}(\pi_A^*A) \otimes \pi_A^*\Xi'), \pi^*_AB)
+    \]
+    and since $L_{\Gamma.A}\pi^*_AA \cong \pi^*_AL_\Gamma A$ we get our desired isomorphism by full and faithfulness of $\pi_A^*$.
+\end{comment}
+
+\begin{comment}
+    Let $\pi_A^{*{-1}} : \mathcal{L}_{\Gamma.A}(\pi^*_A(E),\pi^*_A(D)) \to \mathcal{L}_\Gamma(E, D)$ be inverse to the isomorphism of homsets induced by $\pi_A$. By sending the unique map from $\pi^*_A(A)$ to $1$ in $\mathcal{T}_{\Gamma.A}$ through the isomorphisms
     \[
       \mathcal{T}_{\Gamma.A}(\pi^*_AA,1) \cong \mathcal{T}_{\Gamma.A}(\pi^*_AA,M(I)) \cong \mathcal{L}_{\Gamma.A}(L_{\Gamma.A}\pi^*_AA,I) \cong \mathcal{L}_{\Gamma.A}(\pi^*_AL_{\Gamma}A,I)
     \]
-    we get map $v : \pi^*_AL_\Gamma A \to I$. Using this, we define $e(y,t) = \phi_A(t \circ (v \otimes 1_{\pi^*_A(\Xi')})) \circ (y \otimes 1_{(\Xi')})$. Now, since any section $s : \Gamma \to \Gamma.A$ is also an inverse to the induced functor on homsets, it must be the same as $\phi_A$.
+we get the map $v : \pi^*_AL_\Gamma A \to I$, which is a retract of any map from $I \to \pi_A^*L_\Gamma A$. We define $f = \pi_A^{*-1}(- \circ (v \otimes \pi^*_A(\Xi')))$. For any section $s : \Gamma \to \Gamma.A$, we have that $v \circ \pi^*_A(L(\hat s)) : I \to \pi_A^*L_\Gamma A = 1_I$, so we get, for any $t : \pi_A^*(\Xi') \to \pi^*(B)$,
+    \[
+      \pi_A^{*-1}(t \circ v \otimes \pi_A^*\Xi') \circ L(\hat s) = \pi_A^{*-1}(t) \circ (\pi_A^{*-1}(v\pi_A^*L(\hat s)) \otimes \Xi') = \pi_A^{*-1}(t)
+    \]
+    and $s^* = \pi_A^{*-1}$ as functions of homsets.
+    \end{comment}
+\begin{comment} 
+    It remains to show that $f \circ \pi^*_A(-) \circ (u \otimes \pi^*_A(\Xi')) = 1_{\mathcal{L}_{\Gamma}(LA \otimes \Xi', B)}$. For any $t : LA \otimes \Xi' \to B$, we have:
+    \[
+       \pi_A^{*-1}(\pi^*_A(t) \circ (v \otimes \pi^*_A(\Xi')) \circ (u \otimes \Xi')) = t \circ (\pi_A^{*-1}vu \otimes \Xi') = f \circ (I \otimes \Xi') = t
+    \]
+    
+   Using this, we define $e(y,t) = \phi_A(t \circ (v \otimes 1_{\pi^*_A(\Xi')})) \circ (y \otimes 1_{(\Xi')})$. Now, since any section $s : \Gamma \to \Gamma.A$ is also an inverse to the induced functor on homsets, it must be the same as $\phi_A$.
     \[
       \phi_A(t \circ (v \otimes 1_{\pi^*_A(\Xi')}))\circ (L(\hat s) \otimes 1_{(\Xi')}) = s^*(t) \circ (s^*(v)L(\hat s) \otimes 1_{\Xi'})
     \]
     But now $\hat s : \mathcal{T}_{\Gamma}(1, A)$ is obviously a section of the unique map from $A$ to $1$, so by naturality of ismorphisms above we have that $s^*(v)L(\hat s)$ is the identity.\\
-    The situation for condition 3 is illustrated in the following diagram:
+  
+The situation for condition 3 is illustrated in the following diagram:
 
     Since the functors $\pi_A^*$ are strictly monoidal, we have $I = \pi_A^*(I)$ in $\mathcal{L}_{\Gamma.A}$, so we really have that for morphisms $s, t : LA \otimes \Xi \to B$:
     \[
@@ -1218,11 +1373,9 @@ Conditions 2 and 3 correspond to the elimination and computation rules for the $
       s \circ (\phi_A(u) \otimes 1_{\pi_A^* \Xi})) = t \circ (\phi_A(u) \otimes 1_{\pi_A^* \Xi})
      \end{split}
     \]
-   
-
+  
     The second part of the proof remains. What one really ought to do is to make sure that the syntactic interpretation of $L(f)$ overlaps with the semantic.
-  \end{proof}
-\end{thm}
+      \end{comment}
 \begin{comment}
 For compatible $M$ and $L$, there is a natural map
 \[
@@ -1415,7 +1568,13 @@ A \ar[r, "F"] & B
 \]
 where $F^*(p)$ is a fibration if $p$ is, by Lemma(Prop 2.6 in comprehension categories). This shows that $\mathcal{P}$ sends cartesian arrows to cartesian arrows. READ EXAMPLE 4.6 in Comprehension cats
 
-One could also restrict $\diag(\mathcal{V})$ to diagrams in $\mathcal{V}$ over groupoids. In that case, $\mathcal{T}$ consists of fibrations of groupoids and the cartsian fragment of the type theory is essentially the groupoid model as presented by Hofmann and Streicher in \cite{hofmann1998}. This suggests that this model can serve as a setting for linear dependent homotopy type theory.
+One could also restrict $\diag(\mathcal{V})$ to diagrams in $\mathcal{V}$ over groupoids. In that case, $\mathcal{T}$ consists of fibrations of groupoids and the cartsian fragment of the type theory is essentially the groupoid model as presented by Hofmann and Streicher in \cite{hofmann1998}. This suggests that this model can serve as a setting for linear dependent homotopy type theory.\\
+\begin{thm}\label{M-faith}Faithfulness of $M$ is independent.
+  \begin{proof}
+    We have already seen a model for when the functor $M$ is faithful, for example in the families model for any concrete monoidal category $\mathcal{V}$. A model where $M$ is not faithful is given by taking the fibration over families of groupoids $q : [-, \mathbf{Gpd}] \to \mathbf{Gpd}$ as both the cartesian and split monoidal fibration, and defining $L = \delta \pi_0$ and $M = \delta U$, where $U$ is the underlying set functor. We have that $L \vdash M$ is a monoidal fiber adjunction, but $M$ is not faithful.
+  \end{proof}
+\end{thm}
+
 \newpage
 The comprehension of $A \in [\Gamma, \mathbf{Gpd}]$ is the comma groupoid $(\Gamma \downarrow A)$, where objects are functors $F : \Gamma \to A(B)$ for some $B \in \Gamma$, and arrows are commutative diagrams:
 \[
