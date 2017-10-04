@@ -1,0 +1,204 @@
+\section{ILDTT with dependent elimination rules}
+To construct a more intensional flavour of intuitionistic linear dependent type theory, one can augment the elimination rules presented in \cite{vakar14} by allowing the domain type to be dependent on the particular type one is eliminating.
+But in order for this to be possible, one must account for how many times variables appear freely in types. In other words, we need to drop the constraint that types only depend on terms of intuitionistic type. We will split our context in three $\Gamma; \Delta; \Xi$: an intuitionistic context, a (linear) typing context and a (linear) term context.
+Our guiding principle will be the following. In a judgement of the form:
+\[
+\Gamma; x_1 : A_1, x_2 : A_2, \dots x_n : A_n; \vdash B \text{ type}
+\]
+we want:
+\begin{enumerate}
+\item $x_n$ to appear exactly once in $B$
+\item $x_{n-1}$ to appear exactly once in $B$ \textit{or } in $A_n$
+\item $x_{n-2}$ to appear exactly once in $B$ \textit{or} in $A_n$ \textit{or} in $A_{n-1}$
+\item \dots
+\end{enumerate}
+Generally, $x_{n-i}$ appear freely exactly once in $B \bigvee_{k = i + 1, \dots n} A_k$.\\
+For judgements of the form:
+\[
+\Gamma; x_1 : A_1, \dots, x_n : A_n; y_1 : B_1, y_2 : B_2, \dots, y_m : B_m \vdash b : B
+\]
+we want that variables $x_i$ appear exactly once either in $B$, or in any of the types $A_{i+1 \leq k \leq n}$, and that $y_j$ appear exactly once either in $b$ or in $B_{j+1 \leq k \leq m}$.
+\section{Linear contexts as multisets}
+\[
+\inference{\Gamma; \Delta; \Xi \vdash M: A \quad \Gamma; \Delta';\Xi' \vdash \mathcal{J}}
+          {\Gamma[M/x]; \eta_{\Delta'}^x \times \Xi, \Delta'[M/x]; \eta_{\Xi'}^x \times \Xi, \Xi'[M/x] \vdash \mathcal{J}[M/x] }[subst]
+\]
+where $\eta_{S}^x = m(x, S)$ counts the occurences of the variable $x$ in the multiset $S$.
+\[
+\begin{split}
+\inference {\Gamma; \Delta, \eta t: A \otimes B; \cdot \vdash C \text{ type}\\
+\Gamma; \Delta, \eta x: A, \eta y: B; \Xi \vdash c : C[(x \otimes y)/t]\\
+\Gamma; \Xi'; \Xi'' \vdash M: A \otimes B\\
+}
+           {\Gamma; \Delta, \eta \Xi''; \Xi[M/t] \vdash \text{let $M$ be $x \otimes y$ in $c$} : C[M/t]
+           }[$\otimes$-E-Ty]
+\end{split}
+\]\\
+where $\eta$ is a scalar, and $\Xi[M/t]$ is abusive notation for the removal of the $n$-many every occurence of $t$ in $\Xi$ and the addition of $n$ many copies of $\Xi''$
+\subsection*{Type substitution}
+Of course, we always have:
+\[
+\inference{\Gamma; \Delta \vdash A; \text{ type}}
+          {\Gamma; \Delta, x : A; \text{ ctxt} }
+\]
+A crucial component of our system will be substituiton. In addition to the cases given by Vakar, we need to handle the case where the type $B$ depends on a linear variable, $x$:\\
+\[
+\inference{\Gamma; \Delta; \Xi \vdash M: A \quad \Gamma; \Delta', x: A, \Delta''; \vdash B \text{ type}}
+          {\Gamma; \Delta', \Xi, \Delta''[M/x]; \vdash B[M/x] \text{ type} }[Ty-subst]
+\]
+We should notice however, that since $x$ is a linear variable it will only appear once \textit{either} in $\Delta''$ \textit{or } in $B$, so one of the substitutions will always be trivial.
+\[
+\inference{  \Gamma; \Delta; \Xi \vdash M: A \quad \Gamma; \Delta';  \Xi', x : A, \Xi'' \vdash b : B}
+          {\Gamma; \Delta'; \Xi', \Xi, \Xi''[M/x] \vdash b[M/x] : B}[Tm-subst]
+\]
+A helpful slogan might be ``terms at a cost and variables for free''.\\
+\textbf{Exchange} in a linear context is allowed as long as it respects dependency:
+\[
+\inference{
+  \Gamma; \Xi, x : A, x' : A', \Xi'; \cdot \vdash \mathcal{J}
+\quad \text{$x$ not free in $A'$}}
+{\Gamma; \Xi, x' : A', x : A, \Xi'; \cdot \vdash \mathcal{J}}
+\]
+\\
+\section{Typing rules}
+\subsection{Non-dependent tensor}
+\[
+\begin{split}
+\inference {\Gamma; \Delta, t: A \otimes B; \cdot \vdash C \text{ type}\\
+\Gamma;  \Delta, x: A, y: B; \Xi \vdash c : C[(x \otimes y)/t]\\
+\Gamma;    \Xi'; \Xi'' \vdash M: A \otimes B\\
+}
+           {\Gamma; \Delta, \Xi''; \Xi \vdash R_{[t, x, y]} : C[M/t]
+           }[$\otimes$-E-Ty]
+\end{split}
+\]\\
+\[
+\begin{split}
+\inference {\Gamma; \Delta; \cdot \vdash C \text{ type}\\
+\Gamma;  \Delta; \Xi, x: A, y: B \vdash c : C\\
+\Gamma;    \Xi'; \Xi'' \vdash M: A \otimes B\\
+}
+           {\Gamma; \Delta; \Xi, \Xi'' \vdash \text{ let $M$ be $x \otimes y$ in }c : C
+           }[$\otimes$-E-Tm]
+\end{split}
+\]
+\[
+\begin{split}
+\inference {\Gamma; \Delta; \cdot \vdash A \text{ type}\\
+\Gamma;  \Delta, x : A; \cdot \vdash B \text{ type}
+  }
+           {\Gamma; \Delta; \cdot \vdash \prod_{x: A}B \text{ type} 
+             }[$\Pi$-F]
+\end{split}
+\]\\
+\subsection{Non-dependent function}
+\[
+\begin{split}
+\inference {\Gamma;  \Delta; \cdot \vdash A \text{ type}\\
+\Gamma; \Delta; \cdot \vdash B \text{ type}
+}
+           {\Gamma; \Delta, \Delta'; \cdot \vdash A \multimap B \text{ type}
+           }[$\multimap$-I]
+\end{split}
+\]
+\\
+\[
+\begin{split}
+\inference {\Gamma;  \Delta; \Xi \vdash f : A \multimap B\\
+\Gamma;    \Delta; \Xi' \vdash M: A\\
+}
+           {\Gamma; \Delta; \Xi, \Xi' \vdash f (M)
+           }[$\multimap$-E-Ty]
+\end{split}
+\]
+\subsection{Dependent Tensor}
+\[
+\begin{split}
+\inference {\Gamma; \Delta; \cdot \vdash A \text{ type}\\
+ \Gamma; \Delta, x : A; \cdot \vdash B \text{ type}
+  }
+           {\Gamma; \Delta; \cdot \vdash \sum_{x: A}B \text{ type} 
+             }[$\Sigma$-F]
+\end{split}
+\]\\
+
+Remark: Since we won't have weakening as an admissable rule, $x$ should appear freely in $B$.
+\[
+\begin{split}
+  \inference {
+    \Gamma; \Delta; \cdot \vdash \sum_{x : A}B \text{ type}\\
+    \Gamma; \Delta; \Delta' \vdash a : A\\
+    \Gamma; \Delta, \Delta'; \Delta'' \vdash b : B[a/x]\\
+}
+           {\Gamma; \Delta; \Delta', \Delta'' \vdash (a, b) : \sum_{x : A}B}[$\sum$-I]
+\end{split}
+\]\\
+\[
+\begin{split}
+\inference {\Gamma; \Delta, t: \sum_{x : A}B; \cdot \vdash C \text{ type}\\
+\Gamma;  \Delta, x: A, y: B; \Xi \vdash c : C[(x \otimes y)/t]\\
+\Gamma;    \Xi'; \Xi'' \vdash M: \sum_{x : A}B\\
+}
+           {\Gamma; \Delta, \Xi''; \Xi \vdash c : C[M/t]
+           }[$\sum$-E-Ty]
+\end{split}
+\]\\
+\[
+\begin{split}
+\inference {\Gamma; \Delta; \cdot \vdash C \text{ type}\\
+\Gamma;  \Delta; \Xi, x: A, y: B \vdash c : C\\
+\Gamma;    \Delta' (= \Xi?); \Xi' \vdash M: \sum_{x : A}B\\
+}
+           {\Gamma; \Delta; \Xi, \Xi' \vdash \text{R}^{\Sigma}_{[t, M]}(c) : C
+           }[$\sum$-E-Tm]
+\end{split}
+\]\\
+Before asking $\text{R}^{\Sigma}_{[t, (a \otimes b)]}(c) = c[a/x][b/y] : C$ to be given by $\Sigma$-C, let's verify that the contexts necessary to yield both sides are equal:\\
+Let
+\[
+\spl
+\Gamma; \Delta \vdash A \text{ type}\\
+\Gamma; \Delta, x : A \vdash B \text{ type}\\
+\Gamma; \Delta; \Xi \vdash a : A\\
+\Gamma; \Delta, \Xi; \vdash B[a/x] \text{ type}\\
+\Gamma; \Delta, \Xi; \Xi' \vdash b : B[a/x]\\
+\Gamma; \Delta'; \Xi'', x : A, y : B \vdash c : C\\
+\end{split}
+\]
+Does $x$ appear freely in $B$ or $c$? We get two cases.
+\[
+\spl
+\Gamma; \Delta'; \Xi'', \Xi, y : B[a/z] \vdash c : C\\
+\end{split}
+\]
+Then we exchange $b$
+\\
+\subsection{Identity types}
+Does the term $refl : Id(a,a)$ contain $a$ as a free variable or not? For now, lets assume it does not. It should be uniquely given by its type.
+\[
+\begin{split}
+\inference {\Gamma; \Delta; \Xi \vdash N : A\\
+\Gamma;  \Delta; \Xi \vdash M : A\\
+}
+           {\Gamma; \Delta, \Xi; \cdot \vdash Id(M, N) \text{ type}
+           }[Id-F]
+\end{split}
+\]
+\[
+\begin{split}
+\inference {\Gamma; \Delta; \Xi \vdash M : A\\
+}
+           {\Gamma; \Delta, \Xi; \cdot \vdash refl : Id(M, M) \text{ type}
+           }[Id-I]
+\end{split}
+\begin{split}
+  \inference {\Gamma; \Delta, x : A, y : A, p : Id(x, y); \cdot  \vdash C \text{ type}\\
+    \Gamma; \Delta x : A \vdash c : C[x/y, p/refl]\\
+    \Gamma; \Delta'; \Xi \vdash M : A\\
+    \Gamma; \Delta'; \Xi \vdash N : A\\
+    \Gamma; \Delta', \Xi; \cdot \vdash P : Id(M, N)\\
+}
+           {\Gamma; \Delta, \Xi; \vdash c : C[M/x, N/y, P/p]
+           }[Id-E-Ty]
+\end{split}
+\]\\

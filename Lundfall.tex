@@ -1,5 +1,6 @@
 \input{../preamble.tex}
 \usepackage[margin=0.5in]{geometry}
+\usepackage{todonotes}
 %\newtheorem{defn}[thm]{Definition}
 \newtheorem{lemm}[thm]{Lemma}
 %\newtheorem{cor}[thm]{Corollary}
@@ -133,7 +134,6 @@ The path from strict 2-categories to weak 2-categories is marched to the categor
   \]
   subject to the following coherence conditions:
 \end{defn}
-
 
 %\subsection{Spectra}
 %\input{spectra}
@@ -438,16 +438,6 @@ Below are the syntactic rules for the operators $M$ and $L$. \\
 \inference{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t : B}{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t \equiv t[s/x]  : B}[L-C]
 \]\\
 \[
-  \inference{
-    \Gamma; y : A_L, \Xi \vdash t : B \\
-    \Gamma; y : A_L, \Xi \vdash t' : B \\
-    \Gamma, x : A; \Xi' \vdash t[x_L/y] \equiv t'[x_L/y] : B\\
-    \Gamma \vdash a : A_L \\}
-  {
-    \Gamma; \Xi, \Xi' \vdash t[a/y] \equiv t[a/y] : B\\
-  }[L-U]
-  \]\\
-\[
   \inference{\Gamma; y : A_L, \Xi \vdash t : B \\
     (\Gamma, x : A; \Xi \vdash t[x_L/y] : B)\\
     \Gamma; \Xi' \vdash a : A_L 
@@ -480,101 +470,46 @@ Below are the syntactic rules for the operators $M$ and $L$. \\
 \]
 \end{minipage}
 }\\
-As a motivation for the semantic interpretation of $L$ and $M$ as adjoint functors given in \ref{semanticML}, we will demonstrate that they already satisfy the relevant conditions from a syntactic point of view. That is, in the spirit of functional programming, we think of the cartesian and linear types (in a context $\Gamma$) of our theory forming the respective categories $\mathcal{T}$ and $\mathcal{L}$ whose morphisms are functions, composition given by function composition. Here, the canonical variable-as-term judgement $\Gamma, x : A \vdash x : A$, or, $\Gamma; z : B \vdash z : B$, yields the identity on a cartesian type $A$ or a linear type $B$, respectively.
-\begin{thm}
-  $M$ is a functor. I.e. for any linear types, $\Gamma \vdash A \linear$ and $\Gamma \vdash B \linear$, there is a term $fmap : M(A \multimap B) \to MA \to MB$ such that $fmap M(id_A) \equiv id_{MA}$.
-  \begin{proof}
-  Define:
-  \[
-    \Gamma, f : M(A \multimap B), a : A_M \vdash (\sigma(f)\sigma(a))_M : B_M
-  \]
-  and see that for $f = M(id_A)$, we have $\sigma(f)(\sigma(a)) \equiv id_A\sigma(a)_M \equiv a : A_M$.
-\end{proof}
-\end{thm}
-\begin{thm}
-  $L$ is a functor. I.e. for any cartesian types, $\Gamma \vdash A \type$ and $\Gamma \vdash B \type$, there is a term $fmap : L(A \to B) \multimap LA \multimap LB$ such that $fmap L(id_A) \equiv id_{LA}$.
-  \begin{proof}
-  Define:
+As a motivation for the semantic interpretation of $L$ and $M$ as adjoint functors given in \ref{semanticML}, we will demonstrate that they already satisfy the relevant conditions from a syntactic point of view. That is, in the spirit of functional programming, we think of the cartesian and linear types (in a context $\Gamma$) of our theory forming the respective categories $\mathcal{T}$ and $\mathcal{L}$ whose objects are types and morphisms are functions and composition is given by function composition. The identity function $\lambda x. x : A \to A$, yields the identity on cartesian types, while $\lambda x.x : B \multimap B$ is the identity for linear $B$.
+\begin{defn}Define $\_\hat \circ\_ : (B \multimap C) \multimap (A \multimap B) \multimap (A \multimap C)$ and $\_ \circ\_ : (B \to C) \to (A \to B) \to (A \to C)$ by:
   \[
     \begin{split}
-    \Gamma, f : L(A \to B), y : A; \cdot &\vdash f(y)_L : B_L\\
-    \Gamma, f : L(A \to B); a : A_L &\vdash \text{let $y$ be $a$ in $f(y)_L$} : B_L\\
-    \Gamma; \hat f : L(A \to B), a : A_L &\vdash \text{let $\hat f$ be $f$ in (let $y$ be $a$ in $f(y)_L$)}\\
-  \end{split}
+    g \hat \circ f = \lambda x. g(f(x))\\
+    g \circ f = \lambda x. g(f(x))
+    \end{split}
+  \]
+\end{defn}
+
+\begin{thm}\label{Mfunc}
+  $M$ is a (syntactic) functor. In other words, for any linear types, $\Gamma \vdash A \linear$ and $\Gamma \vdash B \linear$, there is a term
+\[
+  \textup{\texttt{fmap}} : (A \multimap B)_M \to A_M \to B_M
+  \]
+such that $\textup{\texttt{fmap }} (id_A)_M \equiv id_{A_M}$ and $\textup{\texttt{fmap }} ((g \hat \circ f)_M) \equiv \textup{\texttt{fmap }} g_M \circ \textup{\texttt{fmap }} f_M$
+  \begin{proof}
+  Define:
+  \[
+    \texttt{fmap }f := \lambda a. (\sigma(f)\sigma(a))_M
+  \]
+  and see that for $f = (id_A)_M$, we have $(\sigma(id_A)\sigma(a))_M \equiv (\sigma(a))_M \equiv a : A_M$, as well as:
+  \[
+    \lambda x. (\sigma(\lambda y. g(f(y)))_M(\sigma x))_M \equiv \lambda x. (\lambda y. g(f(y))(\sigma x))_M \equiv \lambda x. (g(f(\sigma(x))))_M
   \]
 \end{proof}
 \end{thm}
-and now for $\hat f = L(id_A)$, we have $\text{let $\hat f$ be $(id_A)_L$ in (let $y$ be $a$ in $f(y)_L$)} \equiv \text{let $y$ be $a$ in $\hat f(y)_L$}$\\
-
-$\Gamma; x : A \vdash f : B$, the image of $f$ under $M$ is given by:\\
-\[
-  \begin{split}
-  \Gamma; x : A &\vdash f : B\\
-  \Gamma, y : A_M &\vdash y : A_M\\
-  \Gamma, y : A_M; \cdot &\vdash \sigma(y) : A\\
-  \Gamma, y : A_M; \cdot &\vdash f[\sigma(y)/x] : B\\
-  \Gamma, y : A_M &\vdash f[\sigma(y)/x]_M : B_M\\
-  \end{split}
-\]\\
-Similarly, for $\Gamma, x : A \vdash f : B$ (where $\Gamma \vdash B \type$) we get $L(f)$ via:
-\[
-  \begin{split}
-    \Gamma, x : A &\vdash f : B\\
-    \Gamma, x : A; \cdot &\vdash f_L : B_L\\
-    \Gamma; y : A_L &\vdash y : A_L\\
-    \Gamma; y : A_L &\vdash \text{let $x$ be $y$ in $f_L$} : B_L
-  \end{split}
-\]\\
-First, we check that $M(id_A) = id_{MA}$.  The image of the identity morphism $\Gamma; x : A \vdash x : A$ is:
-\[
-  \Gamma, y : A_M \vdash x[\sigma(y)/x]_M \equiv \sigma(y)_M \equiv y : A_M
-\]
-Then, given morphisms $\Gamma; x : A \vdash f : B$ and $\Gamma; y : B \vdash g : C$, we see that functoriality of $M$ follows directly from functoriality of substitution. Corresponding to $M(g \circ f)$ we have the term:
-\[
-\Gamma, z : A_M \vdash g[f/y][\sigma(z)/x]_M : C_M
-\],
-while $M(g) \circ M(f)$ is given by:
-\[
-  \begin{split}
-    \Gamma, z : A_M &\vdash g[\sigma(f[\sigma(z)/x]_M)/y]_M : C_M \quad \equiv\\
-    \Gamma, z : A_M &\vdash g[f[\sigma(z)/x]/y]_M : C_M \quad \equiv\\
-    \Gamma, z : A_M &\vdash g[f/y][\sigma(z)/x]_M : C_M
-  \end{split}
-\]
-proving functoriality of $M$.\\
-%\end{proof}
-%\end{thm}
-Functoriality of $L$ is not as immediate. For this we really need to utilize the uniqueness rule L-U:
+Similarly, for $L$ we have:
 \begin{thm}
-  $L$ is a (syntactic) functor
+  $L$ is a functor. i.e. for any cartesian types, $A$ and $B$, there is a term $\text{fmap} : L(A \to B) \multimap (LA \multimap LB)$ such that $\text{fmap } L(id_A) \equiv id_{LA}$.
   \begin{proof}
-The identity on $A$, $\Gamma, x : A \vdash x : A$ is mapped to:
-\[
-  \Gamma; y : A_L \vdash \text{let $x$ be $y$ in $x_L$} : A_L
-\]
-Comparing this with the identity:
-\[
-  \Gamma; y : A_L \vdash y : A_L
-\]
-and the equality
-\[
-  \Gamma, x : A; \cdot \vdash \text{let $x$ be $x_L$ in $x_L$} \equiv x_L : A_L
-\]
-we conclude, using L-U, that $\text{let $x$ be $y$ in $x_L$} = y$.
-
-For types $A, B$ and $C$, and morphisms $\Gamma, x : A \vdash f : B$ and $\Gamma, y : B \vdash g : C$, we want "$L(g \circ f)$":
-\[
-  \Gamma; z : A_L \vdash \text{let $x$ be $z$ in $g[f/y]_L$} : C_L\\
-\]
-to equal "$L(g) \circ L(f)$":
-\[
-  \Gamma; z : A_L \vdash \text{let $y$ be (let $x$ be $z$ in $f_L$) in $g_L$} : C_L
-\]\\
-This is done in the same fashion. From the equality:
-\[
-  \Gamma, x : A; \cdot \vdash \text{let $y$ be (let $x$ be $x_L$ in $f_L$) in $g_L$} \equiv \text{let $y$ be $f_L$ in $g_L$} \equiv g_L[f/y] \equiv \text{let $x$ be $x_L$ in $g[f/y]_L$}
-\]
-and applying L-U we get the desired equality.
+  Define:
+  \[
+    \text{fmap } f \; a := \text{let $\hat f$ be $f$ in (let $a$ be $y$ in $f(y)_L$)}
+  \]
+  where $\hat f : A \multimap B$ and $y : A$. When $f = (id_A)_L$ we get:
+  \[
+    \text{fmap } (id_A)_L \; a = \text{let $a$ be $y$ in $id_A(y)_L$}
+  \]
+  and by L-U, (since $\text{let $a$ be $y$ in $id_A(y)_L$}[x_L/y] \equiv a$), this is equal to $(id_A)_L$.
 \end{proof}
 \end{thm}
 Furthermore, the categories of cartesian and monoidal types carry a natural monoidal structure, given by $(\times, 1)$ and $(\otimes, I)$, respectively, where $\times$ is simply $\Sigma$ where the second argument does not depend on the first. $M$ and $L$ are monoidal functors with respect to these.\\
@@ -740,15 +675,31 @@ so by L-U, we can transform this equality to the desired
     \]
 \end{proof}
 \end{thm}
-It is hard to reason about equality of linear terms since the ordinary $Id$-type is a dependent type, and in the theory we do not allow for type dependency on linear terms. In the presence of the $M$ operator, however, we can form the type $a_M = b_M$ for two terms of the same linear type, which, if $M$ is faithful, serves as a surrogate for linear equality. However, as will be demonstrated by theorem \ref{M-faith}, faithfulness of $M$ is independent of the rest of the theory. This means that one can consistently assume the following theorem (or its negation):
+It is hard to reason about equality of linear terms since the ordinary $Id$-type is a dependent type, and in the theory we do not allow for type dependency on linear terms. In the presence of the $M$ operator, however, we can form the type $a_M = b_M$ for two terms $\Gamma; \cdot \vdash a, b : A$, which can serve as a surrogate for linear equality. If we add extensionality to our theory so that propositional equality implies judgemental equality, then $a_M =_{A_M} b_M$ implies $\Gamma; \cdot \vdash a \equiv b : A$.
+
+This only allows us to compare linear terms in an empty linear context, however. For two general terms $\Gamma; x_1 : A_1, x_2 : A_2, \dots x_n : A_n \vdash f : B$ and $\Gamma; x_1 : A_1, x_2 : A_2, \dots x_n : A_n \vdash g : B$, the type
+\[
+  \Gamma, y_1 : {A_1}_M, y_2 : {A_2}_M, \dots y_n : {A_n}_M \vdash f[\sigma(\bar y)/\bar x]_M =_{B_M} g[\sigma(\hat y)/\hat x]_M
+\]
+but this gives us very little information about $f$ and $g$, since we have no way of ``going back'' to the mixed linear context. This is related to the fact that generally, there is no inverse to the map $\texttt{fmap} : (A \multimap B)_M \to (A_M \to B_M)$. We can postulating the existence of such a map by the rules:
 \[
   \inference{
     \Gamma \vdash A \linear\\
-    \Gamma; \cdot \vdash a : A\\
-    \Gamma; \cdot \vdash b : A\\
-    \Gamma \vdash a_M \equiv b_M : A_M}
-  {\Gamma \vdash a \equiv b : A}[M-faith]
+    \Gamma \vdash B \linear
+  }
+  {
+    \Gamma \vdash \texttt{fmap}^{-1} : (A_M \to B_M) \to (A \multimap B)_M
+  }[$\texttt{fmap}^{-1}$-I]
 \]
+\[
+  \inference{\Gamma \vdash f : (A \multimap B)_M}
+  {\Gamma \vdash \texttt{fmap}^{-1}(\texttt{fmap}(f)) \equiv f : (A \multimap B)_M}[$\texttt{fmap}$-l]
+\]
+\[
+  \inference{\Gamma \vdash f : A_M \to B_M}
+  {\Gamma \vdash \texttt{fmap}(\texttt{fmap}^{-1}(f)) \equiv f : A_M \to B_M}[$\texttt{fmap}$-r]
+\]
+which corresponds to asking for $M$ to be a strong closed functor in the semantics. 
 \begin{comment}
 This is true if and only if the counit of the adjunction is an epimorphism. Syntactically, this means that for any $\Gamma; x : B \vdash f, g : A$
 \[
@@ -875,7 +826,7 @@ Since the reward is constant, this is not truly a dependent linear function and 
 \[
 \cdot; x : ETH \vdash GoldbachReward: \Pi_{x : \mathbb{N}}\Sigma_{y, z : \mathbb{N}}Prime(y) \times Prime(z) \times y + z =_{\mathbb{B}} 2(suc(suc(x))) \multimap ETH
 \]
-To execute the transaction, one would need to exhibit that there is an address $x$ with one ether to begin with and provide a proof of the Goldbach conjecture.\\
+To execute such a function and receive the reward, one would need to exhibit that there is an address $x$ with one ether to begin with and provide a proof of the Goldbach conjecture.\\
 \subsection{Universes}
 Our cartesian and linear types live in separate universes, $U$ and $L$. Since linear types are type checked in a purely cartesian context, the linear universe is a cartesian type. Our universes are given á la Tarski and are closed under all previously introduced type formers. Below, we only outline the closure over the type formers $\Pi$, $\otimes$ and $\sqcap$, but this should be sufficient to give the idea. For more detail we refer to Hofmann's \textit{Syntax and Semantics of Dependent types}, \cite{hofmann1997syntax}, or Krishnaswami's \textit{Integrating Linear and Dependent types}, \cite{krishnaswami}.\\
 \fbox{
@@ -923,16 +874,21 @@ Our cartesian and linear types live in separate universes, $U$ and $L$. Since li
     \]\\
   \end{minipage}
 }\\
-But with linear universes, we can formulate a type level equality of linear types. This means that we can also formulate a univalence axiom \cite{voed} for linear types. First, we define the identity function:
+As an example using universes, we can properly formulate the identity function of cartesian or linear types by:
 \[
-  id : \sqcup_{A : \mathcal{L}}
+  \begin{split}
+&    \text{id} : \Pi_{A : \mathcal{U}}A \to A\\
+&    \text{id }A \; a := a
+    \end{split}
 \]
-
-
+or
 \[
-  equiv(A, B) = \Pi_{f : A \multimap B}
+\begin{split}
+&  \text{id} : \sqcap_{A : \mathcal{L}}A \multimap A\\
+&  \text{id }A \; a := a
+\end{split}
 \]
-
+respectively.
 \section{Semantics}
 \subsection{Structural semantic core}
 To explore the models of linear dependent type theory we begin by constructing a categorical structure which abstracts the key features of the theory. We will utilize the notion of a \textit{comprehension category}, which provides the most general structure in which we can deal with the structural rules like context extensions and substitutions. Once this has been taken care of we may consider what extra conditions have to be imposed in order for the model to support various type constructors, and then provide concrete models that satisfy these conditions.\\
@@ -991,7 +947,7 @@ Maps of $\mathcal{C}$ that arise via $\pi(A)$ for some $A \in \mathcal{T}$ will 
 \begin{defn}
  A \textbf{split monoidal fibration} is a lax monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, equipped with a cleavage  $\{ u^*, \bar u \}_{u \in \mathcal{C}}$, so that every lift $u^*$ is a strict monoidal functor, and $u^*v^* = (vu)^*$ for all compatible liftings $u^*$ and $v^*$.
 \end{defn}
-Notice that this condition is quite strong, as the induced functors of a lax monoidal fibration are generally only lax monoidal. However, every lax monoidal fibration where the induced functors are strong will be equivalent to a split monoidal fibration. Equipped with these notions, we define the general structure of the structural core of our type theory:
+Notice that this condition is quite strong, as the induced functors of a lax monoidal fibration are generally only lax monoidal. This disqualifies the graph fibration \ref{graph} from constituting a model of our type theory. However, every lax monoidal fibration where the induced functors are strong will be equivalent to a split monoidal fibration. Equipped with these notions, we define the general structure of the structural core of our type theory:
 
 A model for linear dependent type theory consists of a split comprehension category $p : \mathcal{T} \to \mathcal{C}$ and a split monoidal fibration $q : \mathcal{L} \to \mathcal{C}$, as illustrated in the following picture:
 \[
@@ -1124,7 +1080,7 @@ Finally, if $B$ is an object of $\mathcal{L}_{\Gamma.A.\Gamma'}$, then the image
 In the following, we assume that the comprehension category comprising the core of our syntax is full, i.e. that the functor $\pi : \mathcal{T} \to \mathcal{C}^{\to}$ is full and faithful. This allows us to think of homsets $\mathcal{T}_\Gamma(A, B)$ as living over the base category projections $\mathcal{C}_\Gamma(\pi_A : \Gamma.A \to \Gamma, \pi_B : \Gamma.B \to \Gamma)$.
 \begin{defn}A \textbf{model of LDTT} is a full, split comprehension category $\pi : \mathcal{T} \to \mathcal{C}^{\to}$ and a split monoidal fibration $q : \mathcal{L} \to \mathcal{C}$.\\
 \end{defn}
-  It will sometimes be useful to also assume that the comprehension category has a \textit{unit}, as this give us an isomorphism $\mathcal{C}_\Gamma(\pi(A), \pi(B)) \cong \mathcal{T}_{\Gamma.A}(1, \pi^*_A*(B))$ \cite{jacobs}.
+  It will sometimes be useful to also assume that the comprehension category has a \textit{unit}, as this will give rise to an isomorphism $\mathcal{C}_\Gamma(\pi(A), \pi(B)) \cong \mathcal{T}_{\Gamma.A}(1, \pi^*_A(B))$ \cite{jacobs}.
 \begin{defn}
     A fibration $p : \mathcal{T} \to \mathcal{C}$ \textbf{admits a terminal object} if there is a functor $\mathbf{1} : \mathcal{C} \to \mathcal{T}$, such that for every $\Gamma \in \mathcal{C}$, $\mathbf{1}(\Gamma)$ is a terminal object of the fiber $\mathcal{T}_{\Gamma}$, and for every $f : \Delta \to \Gamma$, the canonical map $\alpha : f^*(\mathbf{1}(\Gamma)) \to \mathbf{1}(\Delta)$ is an isomorphism.
   \end{defn}
@@ -1132,27 +1088,13 @@ In the following, we assume that the comprehension category comprising the core 
   \begin{defn}
     A comprehension category $\pi : \mathcal{T} \to \mathcal{C}^{\to}$ \textbf{has a unit} if the fibration $p : \mathcal{T} \to \mathcal{C}$ admits a terminal object functor $\mathbf{1}$ which is left adjoint to the functor $s(\pi) : \mathcal{T} \to \mathcal{C}$, selecting the source of the morphism assigned by $\pi$.
   \end{defn}
-  Most of our models will naturally be equipped with such a structure, and this yields the nice property that $\mathcal{C}_{/\Gamma}(\Gamma.A, \Gamma.B) \cong \mathcal{T}_{\Gamma.A}(1, \pi_A^*(B))$, allowing us to shift in perspective to think of terms depending on $\Gamma$ and $A$ as either living in the slice category $\mathcal{C}_{/\Gamma}$ or in the fiber $\mathcal{T}_{\Gamma.A}$. Importantly, since $\mathbf{1}$ is full and faithful, the unit of the adjunctionis an isomorphism, meaning that for every $A \in \mathcal{T}_\Gamma$, we have $eta_A : A_{\Gamma} \cong 1_{\Gamma.A}$. But as these objects live in different slices, the following result is more convenient
-  \begin{thm}
-    For any $A$ over $\Gamma$, we have that $1_{\Gamma.A} \cong \pi_A^*(A)$.
-    \begin{proof}
-The cartesian property of the lift of $\pi_A$ gives rise to the unique arrow $v$ in the following diagram:
-      \[
-        \ti
-        1_{\Gamma.A} \ar[rd, "\eta_A^{-1}"] \ar[d, "\exists!v"] & \\
-        \pi^*_A(A) \ar[r, "\pi_A^*"] & A\\
-        \kz
-        \]
-    \end{proof}
-      Since $1_{\Gamma.A}$ is a terminal object in the same slice as $\pi_A^*(A)$, there also exists a unique arrow $v$ in the other direction. Since $uvu = u$ and $vuv = v$ they form an isomorphism.
-  \end{thm}
-  
+  Most of our models will naturally be equipped with such a structure, and this yields the nice property that $\mathcal{C}_{/\Gamma}(\Gamma.A, \Gamma.B) \cong \mathcal{T}_{\Gamma.A}(1, \pi_A^*(B))$, allowing us to shift in perspective to think of terms depending on $\Gamma$ and $A$ as either living in the slice category $\mathcal{C}_{/\Gamma}$ or in the fiber $\mathcal{T}_{\Gamma.A}$. Importantly, since $\mathbf{1}$ is full and faithful, the unit of the adjunction is a natural isomorphism, so for every $A \in \mathcal{T}_\Gamma$, we have $\eta_A : \Gamma.A \cong \Gamma.A.1$.
 \begin{defn}
   A model of LDTT \textbf{supports $I$-types} if, for every $\Gamma$, there is exists an object $[[I]] \in \mathcal{L}_{\Gamma}$, equipped with a morphism $[[*]] : I \to [[I]]$, such that for every pair of maps $t : \Xi' \to [[I]]$ and $c : \Xi \to C$, there exists a map $[[\text{let $t$ be * in $c$}]] : \bigotimes \Xi, \Xi' \to C$ such that $[[\text{let * be * in $c$}]] = c$.
 \end{defn}
 This is trivially satisfied by every model by setting $[[I]] = I$, $[[*]] = 1_{I}$, and $[[\text{let $t$ be * in $c$}]]$ to the composite $\rho (c \otimes [[t]]) \alpha  : \bigotimes \Xi, \Xi' \cong \Xi \otimes \Xi' \to C \otimes I \cong C$, where $\rho$ is the right unitor for the monoidal structure of $\mathcal{L}_{\Gamma}$, and $\alpha$ is the isomorphism $\bigotimes \Xi, \Xi' \cong \Xi \otimes \Xi$. As for the identity $\rho(c \otimes 1_{I}) \alpha = c$, notice that $\alpha : \bigotimes \Xi \cong \Xi \otimes [[\cdot]] = \Xi \otimes I$ is given by $\rho^{-1}$, so we get $\rho (c \otimes 1_I) = c \rho$, from the naturality of $\rho$.\\
 \begin{defn}
-  A model of LDTT \textbf{supports $\otimes$-types}, if, for every $A, B \in \mathcal{L}_{\Gamma}$, there exists an object $[[A \otimes B]] \in \mathcal{L}_{\Gamma}$, such that for any arrows $a : \Xi \to A$, $b : \Xi' \to B$, there exists an arrow $[[(a \otimes b)]] : \bigotimes Xi, \Xi \to [[A \otimes B]]$ and for arrows $t : \Xi' \to [[A \otimes B]]$ and $c : \bigotimes \Xi \otimes A \otimes B \to C$, there exists an arrow $[[\text{let $x \otimes y$ be $t$ in $c : C$}]]$ such that $[[\text{let $x \otimes y$ be $a \otimes b$ in $c$}]] = c$.
+  A model of LDTT \textbf{supports $\otimes$-types}, if, for every $A, B \in \mathcal{L}_{\Gamma}$, there exists an object $[[A \otimes B]] \in \mathcal{L}_{\Gamma}$, such that for any arrows $a : \Xi \to A$, $b : \Xi' \to B$, there exists an arrow $[[(a \otimes b)]] : \bigotimes \Xi, \Xi' \to [[A \otimes B]]$ and for arrows $t : \Xi' \to [[A \otimes B]]$ and $c : \bigotimes \Xi \otimes A \otimes B \to C$, there exists an arrow $[[\text{let $x \otimes y$ be $t$ in $c : C$}]]$ such that $[[\text{let $x \otimes y$ be $a \otimes b$ in $c$}]] = c$.
 \end{defn}
 Again, it is not hard to see that there is a canonical interpretation of this in any model of LDTT sending $[[A \otimes B]]$ to $[[A]] \otimes [[B]]$. Some care is needed in order to always make sure contexts are left associated.\\
 Similarly, one can define what it means for a model of LDTT to support $\multimap, \oplus, \&, \top$ and $0$. We may think of these conditions as corresponding to weak versions of internal homs, binary products and coproducts, and terminal and initial object of the fibers, that are stable under reindexing functors. Therefore, whenever the fibers of our model are monoidal closed, complete or cocomplete, we know that it supports the corresponding type formers. This is well established and not the focus of the interplay between linear and dependent types we explore here. For a more detailed treatment we refer the reader to \cite{mellies}.\\
@@ -1287,10 +1229,10 @@ s^*\pi_A^*\sqsubset_A(\Xi'\{\pi_A\} \otimes B) = \sqsubset_A(\Xi'\{\pi_A\} \otim
 \]
 which follows from applying the functor $s^*$ to the equality $\eta_{\Xi'\{\pi_A\}\otimes B}\circ \pi^*_A\hat c = c$.
 \begin{defn}\label{semanticML}
-  A model of LDTT with unit and simple products \textbf{supports the operators $M$ and $L$} if there exists monoidal functors $M : \mathcal{L} \leftrightarrow \mathcal{T} : L$ which are cartesian with respect to the fibrations $p : \mathcal{T} \to \mathcal{C}$ and $q : \mathcal{L} \to \mathcal{C}$, such that $L \dashv M$ is a fibred, monoidal adjunction such that:
-  \begin{enumerate}
-  \item There is an isomorphism of hom-sets $\mathcal{L}_{\Gamma.A}(\pi_A^*(\Xi'), \pi_A^*(B)) \cong \mathcal{L}_\Gamma(LA \otimes \Xi', B)$.
-    \end{enumerate}
+  A model of LDTT with unit and simple products \textbf{supports the operators $M$ and $L$} if there exists functors $M : \mathcal{L} \leftrightarrow \mathcal{T} : L$ which are cartesian with respect to the fibrations $p : \mathcal{T} \to \mathcal{C}$ and $q : \mathcal{L} \to \mathcal{C}$, such that $L \dashv M$ is a fibred adjunction and there is an isomorphism of hom-sets:
+  \[
+    \mathcal{L}_{\Gamma.A}(\pi_A^*(\Xi'), \pi_A^*(B)) \cong \mathcal{L}_\Gamma(LA \otimes \Xi', B)\].
+  
 \end{defn}
 Recall that a fibred adjunction implies that there are natural isomorphisms making the following diagram commute:
 \[
@@ -1300,31 +1242,23 @@ Recall that a fibred adjunction implies that there are natural isomorphisms maki
   \kz
 \]
 which from a syntactic perspective ensures that $M$ and $L$ commute with substitution.\\
-The final condition of the definition is what yields the elimination and computation rules L-U, and while it might appear somewhat unnatural semantically, it turns out to hold in a large class of models, satisfying that the reindexing functors $\pi_A^*$ of the monoidal fibration are full and faithful.
-\begin{thm}For all $A \in \mathcal{T}_\Gamma$, if $\pi_A^* : \mathcal{L}_\Gamma \to \mathcal{L}_{\Gamma.A}$ is full and faithful, then any strong monoidal fiber adjunction $L \vdash M$ satisfies $\mathcal{L}_{\Gamma.A}(\pi^*(\Xi'), \pi^*(B)) \cong \mathcal{L}_\Gamma(LA \otimes \Xi', B)$.
+The final condition of the definition is what yields the elimination and computation rules L-U, and while it might appear somewhat unnatural semantically, it does turn out to hold automatically in a large class of models, due to the following result:
+\begin{thm}In a model of LDTT with unit such that the functors $\mathcal{L}_\Gamma(I,-) : \mathcal{L}_\Gamma \to \mathbf{Set}$ are strict monoidal (can this be dropped?), full and faithful for all $\Gamma$, any fibred adjunction $L \dashv M$ where $L$ is strictly monoidal satisfies $\mathcal{L}_{\Gamma.A}(\pi^*_A(\Xi'), \pi^*(B)) \cong \mathcal{L}_{\Gamma}(LA \otimes \Xi', B)$.
   \begin{proof}
-    Since $1_{\Gamma.A} \cong \pi^*_A A$ in $\mathcal{T}_{\Gamma.A}$, we have $I \cong L(1) \cong L_{\Gamma.A}(\pi_A^* A) \cong \pi_A^*(L_{\Gamma}A)$ in $\mathcal{L}_{\Gamma.A}$. By this there is an isomorphism of homsets:
-    \[
-      \begin{split}
-        \mathcal{L}_{\Gamma.A}(\pi^*_A\Xi', \pi^*_AB) \cong \\
-        \mathcal{L}_{\Gamma.A}(I \otimes \pi^*_A\Xi', \pi^*_AB) \cong \\
-        \mathcal{L}_{\Gamma.A}(\pi^*LA \otimes \pi^*_A\Xi', \pi^*_AB) \cong \\
-        \mathcal{L}_{\Gamma}(LA \otimes \Xi', B)
-        \end{split}
-    \]
-  \end{proof}
-\end{thm}
-The requirement that the reindexing functors are full and faithful is a reasonable requirement from a syntactic perspective, as it says that no terms are lost nor gained from weakening the cartesian part of the context in a linear judgement. It comes as no surprise then, that another sitatution when we can support $M$ and $L$ ``for free'' is in the presence of semantic $[-,-]$ type formers.
-\begin{thm}In a model of LDTT that supports $[-,-]$ type formers, then any strong fibred monoidal adjunction $L \dashv M$ satisfies $\mathcal{L}_{\Gamma.A}(\pi^*_A(\Xi'), \pi^*(B)) \cong \mathcal{L}_{\Gamma}(LA \otimes \Xi', B)$.
-  \begin{proof}
-    A model supporting internal homs must have reindexing functions which preserve these. That is, we havean isomorphism $\pi_A^*[A, B] \cong [\pi_A^*A, \pi^*B]$. We get a chain of isomorphisms:
+We have a chain of isomorphisms:
 \[
       \begin{split}
 &        \mathcal{L}_{\Gamma}(LA \otimes \Xi, B) \cong \\
- &       \mathcal{L}_{\Gamma}(LA, [\Xi, B]) \cong \\
+&       \mathbf{Set}(\mathcal{L}_\Gamma(I, LA \otimes \Xi), \mathcal{L}_\Gamma(I, B)) \cong \\
+&       \mathbf{Set}(\mathcal{L}_\Gamma(I, LA) \times \mathcal{L}_\Gamma(I, \Xi), \mathcal{L}_\Gamma(I, B)) \cong \\
+&       \mathbf{Set}(\mathcal{L}_\Gamma(I, LA), [\mathcal{L}_\Gamma(I, \Xi), \mathcal{L}_\Gamma(I, B)]) \cong \\
+&       \mathbf{Set}(\mathcal{L}_\Gamma(I, LA), \mathcal{L}_\Gamma(\Xi, B)) \cong \\
+&       \mathbf{Set}(\mathcal{T}_\Gamma(1, MLA) \times \mathcal{T}_\Gamma(1, M\Xi), \mathcal{T}_\Gamma(1, M(B))) \cong \\
+ &       \mathbf{Set}(\hom_{\mathcal{T}}(1, M(LA \otimes \Xi)), \hom_{\mathcal{T}}(1, M(B))) \cong \\
   &      \mathcal{T}_{\Gamma}(A, M_{\Gamma}[\Xi, B]) \cong \\
  &\mathcal{T}_{\Gamma.A}(1, \pi_A^*(M_{\Gamma}[\Xi, B])) \cong \\
  &\mathcal{T}_{\Gamma.A}(1, M_{\Gamma.A}\pi_A^*[\Xi, B])) \cong \\
+  &\mathcal{L}_{\Gamma.A}(L_{\Gamma.A}(1), \pi_A^*[\Xi, B])) \cong \\
  &\mathcal{L}_{\Gamma.A}(I, \pi_A^*[\Xi, B])) \cong \\
  &\mathcal{L}_{\Gamma.A}(I, [\pi_A^*\Xi, \pi_A^*B])) \cong \\
  &\mathcal{L}_{\Gamma.A}(\pi_A^*\Xi, \pi_A^*B).
@@ -1332,6 +1266,29 @@ The requirement that the reindexing functors are full and faithful is a reasonab
 \]
   \end{proof}
 \end{thm}
+
+
+
+that supports $\multimap$-types.
+\begin{thm}In a model of LDTT that supports $\multimap$ type formers, then any fibred adjunction $L \dashv M$ where $L$ is strictly monoidal satisfies $\mathcal{L}_{\Gamma.A}(\pi^*_A(\Xi'), \pi^*(B)) \cong \mathcal{L}_{\Gamma}(LA \otimes \Xi', B)$.
+  \begin{proof}
+    A model supporting internal homs must have reindexing functions which preserve these. That is, we have an isomorphism $\pi_A^*[\Xi, B] \cong [\pi_A^*\Xi, \pi^*_AB]$. We get a chain of isomorphisms:
+\[
+      \begin{split}
+&        \mathcal{L}_{\Gamma}(LA \otimes \Xi, B) \cong \\
+ &       \mathcal{L}_{\Gamma}(LA, [\Xi, B]) \cong \\
+  &      \mathcal{T}_{\Gamma}(A, M_{\Gamma}[\Xi, B]) \cong \\
+ &\mathcal{T}_{\Gamma.A}(1, \pi_A^*(M_{\Gamma}[\Xi, B])) \cong \\
+ &\mathcal{T}_{\Gamma.A}(1, M_{\Gamma.A}\pi_A^*[\Xi, B])) \cong \\
+  &\mathcal{L}_{\Gamma.A}(L_{\Gamma.A}(1), \pi_A^*[\Xi, B])) \cong \\
+ &\mathcal{L}_{\Gamma.A}(I, \pi_A^*[\Xi, B])) \cong \\
+ &\mathcal{L}_{\Gamma.A}(I, [\pi_A^*\Xi, \pi_A^*B])) \cong \\
+ &\mathcal{L}_{\Gamma.A}(\pi_A^*\Xi, \pi_A^*B).
+      \end{split}
+\]
+  \end{proof}
+\end{thm}
+I wonder if there is a more natural condition which does not assume $\multimap$-types that implies $\mathcal{L}_{\Gamma.A}(\pi^*_A(\Xi'), \pi^*(B)) \cong \mathcal{L}_{\Gamma}(LA \otimes \Xi', B)$, but I cannot find it right now.
 \begin{comment}
 Since epimorphisms are preserved by left adjoints, we can precompose with $L_{\Gamma.A}(var)$ to get an isomorphism:
     \[
@@ -1390,17 +1347,17 @@ in $\mathcal{T}_{\Gamma.A}$ gives rise to a map $L_{\Gamma.A}\pi^{*(\mathcal{T})
 
 
 There are various degrees to which a model can support universes. The baseline condition is an object $U$ in every fiber such there is an object in the same fiber for every section of the corresponding projection. In order to even state what it means for a universe to be closed under various types, we need to assume that our model supports such types.
-\begin{defn}A model of LDTT \textbf{supports cartesian universes}, if for every $\Gamma \in \mathcal{C}$, there exists an object $U \in \mathcal{T}_{\Gamma}$, such that, for every section $t : \Gamma \to \Gamma.U$ to the corresponding projection, there exists an object $El(t) \in \mathcal{T}_{\Gamma}$. For a model that supports the type former in question, the universe is closed under this type if:
+\begin{defn}A model of LDTT \textbf{supports cartesian universes}, if for every $\Gamma \in \mathcal{C}$, there exists an object $U \in \mathcal{T}_{\Gamma}$, such that, for every section $t : \Gamma \to \Gamma.U$ to the corresponding projection, there exists an object $El(t) \in \mathcal{T}_{\Gamma}$. For a model that supports the type former in question, the universe is closed under:
   \begin{itemize}
-  \item $\Pi$-types (or $\Sigma$). For sections $t : \Gamma \to \Gamma.U$ and $v : \Gamma.El(t) \to \Gamma.El(t).U$, there is a section $\hat \Pi_{El(t)}v : \Gamma \to \Gamma.U$ such that $El(\hat \Pi_{El(t)}) = \Pi_{El(t)}El(v)$ (or $\Sigma$) i.e. if the object corresponding to $\hat \Pi_{El(t)}v$ is equal the image of $El(v)$ under the functor corresponding to the semantic type former.
-  \item $Id$-types. For sections $A : \Gamma \to \Gamma.U$, $a, b : \Gamma \to \Gamma.El(A)$, there is a section $\hat Id(a, b) : \Gamma \to \Gamma.U$, such that $El(\hat Id(a, b)) = Id_A$.
+  \item $\Pi$-types, (or $\Sigma$) if, for sections $t : \Gamma \to \Gamma.U$ and $v : \Gamma.El(t) \to \Gamma.El(t).U$, there is a section $\hat \Pi_{El(t)}v : \Gamma \to \Gamma.U$ such that $El(\hat \Pi_{El(t)}) = \Pi_{El(t)}El(v)$ (or $\Sigma$) i.e. if the object corresponding to $\hat \Pi_{El(t)}v$ is equal the image of $El(v)$ under the functor corresponding to the semantic type former.
+  \item $Id$-types, if, for sections $A : \Gamma \to \Gamma.U$, $a, b : \Gamma \to \Gamma.El(A)$, there is a section $\hat Id(a, b) : \Gamma \to \Gamma.U$, such that $El(\hat Id(a, b)) = Id_A$.
   \end{itemize}
 \end{defn}
 Linear universes are defined in the same fashion, keeping in mind that the linear universe is a cartesian type.
 \begin{defn}
   A model of LDTT \textbf{supports linear universes}, if, for every $\Gamma \in \mathcal{C}$, there is an object $L \in \mathcal{T}_{\Gamma}$, such that for every section $t : \Gamma \to \Gamma.L$ to the corresponding projection, there exists an object $El(t)$ in $\mathcal{L}_{\Gamma}$. For a model that supports the type former in question, the linear universe is closed under this type if:
   \begin{itemize}
-    \item $I$, (or $\top$, $0$): There is a section $\hat I : \Gamma \to \Gamma.L$, (or $\top$, $0$) such that $El(\hat I) = I$ in $\mathcal{L}_\Gamma$.
+    \item $I$, (or $\top$, $0$): There is a section $\hat I : \Gamma \to \Gamma.L$, such that $El(\hat I) = I$ in $\mathcal{L}_\Gamma$.
     \item $\otimes$ (or $\multimap$, $\&$): For every pair of sections $a, b : \Gamma \to \Gamma.L$, there is a section $\hat{a\otimes b}$ (or $\hat \multimap$, $\hat \&$) such that $El(\hat{a\otimes b}) = El(a)\otimes El(b)$
     \end{itemize}
   \end{defn}
@@ -1427,7 +1384,7 @@ For an arbitrary category $\mathcal{C}$, let $Fam(\mathcal{C})$ denote the categ
 \]
 for all $s \in S$.
 \end{defn}
-By projecting a family to its indexing set, we get a fibration $p : Fam(\mathcal{C}) \to \mathbf{Set}$, and if $\mathcal{C}$ has a terminal object, $\top$ such that the hom-sets $\mathcal{C}(\top,A)$ are small for all $A \in \mathcal{C}$, we can form a comprehension category by defining $\pi : Fam(\mathcal{C}) \to \mathbf{Set}^\to$ as follows.
+By projecting a family to its indexing set, we get a fibration $p : Fam(\mathcal{C}) \to \mathbf{Set}$, and if $\mathcal{C}$ has a terminal object, $\top$ such that the hom-sets $\mathcal{C}(\top,A)$ are small for all $A \in \mathcal{C}$, we can form a comprehension category with unit by defining $\pi : Fam(\mathcal{C}) \to \mathbf{Set}^\to$ as follows.
 
 On objects, let
 \[
@@ -1447,7 +1404,7 @@ I \ar[r, "u"] & J
 in $\mathbf{Set}$. This comprehension category will be full if the global sections functor $\mathcal{C}(\top, -) \to \mathbf{Set}$ is full and faithful.
 \\
 For a morphism $u : S \to p(S', f) = S'$ the canonical choice of a lift $u^* = (u, i) : (S, fu) \to (S', f)$ where $i : S \to \text{Mor}(\mathcal{C})$ is defined by $s \mapsto 1_{fu(s)}$ makes this a split fibration.\\
-The cartesian part of our semantic structure will simply be the fibration $p : Fam(\mathbf{Set}) \to \mathbf{Set}$ with $\pi : Fam(\mathbf{Set}) \to \mathbf{Set}^\to$ as outlined above. Then for any symmetric monoidal category $\mathcal{V}$ we form a split monoidal fibration by letting the unit object be given at any fiber by mapping a set $S$ to the family constant at the unit of $\mathcal{V}$, and define the tensor product as:
+The cartesian part of our semantic structure will simply be the fibration $p : Fam(\mathbf{Set}) \to \mathbf{Set}$ with $\pi : Fam(\mathbf{Set}) \to \mathbf{Set}^\to$ as outlined above. Then for any symmetric monoidal category $\mathcal{V}$ we form a lax monoidal fibration by letting the unit object be given at any fiber by mapping a set $S$ to the family constant at the unit of $\mathcal{V}$, and define the tensor product as:
 \[
 (S, g) \otimes (S, f) = (S, f \otimes g) = (S, \lambda s. f(s) \otimes g(s))
 \]
@@ -1455,29 +1412,94 @@ For $u : S \to p(S', f) = S'$ in the base, we have:
 \[
   u^*((S', \alpha) \otimes (S', \beta)) = (S, \lambda s.\alpha u(s) \otimes \beta(u(s))) = u^*(S', \alpha) \otimes u^*(S', \beta)
 \]
-so this is in fact a split monoidal fibration. Putting this together, this forms our first concrete model of the type theory:
+Since the tensor product is defined pointwise, it is preserved by reindexing functors, so this is in fact a split monoidal fibration. Putting this together, this forms our first concrete model of the type theory:
 \[
 \ti
 Fam(\mathcal{V}) \ar[rd, "q"]  & Fam(\mathbf{Set}) \ar[d, "p"] \ar[r, "\pi"] & \mathbf{Set}^\to \ar[ld, "cod"] \\
 & \mathbf{Set}
 \kz
 \]
-This model trivially supports $\otimes$ and $I$-types (all models do). For any fibration $p : Fam(\mathcal{C}) \to \mathbf{Sets}$, its fiberwise limits and colimits are constructed pointwise, so they exist if and only if they do in $\mathcal{C}$. Since reindexing functors is simply precomposition, they preserve these (co)limits We therefore get that the families model supports the type formers $\multimap, \oplus, 0, \&$ and $\top$ if $\mathcal{V}$ if is monoidal closed, has binary coproducts, initial object, binary products and terminal object respectively. \\
+This model trivially supports $\otimes$ and $I$-types (all models do). For any fibration $p : Fam(\mathcal{C}) \to \mathbf{Sets}$, its fiberwise limits and colimits are constructed pointwise, so they exist if and only if they do in $\mathcal{C}$. Since reindexing functors is simply precomposition, they preserve these (co)limits. We therefore get that the families model supports the type formers $\oplus, 0, \&$ and $\top$ if $\mathcal{V}$ has binary coproducts, initial object, binary products and terminal object respectively. Similarly, it supports $\multimap$ if $\mathcal{V}$ is monoidal closed, by $[(S, f), (S, g)] = (S, \lambda s. [f(s),g(s)])$. This is a right adjoint to $\otimes$, since at every component, the set of maps $f(s) \otimes g(s) \to h(s)$ is isomorphic to $f(s) \to [g(s),h(s)]$.
+\\
 For the dependent types, we utilize the following result:
-\begin{thm}
+\begin{thm}\label{adjointproducts}
 For a fibration $p : Fam(\mathcal{C}) \to \mathbf{Sets}$ and a function $u : S \to S'$ in the base, $u^* : Fam(\mathcal{C})_{S'} \to Fam(\mathcal{C})_S$ has a left (right) adjoints if and only if $\mathcal{C}$ has small coproducts (products).
   \begin{proof}
     For $\mathcal{C}$ with small coproducts, define the left adjoint to $u^*$ by $(S, f) \mapsto (S', \lambda s'.\coprod_{s \in u^{-1}(s')}f(s))$. Similarly for $\mathcal{C}$ with small products, define a right adjoint to $u^*$ by $(S, f) \mapsto (S', \lambda s'.\prod_{s \in u^{-1}(s')}f(s))$.\\
-    In the other direction, the set of objects we want to take the (co)product of forms an object $(S, f)$ of $Fam(\mathcal{C})$. From the unique map $! : S \to 1$ in the base, we get a left (right) adjoint to the lift of $!$, which sends $(S, f)$ to an object of $Fam(\mathcal{C})_1 \cong \mathcal{C}$, which has the universal property of the (co)product of the objects indexed by $S$:
+    In the other direction, the family of objects we want to take the (co)product of forms an object $A = \{A\}_i$ of $Fam(\mathcal{C})$. The lift of the unique map $! : p(A) \to \mathbf{1}$ in the base has a right (left) adjoint, making $\Pi_!(A)$ an object of of $Fam(\mathcal{C})_1 \cong \mathcal{C}$, so that for every object $B \in \mathcal{C}$, we have:
     \[
-      Hom_{\mathcal{C}}(\Sigma_A(S, f), B) \cong Hom_{Fam{\mathcal{C}}_S}((S, f), (S, B ))
+      \mathcal{C}(B, \Pi_!(A)) \cong Fam({\mathcal{C}})_S(!^*B, A)
     \]
-    TODO: CHECK THIS DIRECTION AGAIN (WHEN AWAKE)
+    where $!^*B = (S, \lambda s. B)$. This means that every map on the right hand side, which consists of a family of morphisms $f_i : B \to A_i$ gives rise to a unique map on the left hand side, which is precisely the universal property of the product.
   \end{proof}
 \end{thm}
-From this we see that the families model supports $\Sigma$ and $\Pi$ types, since $\mathbf{Sets}$ has all limits and colimits, and that it supports $\sqcap$ (or $\sqsubset$) if and only if $\mathcal{V}$ has small products (or coproducts).\\
-M and L through global sections functor?\\
-Universes as the underlying set of objects?
+\todo{Beck-chevalley}{To show that the families model supports $\Sigma$ and $\Pi$ types, since $\mathbf{Sets}$ has all limits and colimits, and that it supports $\sqcap$ (or $\sqsubset$) if and only if $\mathcal{V}$ has small products (or coproducts).}\\
+The model also supports $Id$-types. For any $A \in Fam(\mathbf{Sets})_\Gamma$, let $Id_A := A \times A$, and $r_A : A \to A \times A$ be the diagonal map. Then $\Gamma.A.A^+.Id$ is isomorphic to $\Gamma.A \times \Gamma.A$, so for any commutative square:
+\[
+  \ti
+  \Gamma.A \ar[r, "f"] \ar[d, "r_A"] & \Delta.C \ar[d, "\pi_C"] \\
+  \Gamma.A.A^+.Id \ar[r, "g"] & \Delta
+  \kz
+\]
+we get a the lift $\Gamma.A.A^+.Id \to \Delta.B$ by $f \circ \pi_1$, where $\pi_1 : \Gamma.A \times \Gamma.A \to \Gamma.A$ is a projection from the product.\\
+To deal with the operators $M$ and $L$, we make use of the following lemma:
+\begin{lemm}\label{fiberadj}An adjunction
+\[
+\ti
+\mathcal{C} \ar[r, "G"{name=A, below}, bend right] & \mathcal{D} \ar[l, "F"{name=B, above}, bend right] \ar[from=A, to=B, symbol=\vdash]
+\kz
+\]
+induces a fiber adjunction between the corresponding fibrations:
+  \[
+\ti
+    Fam(\mathcal{C}) \ar[rd, "p"] \ar[rr, "\mathbf{G}"{name=B, below},swap] & & \ar[ll, "\mathbf{F}"{name=A, above},bend right] \ar[from=A, to=B, symbol=\dashv] Fam(\mathcal{D}) \ar[ld, "q"]\\
+    & \mathbf{Sets}
+    \kz
+  \]
+\begin{proof}
+  Let $\mathbf{G} : Fam(\mathcal{C}) \to Fam(\mathcal{D})$ and $\mathbf{F} : Fam(\mathcal{D}) \to Fam(\mathcal{C})$ be the induced cartesian functors, defined pointwise in the obvious way. Define the vertical counit $\epsilon : \mathbf{FG} \implies 1_{Fam(\mathcal{C})}$, given at every component $\{A\}_I \in Fam(\mathcal{C})_I$ by the underlying counit, $\epsilon_A = (1_I, \epsilon_{A_i})$. For any morphism $(u, \alpha) : \mathbf{F}(O, f) \to (O', g)$, any morphism $(v, \beta) : (O, f) \to \mathbf{G}(O', g)$ such that $\epsilon_{(O', g)} \circ \mathbf{F}(v \beta) = (u, \alpha)$, must satisfy $v = u$, since $\mathbf{F}$ is constant on the function part of a morphism. But then each component of the family of morphisms, $\beta$ is a morphism $\beta_o : f(o) \to G(g(o'))$ fitting into the following diagram:
+  \[
+    \ti
+    F(f(o)) \ar[rd, "\alpha_o"] \ar[r, "F(\beta_o)"] & FG(g(o')) \ar[d, "\epsilon_{g(o')}"] \\
+    & g(o')
+    \kz
+  \]
+  so by the universal property of the counit, each such $\beta_o$ is uniquely defined.
+\end{proof}
+\end{lemm}
+This gives a candidate for $M$ and $L$, whenever $\mathcal{V}$ is a concrete category.\\
+When it comes to universes, we need to be careful so as to not run into size issues. The simplest scenario is when the category $\mathcal{V}$ is small. Then we define $\mathcal{L} \in Fam(\mathbf{Sets})_\Gamma$ as $(\Gamma, \lambda \gamma . Ob(\mathcal{V}))$. Since any section of $\pi(\mathcal{L}) : \Gamma.\mathcal{L} \to \Gamma$ consists of a selection of morphisms $f_\gamma : \mathbf{1} \to Ob(\mathcal{V})$, this defines an object $(\Gamma, f)$ of $Fam(\mathcal{V})$ where $f(\gamma) = f_\gamma(\star)$. Of course, this universe will be closed under all purely linear type formers that are supported by $\mathcal{V}$, since these are constructed pointwise.\\
+However, we cannot construct a cartesian universe in the same fashion, since $\mathbf{Set}$ is a large category. We need to restrict ourselves to a certain subset of the cumulative hierarchy of all sets.
+\begin{defn}For an ordinal $\alpha$, the set $\mathcal{V}_{\alpha}$, is defined by transfinite induction as follows:
+  \begin{itemize}
+  \item $V_0 = \emptyset$
+  \item $V_{\alpha + 1} = \mathcal{P}V_\alpha$
+  \item $V_{\beta} = \bigcup_{\alpha < \beta}(V_\alpha) \quad $ ($\beta$ is a limit).
+  \end{itemize}
+\end{defn}
+The objects of $\mathbf{Set}$ consists of all of the sets such that they are elements of $V_\alpha$, for some $\alpha$.
+\begin{defn}
+  For any ordinal $\alpha$, the define the subcategory $\mathbf{Set}_\alpha$ of $\mathbf{Set}$, whose objects are sets $X$ such that $X \in V_\alpha$. 
+\end{defn}
+The idea is to select a large enough cardinal $\kappa$, such that $\mathbf{Set}_\kappa$ can be thought of as a model of ZFC itself. This is the notion of a Grothendieck universe. First, recall the notion of an inaccessible cardinal:
+\begin{defn}A cardinal, $\kappa$. is said to be:
+  \begin{itemize}
+  \item \textbf{Uncountable}, if it is larger than the smallest infinite set.
+  \item A \textbf{strong limit}, if for any $\lambda < \kappa$, we have $2^\lambda < \kappa$.
+  \item \textbf{Regular}, if it is not the union of a family of sets of size  $<\kappa$ indexed by a set of size $< \kappa$.
+  \item \textbf{Inaccessible}, if it is uncountable, a strong limit and regular.
+  \end{itemize}
+\end{defn}
+It is important to keep in mind that the existence of inaccessible cardinals is independent of ZFC. But assuming their existence allows us to form a set theoretic universe which can model ZFC itself.
+\begin{defn}A \textbf{Grothendieck universe} is a set $V_\kappa$ where $\kappa$ is an inaccessible cardinal. With respect to such a universe, a set $X$ is small if $X \in V_\kappa$, otherwise it is large.
+\end{defn}
+It is now easy to see that the category $\mathbf{Set}_\kappa$ corresponding to a Grothendieck universe has limits and colimits for all $\kappa$-small diagrams. For clarity, we will refer to the category consisting of both small and large sets by $\mathbf{SETS}$ with respect to this universe. By enlarging the families model and make $\mathbf{SETS}$ the new base category, we can construct cartesian universes in the following fashion:\\
+Let $\mathcal{U} \in Fam(\mathbf{SETS})_\Gamma$ be defined by $(\Gamma, \lambda \gamma. V_\kappa)$. Any section $t : \Gamma \to \Gamma.U$ defines a $\Gamma$ indexed collection $(\Gamma, t_\gamma)$ of sets in $V_\kappa$, which gives an interpretation of $El(t)$. Following closely the proof of theorem \ref{adjointproducts}, paying attention to size, we get the following result:
+\begin{corl}
+  For any function $u : S \to S'$  such that for each $s \in S'$, the subset $u^{-1}(s)$ is small, the functor  $u^* : Fam(\mathbf{SETS})_{S'} \to Fam(\mathbf{SETS})_S$ has left and right adjoints, $\Sigma$ and $\Pi$. Furthermore, for each family $(S', f)$ in $Fam(\mathbf{SETS})_S$, each member of the family $\Sigma(\Gamma, f) \in Fam(\mathbf{SETS})_S$ is small.
+\end{corl}
+By this argument, we find that the enlarged families model supports cartesian universes that are closed under $\Pi$ and $\Sigma$. Since the projections $\pi_U : \Gamma.U \to \Gamma$ associated to universes are such that the sets $\pi_U(\gamma)$ are small, for sections $t : \Gamma \to \Gamma.U$ and $s : \Gamma.El(t) \to \Gamma.El(t).U$, define $\hat \Pi_{El(t)}v$ as the section which associates each $\gamma$ to the image of the member $El(v)_\gamma$ under functor $\Pi$. The case for $\Sigma$ is completely analoguous.\\
+Note that this procedure of enlarging the base category can also be used to account for cases where the category $\mathcal{V}$ is large.
 \subsection{Syntactic enriched categories}
 As an in depth example construction in the families model of linear dependent type theory, recall the notion of an enriched category in as defined in \ref{enr-cat}.
 Our goal is to construct a syntactic analogue of this construction in the families model, such that the interpretation of this is an enriched category. There are two ways of doing this. The first is a meta construction, in which we ask for the existence of certain types and judgemental equalities to hold, whereas the second, internal definintion, is a type \textbf{Enr-Cat}, whose terms are interpreted as enriched categories. The type \textbf{Enr-Cat} allows us to formulate theorems about enriched categories directly in the syntax, but requires more involved type formers, such as universes, and the following type,
@@ -1536,45 +1558,210 @@ and
 \]
 for all $f : B_{x,y}$, $g : B_{y,z}$ and $h : B_{z,w}$, demonstrating that composition is unital and associative in the enriched category.
 For example, we may choose $\mathcal{V}$ to be the category of groups equipped with the usual tensor product of groups. Here the $L$ functor forms the free abelian group of a set, and the construction above will yield an Ab-enriched category.
-\subsection{Diagrams}
-Expanding upon the Monoidal Families example given by Vakar \cite{vakar14}, we consider diagrams $J : \mathcal{D} \to \mathcal{V}$ of any shape in a category $\mathcal{V}$. In other words, we construct a category $\diag(\mathcal{V})$ whose objects are functors with $\mathcal{V}$ as codomain and whose morphisms for diagrams $J : \mathcal{D} \to \mathcal{V}$ and $J' :\mathcal{C} \to \mathcal{V}$ are given by functors $F : \mathcal{C} \to \mathcal{D}$ such that $J \circ F = J'$.
+\subsection{Diagrams in monoidal categories}
+Expanding on the set indexed families example, for any category $\mathcal{C}$, there is a fibration $cod : Diag(\mathcal{C}) \to \mathbf{Cat}$, where the total category $Diag(\mathcal{C})$ has functors $J : \mathcal{D} \to \mathcal{C}$ into $\mathcal{C}$ as objects, and whose morphisms between $J : \mathcal{D} \to \mathcal{V}$ and $J' :\mathcal{C} \to \mathcal{V}$ consist of functors $F : \mathcal{C} \to \mathcal{D}$ such that $J \circ F = J'$. In other words, the fibers of $Diag(\mathcal{C})$ are functor categories, which we write $[\Gamma, \mathcal{C}]$, for any small category $\Gamma$. Any functor $F : \mathcal{A} \to \mathcal{B}$ in the base induces a canonical lift $F^* : [\mathcal{B}, \mathcal{C}] \to [\mathcal{A},\mathcal{C}]$ simply given by precomposition.\\
+Again, when $\mathcal{C}$ has a terminal object $\top$ such that the collections $\mathcal{C}(\top, A)$ are small for any $A \in \mathcal{C}$, then this forms a comprehension category,
+\[
+\ti
+\diag(\mathcal{C}) \ar[d, "dom"] \ar[r,"\pi"] & \mathbf{Cat}^\to \ar[ld, "cod"] \\
+\mathbf{Cat}
+\kz
+\]
+ where
+\[
+  \pi(J : [\mathcal{A}, \mathcal{C}]) = (\top \downarrow J) \to A 
+\]
+is simply projecting any morphism
+\[
+  \ti
+  \top \ar[d,"\alpha"] \ar[rd, "\beta"]\\
+  J(a) \ar[r, "J(f)"] & J(b)
+  \kz
+\]
+of the slice category $(\top \downarrow J)$ to the underlying morphism $f : a \to b$ in $\mathcal{A}$.\\
+When $\mathcal{C}$ is any symmetric monoidal cateogyr $\mathcal{V}$, there is an obvious symmetric monoidal structure on each fiber $[\Gamma, \mathcal{V}]$, given pointwise:
+\[
+  \begin{split}
+    J \otimes J'(x) &= J(x) \otimes J'(x) : [\Gamma, \mathcal{V}]\\
+    J \otimes J'(f) &= J(f) \otimes J'(f) : J(x) \otimes J'(x) \to J(y) \otimes J'(y)
+  \end{split}
+\]
 
-From this we get the obvious domain fibration $dom : \diag(\mathcal{V}) \to \textbf{Cat}$.
-\begin{thm}
-If $\mathcal{V}$ is a monoidal category, $dom$ is a lax monoidal fibration.
-\begin{proof}
+Furthermore, since lifts are simply precomposition, reindexing functors are strictly monoidal, so this yields a split monoidal fibration. Restricting the base to small groupoids instead of small categories, and setting $\mathcal{C} = \mathbf{Gpd}$ we get a model of linear dependent type theory which expands the groupoid model by Hofmann and Streicher \cite{hofmann1998}:
+\[
+\ti
+\diag(\mathcal{V}) \ar[rd, "dom"]  & \diag{\mathbf{(Gpd)}} \ar[d, "dom"] \ar[r, "\pi"] & \mathbf{Gpd}^\to \ar[ld, "cod"] \\
+& \mathbf{Gpd}
+\kz
+\]
+As shown in \cite{hofmann1998}, this model supports $\Pi$ and $\Sigma$, and importantly provides an example of $Id$-types where there might be more terms of $x =_A x$ than $refl(x)$, which sets the stage for the homotopy interpretation of dependent type theory.\\
+Here, the interpretation of identity type $Id_A$ is the functor $Id_A : \Gamma.A.A^+ \to \mathbf{Gpd}$ which sends an object $(\gamma, a \in A(\gamma), b \in A(\gamma))$ to the discrete groupoid $\delta(\Hom_A(a,b))$, and a morphism $(\gamma, f: a \to a', g : b \to b')$ to the functor $g \circ - \circ f^{-1}: \delta(\Hom_A(a, b)) \to \delta(\Hom_A(a',b'))$. This makes the extended context $\Gamma.A.A^+.Id_A$ isomorphic to the arrow category $\Gamma.A^\to$.
+
+
+As in the families model, limits and colimits are constructed pointwise, and preserved by precomposition, so the model supports $\&$, $\top$, $\oplus$, $0$, if $\mathcal{V}$ has binary products, terminal object, binary coproducts and initial object respectively.
+
+
+The situation for $\multimap$ requires a bit of care. Under what conditions is the functor category $[\mathcal{C}, \mathcal{V}]$ monoidal closed with respect to the pointwise tensor product? For all $F \in [\mathcal{C}, \mathcal{V}]$, we need to find a right adjoint to the functor $- \otimes F : [\mathcal{C},\mathcal{V}] \to [\mathcal{C}, \mathcal{V}]$. In other words for all functors $G, H$, we need 
+
+For $F, G, H : \mathcal{C} \to \mathcal{V}$ a natural transformation $\eta : F \otimes G \to H$, a natural transformation is for all $g : z \to x$ and $f : x \to y$ in $\mathcal{C}$, a diagram:
+\[
+  \ti
+  Fx \otimes Gx  \ar[r, "{Fg \otimes Gf}"] & Fz \otimes asd
+  \kz
+\]
+
+
+Naively, $F, G, H : \mathcal{C} \to \mathcal{V}$ a natural transformation $\eta : F \otimes G \to H$ gives rise to a collection of maps $\hat \eta_A : F(A) \to [G(A), H(A)]$, but a priori these maps do not constitute a natural transformation $F \to [G, H]$.\\
+Instead, notice that a natural transformation $\eta : F \to G$, is for each morphism $f : A \to B$ in $\mathcal{C}$, a pair of morphisms $\eta_A$ and $\eta_B$ such that:
+\[
+  \ti
+  F(A) \ar[d, "\eta_A"] \ar[r, "Ff"] & F(B) \ar[d, "\eta_B"]\\
+  G(A) \ar[r, "Gf"] & G(B)
+  \kz
+\]
+or equivalently, an ``element'' of $[F(A), G(A)] \times [F(B), G(B)]$ such that the postcomposing the first component with $Gf$ is the same as precomposing the second component with $Ff$:
+\[
+  \ti
+  {[F(A), G(A)]} \times [F(B), G(B)] \ar[r, "\pi_1(Gf^*)",yshift=3] \ar[r, "\pi_2(Ff_*)",yshift=-3, swap] & {[F(A), G(B)]}
+  \kz
+\]
+So if $\mathcal{V}$ has all limits, a natural candidate for the internal hom of the functor category becomes the equalizer:
+\[
+  \ti
+  [F, G](x) = Eq(\Pi_{x \in \mathcal{C}} [Fx, Gx] \ar[r, "Gf^*",yshift=3] \ar[r, "Ff_*",yshift=-3, swap] & \Pi_{f : x \to y}[Fx, Gy])
+  \kz
+\]
+also known as the end $[F, G](x) = \int_{x \in \mathcal{C}}[Fx, Gx]$ of the functor $[F-, G-] : \mathcal{C}^{op} \times \mathcal{C} \to \mathcal{V}$.\\
+\begin{thm}\label{diaghoms}If $\mathcal{V}$ has internal homs and is complete, $[\mathcal{C},\mathcal{V}]$ has internal homs, defined as above.
+  \begin{proof}
+    For any, $F, G, H \in [\mathcal{C}, \mathcal{V}]$, we need to display bijection
+    \[
+      [\mathcal{C},\mathcal{V}](H \otimes F, G) \cong [\mathcal{C},\mathcal{V}](H, \int_{x \in \mathcal{C}}[Fx, Gx])
+    \]
+    natural in $G$ and $H$.
+    Since $[F, G]$ is a constant functor, a map on the right hand side consists of, for every map $f : x \to y \in \text{Mor}(\mathcal{C})$, of commutative diagrams of the following form:
+    \[
+      \ti
+      Hx \ar[rd, "{\eta_x}"] \ar[r, "Hf"] & Hy \ar[d, "{\eta_y}"] \\
+      & \int_{x \in \mathcal{C}}[Fx, Gx]
+      \kz
+    \]
+    which will determine two unique morphisms, $\hat \eta_x : Hx \to \Pi_{x \in \mathcal{C}}[Fx, Gx]$ and $\hat \eta_y : Hy \to \Pi_{x \in \mathcal{C}}[Fx, Gx]$, such that the following diagram commutes:
+    \[
+      \ti
+      Hx \ar[rd, "\hat \eta_x"] \ar[r, "Hf"] & Hy \ar[d, "\hat \eta_y"] \\
+      & \Pi_{x \in \mathcal{C}}[Fx, Gx] \ar[r, "\pi_1(Gf^*)",yshift=3] \ar[r, "\pi_2(Ff_*)",yshift=-3, swap] & \Pi_{f : x \to y}[Fx, Gy]
+      \kz
+    \]
+    projecting out yields a unique collection of morphisms $\pi_x\hat \eta_x: Hx \to [Fx, Gx]$ such that:
+    \[
+      \ti
+      Hx \ar[r, "Hf"] \ar[d, "\pi_x\hat\eta_x"] & Hy \ar[d, "\pi_x\hat\eta_x"]\\
+      {[Fx, Gx]} \ar[rd, "{[1_{Fx}, Gf]}",swap] & {[Fy, Gy]} \ar[d, "{[Ff, 1_{Gy}]}"]\\
+      & {[Fx, Gy]}
+      \kz
+    \]
+
+    which by the tensor-hom adjunction in $\mathcal{V}$ corresponds precisely to a diagram:
+    \[
+      \ti
+      Hx \otimes Fx \ar[r, "Hf \otimes Ff"] \ar[d] & Hy \otimes Fy \ar[d]\\
+      Gx \ar[r, "Gf"] & Gy
+      \kz
+    \]
+\todo{check this}{Determining a unique natural transformation $H \otimes F \to G$. This yields a bijection of homsets natural in all variables.}
 \end{proof}
 \end{thm}
-This suggests that we can get a model for linear dependent type theory by letting $\mathcal{L} = \diag(\mathcal{V})$ in the semantic structures given above. But what about the choice of $\mathcal{T}$? One can trivially choose $\mathcal{T} = \mathbf{Cat}$ to get the following picture:
+Given any functor $p : \mathcal{D} \to \mathcal{C}$ in the base, we have:
 \[
-\ti
-\diag(\mathcal{V}) \ar[rd, "dom"]  & \mathbf{Cat} \ar[d, "1_{\mathbf{Cat}}"] \ar[r, "Id"] & \mathbf{Cat}^\to \ar[ld, "cod"] \\
-& \mathbf{Cat}
-\kz
+  p^*([G, F]) = \lambda x . \int_{p(x) \in \mathcal{C}}[G(p(x)), F(p(x))]) = \int_{x \in \mathcal{D}}[G(p(x)), F(p(x))] = [p^*G, p^*F]
 \]
-where $Id : \mathbf{Cat} \to \mathbf{Cat}^\to$ is the map sending a category to its identity functor. Another choice would be $\mathcal{T} = \mathbf{Fib}$, the category of grothendieck fibrations, yielding:
+so we get that the diagrams model supports $\multimap$ if $\mathcal{V}$ is monoidal closed and complete.\\
+\begin{defn}
+For any functor $p : \mathcal{A} \to \mathcal{B}$ in the base, a left or right adjoint to the induced functor $p^* : [\mathcal{B}, \mathcal{V}] \to [\mathcal{A}, \mathcal{V}]$ is called a \textbf{left or right Kan extension} of $p$.
+\end{defn}
+So, in order for the diagrams model to support $\sqcap$- and $\sqcup$-types, we need left and right Kan extensions of every functor between small groupoids.\todo{expand}\\
+In order to interpret $M$ and $L$ in this model, the same argument as in lemma \ref{fiberadj} can be used to show that an adjunction between $\mathcal{V}$ and $\mathbf{Gpd}$ induces a fiber adjunction between the respective diagram categories. Also, since the composition of two adjunctions is again an adjunction, we get that whenever the functor $\mathcal{V}(I, -) : \mathcal{V} \to \mathbf{Set}$ has a left adjoint $F$, then there exists an adjunction between $\diag(\mathcal{V})$ and $\diag(\mathbf{Gpd})$, arising out of:
 \[
-\ti
-\diag(\mathcal{V}) \ar[rd, "dom"]  & \mathbf{Fib} \ar[d, "Base"] \ar[r, "\mathcal{P}"] & \mathbf{Cat}^\to \ar[ld, "cod"] \\
-& \mathbf{Cat}
-\kz
+  \ti
+\mathcal{V} \ar[r, "{\mathcal{V}(I, -)}"{name=D, below}, bend right]  & \ar[l, "F"{name=C, above}, bend right] \ar[from=C, to=D, symbol=\dashv] \mathbf{Set} \ar[r, "\delta"{name=B, below}, bend right]   &  \mathbf{Gpd} \ar[l, "\pi_0"{name=A, above}, bend right] \ar[from=A, to=B, symbol=\dashv]
+  \kz
 \]
-where $Base$ is the morphism sending a fibration $p : E \to B \mapsto B$ and $\mathcal{P}$ sends a fibration $p : E \to B$ to its underlying functor $p : E \to B$. For any functor $F : A \to B$ in $\mathbf{Cat}$, there is a pullback:
-\[
-\ti
-A \times_{B} E \ar[r] \ar[d, "F^*(p)"] & E \ar[d, "p"] \\
-A \ar[r, "F"] & B
-\kz
-\]
-where $F^*(p)$ is a fibration if $p$ is, by Lemma(Prop 2.6 in comprehension categories). This shows that $\mathcal{P}$ sends cartesian arrows to cartesian arrows. READ EXAMPLE 4.6 in Comprehension cats
-
-One could also restrict $\diag(\mathcal{V})$ to diagrams in $\mathcal{V}$ over groupoids. In that case, $\mathcal{T}$ consists of fibrations of groupoids and the cartsian fragment of the type theory is essentially the groupoid model as presented by Hofmann and Streicher in \cite{hofmann1998}. This suggests that this model can serve as a setting for linear dependent homotopy type theory.\\
-\begin{thm}\label{M-faith}Faithfulness of $M$ is independent.
+where $\pi_0$ is the functor sending a groupoid to its set of connected components.
+\begin{thm}\label{M-faith}There are models in which $M$ is not faithful.
   \begin{proof}
-    We have already seen a model for when the functor $M$ is faithful, for example in the families model for any concrete monoidal category $\mathcal{V}$. A model where $M$ is not faithful is given by taking the fibration over families of groupoids $q : [-, \mathbf{Gpd}] \to \mathbf{Gpd}$ as both the cartesian and split monoidal fibration, and defining $L = \delta \pi_0$ and $M = \delta U$, where $U$ is the underlying set functor. We have that $L \vdash M$ is a monoidal fiber adjunction, but $M$ is not faithful.
+    Let $\mathcal{V}$ to be $\mathbf{Gpd}$ so that $L = \delta \pi_0$ and $M = \delta \mathbf{Gpd}(1, -)$. This induces a fiber adjunction $L \dashv M$ where \todo{check this}[$L$ is strong monoidal] but $M$ is not faithful.
   \end{proof}
 \end{thm}
+\subsubsection{Universes in the diagrams model}
+As long as $\mathbf{Gpd}$ is large enough to be able to contain the core of $\mathcal{V}$ as an object, we let the linear universe type $\mathcal{L}$ be given by this object.
+\subsection{Higher linear dependent types}
+A key feature of the groupoid model is that it provides a model of dependent type theory where there might be nontrivial terms of the identity type. A natural question to ask is whether this higher dimensional feature of type theory can be extended to the linear dependent case. Can we, for example, construct a model where the total category $\mathcal{L}$ of linear types is a 2-category, so that for terms $\Gamma; \Xi \vdash f : A$ and $\Gamma; \Xi \vdash g : A$, the interpretation of $(\texttt{fmap } f_M) =_{\bigotimes\Xi_M \to A_M} (\texttt{fmap } g_M)$
+\footnote{As defined in theorem \ref{Mfunc}, $\texttt{fmap}$ has type: $\texttt{fmap} : [A \multimap B]_M \to (A_M \to B_M)$}
+is an object representing the 2-cells between $[[f]]$ and $[[g]]$?
 
+Such a model would provide the necessary setting for the following linear analogue to the univalence axiom:
+\[
+  \inference{\Gamma; \cdot \vdash f : A \multimap B\\
+    \Gamma; \cdot \vdash g : B \multimap A\\
+    \Gamma \vdash p : \texttt{fmap}(g \; \hat \circ \; f)_M  =_{A_M \to A_M} id_{A_M}\\
+    \Gamma \vdash q : \texttt{fmap} (f \; \hat \circ \; g)_M =_{B_M \to B_M} id_{B_M}\\
+    }{\Gamma \vdash ua(f, g, p, q) : A =_{\mathcal{L}} B}[L-ua]
+  \]
+  To show that this derivation rule is consistent, we need to display a model where $M$ sends a linear type to a non-discrete groupoid. Such a model is given by letting $\mathcal{V}$ be the 2-category of small symmetric monoidal categories, symmetric monoidal functors and monoidal natural transformations:
+  \[
+    \ti
+    \diag(\mathbf{SMCat}) \ar[rd, "cod"] & \diag(\mathbf{Gpd}) \ar[r, "\pi"] \ar[d, "cod"] & \mathbf{Gpd}^\to \ar[ld, "dom"]\\
+    & \mathbf{Gpd}
+    \kz
+  \]
+ As this model is the first to display a higher dimensional structure in the linear realm, we will refer to this model as the higher-dimensional model.\\
+  Recall that the category of small monoidal categories carries a natural symmetric monoidal structure, as briefly outlined in \ref{smcatmon} and carefully described in \cite{smcat}. Furthermore, the category $\mathbf{SMCat}$ has \todo{products} this monoidal structure is accompanied by an internal hom adjunction. For two symmetric monoidal categories $\mathcal{A}$ and $\mathcal{B}$, category $[\mathcal{A}, \mathcal{B}]$ consisting of strong monoidal functors and monoidal transformations between them carries a natural monoidal structure \cite{smcat}, and serves as the internal hom of $\mathcal{A}$ and $\mathcal{B}$. Since $\mathbf{SMCat}$ is complete with products and equalizers inherited from $\mathbf{Cat}$, theorem \ref{diaghoms} yields that this model supports $\multimap$ type formers.
+  \begin{lemm}
+    There is a functor $F : \mathbf{Cat} \to \mathbf{SMCat}$ which constructs the free symmetric monoidal category of any category, i.e. is a left adjoint to the forgetful functor $U_{\mathbf{SMCat}} : \mathbf{SMCat} \to \mathbf{Cat}$
+    \begin{proof}
+      Construct the free symmetric monoidal category $F\mathcal{C}$ of a small category $\mathcal{C}$ by letting the objects of $F\mathcal{C}$ be finite words $(x_1, x_2, \dots x_n)$ of the objects of $\mathcal{C}$. Morphisms between words are best thought of as string diagrams, where each string stems from a morphism in $\mathcal{C}$:
+      \[
+        \begin{tikzcd}
+        y_1 & y_2 & y_3 \\
+        x_1 \ar[ru, "f",out=90,in=270] & x_2 \ar[lu, "g", out=90,in=270] & x_3 \ar[u, "h"]
+        \end{tikzcd}
+      \]
+      The composition of such morphisms are just the composition of the corresponding string diagrams, composing the labels of strings along the way. The monoidal structure is simply given by concatenation of words. From this construction, it should be clear that given any symmetric monoidal category $\mathcal{D}$, a functor $G : \mathcal{C} \to U\mathcal{D}$ induces a functor $\hat G$ which maps words $(x_1, x_2, \dots x_n) \mapsto G(x_1) \otimes G(x_2) \otimes \dots G(x_n)$, which forms an adjunction $F \vdash U_{\mathbf{SMCat}}$.
+    \end{proof}
+  \end{lemm}
+  \begin{lemm}
+    There is a functor $|-| : \mathbf{Cat} \to \mathbf{Gpd}$ which takes a category $\mathcal{C}$ to its core, i.e. the maximal subgroupoid of $\mathcal{C}$. This functor is a right adjoint to the forgetful functor $U_{\mathbf{Gpd}} : \mathbf{Gpd} \to \mathbf{Cat}$.
+    \begin{proof}
+    \end{proof}
+  \end{lemm}
+  These two adjunctions yields an adjunction $FU_{\mathbf{Gpd}} \dashv |U_{\mathbf{SMCat}}-|$ between $\mathbf{SMCat}$ and $\mathbf{Gpd}$, which by lemma \ref{fiberadj} lifts to a fiber adjunction:
+  \[
+\ti
+    \diag(\mathbf{SMCat}) \ar[rd, "cod"] \ar[rr, "|U_{\mathbf{SMCat}}-|"{name=B, below},swap] & & \ar[ll, "FU_{\mathbf{Gpd}}"{name=A, above},bend right] \ar[from=A, to=B, symbol=\dashv] \diag(\mathbf{Gpd}) \ar[ld, "cod"]\\
+    & \mathbf{Gpd}
+    \kz
+  \]
+  \begin{thm}
+    L-ua is consistent with the rest of the theory. It holds in the higher dimensional model where $\mathbf{SMCat}$ is restricted to $\mathbf{SMCatGpd}$, the category of symmetric monoidal groupoids \cite{smgpd}.
+    \begin{proof}[Sketch]
+      We have two generalized elements $f : I \to [A, B]$ and $g : I \to [B, A]$. Since $I$ is simply the terminal category, these define two monoidal functors $F : A \to B$ and $G : B \to A$. Similarly, $g \; \hat \circ \; f$ and $f \; \hat \circ \; g$ are equivalently the compositions $GF$ and $FG$. Restricted to the core of $A$ and $B$ respectively, these yield the endofunctors $|GF| : |A| \to |A|$ and $|FG| : |B| \to |B|$. That there are inhabitants of the identity types $fmap (g \;\hat \circ \;f) =_{A_M \to A_M}id_{A_M}$ implies that there are natural isomorphisms $\eta : |GF| \to id_{A_M}$ and $\epsilon : |FG| \to id_{B_M}$, so we have an equivalence of categories $|A| \cong |B|$. If $A$ and $B$ were groupoids to begin with, then they are equal to their core, so we have an equivalence $A \cong B$. But equivalences between categories $A$ and $B$ are precisely the isomorphisms between objects of the core of $\mathbf{SMCatGpd}$, which is the interpretation of the linear universe type $\mathcal{L}$.
+    \end{proof}
+  \end{thm}
+  \subsection{Junk}
+  in every context, which from a semantic perspective witnessing the fact that $M$ is a (lax) closed functor. More explicitly, in any model that supports the corresponding type formers, $\texttt{fmap}$ is the morphism $[[\texttt{fmap}]] : M[A, B] \to [MA, MB]$ in $\mathcal{T}_\Gamma$, which is induced by the following procedure: given a pair of morphisms $f : I \to [A, B]$ and $g : I \to A$, yield a map $eval_{A, B}\circ (f \otimes g) : I \to B$. $[[fmap]]$ is the transportation of this procedure through the following chain of isomorphisms:
+\[
+  \begin{split}
+    \mathcal{T}_\Gamma(M[A, B], [MA, MB]) \cong \\
+    \mathcal{T}_\Gamma(M[A, B] \times MA, MB]) \cong \\
+    \mathbf{Set}((\mathcal{T}_\Gamma(1, M[A, B]) \times \mathcal{T}(1, MA), \mathcal{T}(1, MB)) \cong \\
+    \mathbf{Set}(\mathcal{L}_\Gamma(I, [A, B]) \times \mathcal{L}(I, A), \mathcal{L}(1, B))
+  \end{split}  
+\]
+\\
+Since we cannot quantify over linear terms, we cannot define an equivalence of linear types as a type itself, but we can formulate an analogue of the univalence axiom by:
+\\
+There is a fibration:
 \newpage
 The comprehension of $A \in [\Gamma, \mathbf{Gpd}]$ is the comma groupoid $(\Gamma \downarrow A)$, where objects are functors $F : \Gamma \to A(B)$ for some $B \in \Gamma$, and arrows are commutative diagrams:
 \[
@@ -1584,12 +1771,6 @@ The comprehension of $A \in [\Gamma, \mathbf{Gpd}]$ is the comma groupoid $(\Gam
   \kz
 \]
 where $B, C$ are objects of $\Gamma$ and $f : B \to C$.\\
-If the functor $\mathcal{V}(I, -) : \mathcal{V} \to \mathbf{Set}$ has a left adjoint $F$, then there exists an adjunction $M$ and $L$ for every $\Gamma$, arising from:
-\[
-  \ti
-  \mathbf{Gpd} \ar[r, "\pi_0", bend left] & \mathbf{Set} \ar[l, "\delta", bend left] \ar[r, "F", bend left] & \mathcal{V} \ar[l, "{\mathcal{V}(I, -)}", bend left]
-  \kz
-\]
 \begin{thm}The induced functor $\pi_A^*$ is full and faithful.
 \end{thm}
 
@@ -1738,6 +1919,14 @@ Dually, we can use the same argument to conclude that when $\mathcal{V}$ has all
 \begin{cor}
 If $\mathcal{V}$ has all colimits, then $\diag(\mathcal{V})$ supports $\Sigma$-types. If $\mathcal{V}$ has all limits, then $\diag(\mathcal{V})$ supports $\Pi$-types.
 \end{cor}
+\subsection{Graphs}
+Another choice for the monoidal fibration is the category of reflexive symmetric graphs, given as presheafs on the category $\mathcal{Q}$, given by:
+\[
+  \ti
+  E \ar[loop, "o",swap] \ar[r, "s", bend left] \ar[r, "t",bend right,swap] & V \ar[l, "r"]
+  \kz
+\]
+
 \subsection{Spectra}
 %\subsection{Monoidal groupoids}
 %Given any bicategory $\mathcal{B}$, there is a monoidal groupoid $End(b)$ of endomorphisms of an object $b \in \mathcal{B}$ with 1-cells $f : b \to b$ as objects and invertible 2-cells $\eta : f \implies f'$ as morphisms. The monoidal structure of $End(b)$ is given by composition: $f \otimes f' = f'\circ f$. In particular, if $\mathcal{B} = \mathbf{Cat}$, then we have $End(\mathcal{C})$ a monoidal groupoid consisting of functors and natural isomorphisms.\\
