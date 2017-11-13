@@ -14,6 +14,12 @@
 \title{Models of linear dependent type theory}
 \author{Martin Lundfall}
 \maketitle
+\begin{comment}
+  Dependent types section
+  Enriched cats section
+\end{comment}
+\SetWatermarkText{DRAFT}
+\SetWatermarkScale{1}
 \abstract
 In this paper, we construct a type theory which deals with non-linear, ordinary dependent types (what we will call \textit{cartesian}), and \textit{linear types}, where both constructs may depend on terms of cartesian types. In the interplay between the cartesian and linear types we introduce the new type formers $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the type $B$ (and therefore the resulting construct) is a linear type. These can be seen as internalizing quantification in linear propositions. We also introduce the modalities $M$ and $L$, transforming linear types into cartesian types and vice versa.
 
@@ -28,9 +34,11 @@ Lately, there has been an increasing interest in combining linear types with dep
 
 The theory splits contexts into two parts, divided by a semicolon, where the first half contains the cartesian assumptions, for which weakening and contraction is admissible, while the second half contains the linear assumptions, for which exchange is allowed. We introduce two new type formers, $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the type $B$ (and therefore the resulting construct) is a linear type. The traditional $!$ modality is deconstructed as a comonad arising from the adjoint pair $L \dashv M$, where $L$ is the functor sending cartesian types into linear, and $M$ sends linear types to cartesian. We have $\Pi_{x : A}B_M \cong (\sqcap_{x :A}B)_M$, for linear $B$, and, if we assume some commuting conversions, the linear equivalence $(\sqsubset_{x :A}C)_L \cong \Sigma_{x :A}C_L$ for cartesian $C$.
 
+We get new elimination and computation rules for both $\Sigma$ and $Id$-types when eliminating into a linear type. 
+
 We postulate the existence of two universes, $L$ and $U$, containing codes of linear and cartesian types, respectively and assumed to be closed under all type formers.
 
-We develop categorical semantics for the theory, using traditional ZFC as a metatheory (assuming some inaccesible cardinals to support universes in Section \ref{universefam}). Our starting point is a \textit{comprehension categories} \cite{jacobs}, $\pi : \mathcal{T} \to \mathcal{C}$ equipped with a \textit{split monoidal fibration} $q : \mathcal{L} \to \mathcal{C}$ over the same base, making fibers over a context $\mathcal{L}_\Gamma$ monoidal categories, and reindexing functors monoidal functors. The traditional linear type formers $\&, \oplus, 0, \top, \multimap$ correspond to these fibers supporting binary products and coproducts, initial and terminal object and internal homs, respectively. The new type formers $\sqcap_{x : A}B$ and $\sqsubset_{x :A}B$ correspond to right and left adjoints to the reindexing functor $\pi_A : \mathcal{L}_{\Gamma.A} \to \mathcal{L}_\Gamma$, while the modalities $L$ and $M$ give rise to a fiber adjunction between $\mathcal{L}$ and $\mathcal{T}$.
+We develop categorical semantics for the theory, using traditional ZFC as a metatheory (assuming some inaccesible cardinals to support universes in Section \ref{universefam}). Our starting point is a \textit{comprehension categories} \cite{jacobs}, $\pi : \mathcal{T} \to \mathcal{C}$ equipped with a \textit{split monoidal fibration} $q : \mathcal{L} \to \mathcal{C}$ over the same base, making fibers over a context $\mathcal{L}_\Gamma$ monoidal categories, and reindexing functors monoidal functors. The traditional linear type formers $\&, \oplus, 0, \top, \multimap$ correspond to these fibers supporting binary products and coproducts, initial and terminal object and internal homs, respectively. The new type formers $\sqcap_{x : A}B$ and $\sqsubset_{x :A}B$ correspond to right and left adjoints to the reindexing functor $\pi_A : \mathcal{L}_{\Gamma.A} \to \mathcal{L}_\Gamma$, while the modalities $L$ and $M$ give rise to a fiber adjunction between $\mathcal{L}$ and $\mathcal{T}$. The new rules for $\Sigma$ are automatically satisfied by the semantic interpretation of $\Sigma_A$ as a left adjoint to the reindexing functor $\pi_A^* : \mathcal{T}_\Gamma \to \mathcal{T}_{\Gamma.A}$. The new rules for $Id$-types impose an additional condition on the semantic interpretation of $Id$, which are always fulfilled if our identity types are extensional.
 
 We consider two concrete models, the \textit{families model}, in which cartesian types consist of families of sets, indexed by their context set $\Gamma$, and a linear type in the context $\Gamma$ is a $\Gamma$-indexed family of objects in a given symmetric monoidal category $\mathcal{V}$. Examples of $\mathcal{V}$ so that the families model supports all type formers are $\mathbf{AbGrp}$, $\mathbf{GCTop}_*$, $\mathbf{Vect}_F$ the category of abelian groups, the category of compact generated, pointed topological space and the category of vector spaces over a field $F$, respectively.
 
@@ -43,9 +51,11 @@ The structure of this paper is the following: after reviewing some theory on fib
 The theory is both semantically and syntactically motivated, developed in an almost dialectical method, and a reader familiar with both category theory and type theory might benefit from jumping between sections to understand each type former individually both from a semantic and syntactic perspective.
 \section{Preliminaries}\label{prelim}
 \subsection{Dependent type theory}
-From a syntactic perspective, a \textit{type} is a syntactic object whose meaning and function stems from the ways in which it interacts with the derivation rules of a particular \textit{type theory}. A definition of this kind is the best we can hope for if we want to view type theory as a foundational system of mathematical reasoning, as it does not rely on any predefined semantic framework. Taking a foundational view, the question to ask is not \textit{what is a type?} but rather, for any other mathematical construction $X$, one should ask \textit{how do I express $X$, type theoretically?}
+From a syntactic perspective, a \textit{type} is a syntactic object whose meaning and function stems from the ways in which it interacts with the derivation rules of a particular \textit{type theory}. A definition of this kind is the best we can hope for if we want to view type theory as a foundational system of mathematical reasoning, as it does not rely on any predefined semantic framework. Taking a foundational view, the question to ask is not \textit{what is a type?} but rather, for any other mathematical construction $X$ \textit{how do I express $X$, type theoretically?}. Unfortunately, such an explanation provides very little intuition of what types actually are.
 
-Approaching type theory from the perspective of logic, we can form a first approximation of the definition of a type as a generalization of a proposition and a set.
+Instead, assuming some familiarity with traditional logic and set theory, a first approximation of what a type is, can be as the simoultaneous generalization of a proposition and a set. In particular, we can understand the $\Pi$-type as both being a universal quantifier and a special case of implication, and the $\Sigma$-type as both an existential quantifier and a special case of $\land$. This makes dependent type theory very similar to higher order logic, with a different take on quantification.
+
+A third way to understand dependent type theory is as a programming language, forming a unified framework for computation and their specification. This connection goes under the name of the \textit{curry-howard correspondence}. The computation rules of our theory gives us a way to reduce terms and express them in a canonical form, while our types ensure that the output of the computation is in the correct format.
 \subsection{Linear type theory}
 Linear logic is a substructural logic in which the rules of weakening and contraction:
 \[
@@ -1818,8 +1828,8 @@ Some concrete choices for $\mathcal{V}$ that fullfill these conditions are:
 \item The category $\mathbf{CGTop}_*$, of pointed compactly generated topological spaces, with the smash product as monoidal structure. The functor $M$ is here the forgetful functor which both forgets the base point and the topology, which has a left adjoint given by the discrete topology, and then taking the coproduct with the point to create a pointed space. The unit of $\mathbf{CGTop}_*$ is the two point discrete set $S^0$, which is precisely the image of the point in the adjunction above.
 \end{itemize}
 \subsubsection{Syntactic enriched categories}
-As an in depth example construction in the families model of linear dependent type theory, recall the notion of an enriched category in as defined in \ref{enr-cat}.
-Our goal is to construct a syntactic analogue of this construction in the families model, such that the interpretation of this is an enriched category. There are two ways of doing this. The first is a meta construction, in which we ask for the existence of certain types and judgemental equalities to hold, whereas the second, internal definintion, is a type \textbf{Enr-Cat}, whose terms are interpreted as enriched categories. The type \textbf{Enr-Cat} allows us to formulate theorems about enriched categories directly in the syntax, but requires more involved type formers, such as universes, and the following type,
+As an in depth example of a construction in the families model, recall the notion of an enriched category in as defined in \ref{enr-cat}.
+Our goal is to form a syntactic construction whose interpretation of this is an enriched category. There are two ways of doing this. The first we will call a ``meta construction'', in which we ask for the existence of certain types and judgemental equalities to hold, whereas the second, internal definintion, is a type \textbf{Enr-Cat}, whose terms are interpreted as enriched categories. The type \textbf{Enr-Cat} allows us to formulate theorems about enriched categories directly in the syntax, but requires more involved type formers, such as universes, and the following type,
 with which we can reason (non-linearly) about the hom-sets of $\mathcal{V}$:\\
 \fbox{
 \begin{minipage}{.5\linewidth}
@@ -1843,7 +1853,7 @@ with which we can reason (non-linearly) about the hom-sets of $\mathcal{V}$:\\
   \]
 \end{minipage}
 }
-In the presence of linear function types ($\multimap$) and the $M$-functor, this type can be just as well be constructed as $(A \multimap B)_M$. However, adding it as a primitive allows us to talk about the hom-sets of $\mathcal{V}$ even when it is not closed. Instead, the semantics of $[-, -]$ will be an object in $\mathcal{T}$ which ``represents'' the morphisms of $\mathcal{L}$:
+In the presence of linear function types ($\multimap$) and the $M$-functor, this type is equivalent to $(A \multimap B)_M$. However, adding it as a primitive allows us to talk about the hom-sets of $\mathcal{V}$ even when it is not closed. Instead, the semantics of $[-, -]$ will be an object in $\mathcal{T}$ which ``represents'' the morphisms of $\mathcal{L}$:
 \begin{defn}
   A model of linear depenendent type theory supports $[-,-]$-types, if, for all objects $A, B \in \mathcal{L}_{\Gamma}$, there exists an object $T[A, B] \in \mathcal{T}_{\Gamma}$ such that $\mathcal{T}_{\Gamma}(X, T[A, B]) \cong \mathcal{L}_{\Gamma.X}(A, B)$.
 \end{defn}
@@ -2383,6 +2393,82 @@ and $h^{-1} : (A \otimes B \multimap C) \multimap (A \multimap B \multimap C)$:
     \end{proof}
   \end{thm}
   \section{Discussion}\label{discussion}
+  \subsection{Inductive types in linear dependent logic}
+  As we saw in the case for $\Sigma$- and $Id$-types, we add new elimination and computation rules for our traditional cartesian type formers for when the type we eliminate into is linear. This should remain true for inductive types. For example, adding the type of natural numbers to our theory, we would add the rules [$\mathbb{N}$-E$_2$], [$\mathbb{N}$-C$_2$-0], [$\mathbb{N}$-C$_2$-S] to the typical rules for the natural numbers type:\\
+  \fbox{
+  \begin{minipage}{.3\linewidth}
+    \[
+\inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash \mathbb{N} \type}[$\mathbb{N}$-F]
+  \]\\
+  \[
+    \inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash 0 : \mathbb{N}}[$\mathbb{N}$-0-I]
+  \]\\
+  \[
+    \inference{\Gamma \vdash M : \mathbb{N}}{\Gamma \vdash Suc(M) : \mathbb{N}}[$\mathbb{N}$-S-I]
+  \]\\
+  \\
+  \[
+    \inference{\Gamma, n : \mathbb{N} \vdash C \type\\
+      \Gamma \vdash H_z : C[0/n]\\
+      \Gamma, n : \mathbb{N}, x : C \vdash H_s : C[Suc(n)/x]\\
+      \Gamma \vdash M : \mathbb{N}}
+    {\Gamma \vdash R_n^{\mathbb{N}}(H_z, H_s, M) : C[M/n]}[$\mathbb{N}$-E$_1$]
+  \]\\
+  \\
+  \\
+  \[
+    \inference{\Gamma \vdash R_{n}^{\mathbb{N}}(H_z, H_s, 0) : C[0/n]}
+    {\Gamma \vdash R_n^{\mathbb{N}}(H_z, H_s, 0)  \equiv H_Z: C[0/n]}[$\mathbb{N}$-C$_1$-0]
+    \]\\
+\end{minipage}
+\begin{minipage}{.7\linewidth}
+      \[
+    \inference{\Gamma \vdash R_{n}^{\mathbb{N}}(H_z, H_s, Suc(M)) : C[Suc(M)/n]}
+    {\Gamma \vdash R_n^{\mathbb{N}}(H_z, H_s, Suc(M))  \equiv H_s[M/n, R_n^{\mathbb{N}}(H_z, H_s, M)/x] : C[Suc(M)/n]}[$\mathbb{N}$-C$_1$-S]
+    \]\\
+  \[
+    \inference{\Gamma, n : \mathbb{N} \vdash C \linear\\
+      \Gamma; \Xi \vdash H_z : C[0/n]\\
+      \Gamma, n : \mathbb{N}; \Xi, x : C \vdash H_s : C[Suc(n)/x]\\
+      \Gamma \vdash M : \mathbb{N}}
+    {\Gamma; \Xi \vdash R_n^{\mathbb{N}}(H_z, H_s, M) : C[M/n]}[$\mathbb{N}$-E$_2$]
+  \]\\
+  \[
+    \inference{\Gamma; \Xi \vdash R_{n}^{\mathbb{N}}(H_z, H_s, 0) : C[0/n]}
+    {\Gamma; \Xi \vdash R_n^{\mathbb{N}}(H_z, H_s, 0)  \equiv H_z: C[0/n]}[$\mathbb{N}$-C$_2$-0]
+    \]\\
+    \[
+    \inference{\Gamma; \Xi \vdash R_{n}^{\mathbb{N}}(H_z, H_s, Suc(M)) : C[Suc(M)/n]}
+    {\Gamma; \Xi \vdash R_n^{\mathbb{N}}(H_z, H_s, Suc(M)) \equiv \\
+      H_s[M/n, R_n^{\mathbb{N}}(H_z, H_s, M)/x] : C[Suc(M)/n]}[$\mathbb{N}$-C$_2$-S]
+  \]\\
+\end{minipage}
+}
+These rules allow us to define an addition operator for the linear type $\mathbb{N}_L$:\\
+We first define a successor operation for $\mathbb{N}_L$ by:
+\[
+  \begin{split}
+    LSuc &:\mathbb{N}_L \multimap \mathbb{N}_L\\
+    LSuc &:\equiv \lambda x. \text{let $n$ be $x$ in $Suc(n)_L$}
+    \end{split}
+\]
+and define the function that applies this operation $x : \mathbb{N}$ times to any term of $\mathbb{N}_L$:
+\begin{prooftree}
+    \AxiomC{
+      \stackMath\Shortunderstack[c]{{x : \mathbb{N}; y : \mathbb{N}_L \vdash y : \mathbb{N}_L} {x : \mathbb{N} \vdash x : \mathbb{N}}}}
+  \AxiomC{$x : \mathbb{N}, n : \mathbb{N}, z : \mathbb{N}; m : \mathbb{N}_L \vdash LSuc(m) : \mathbb{N}_L$}
+  \AxiomC{$y : \mathbb{N}_L \vdash y : \mathbb{N}_L$}
+  \BinaryInfC{$x : \mathbb{N}, n : \mathbb{N}; y : \mathbb{N}_L, m : \mathbb{N}_L \vdash \text{let $z$ be $y$ in $LSuc(m)$} : \mathbb{N}$}
+  \BinaryInfC{$x : \mathbb{N}; y : \mathbb{N}_L \vdash R^{\mathbb{N}}(y, \text{let $z$ be $y$ in $LSuc(m)$}, x) : \mathbb{N}_L$}
+\end{prooftree}
+allowing us to define ``linear addition operator'':
+\[
+  \begin{split}
+    \_L+\_ &: \mathbb{N}_L \multimap \mathbb{N}_L \multimap \mathbb{N}_L\\
+    \_L+\_ &:\equiv \lambda n. \lambda m. \text{let $x$ be $n$ in $R^{\mathbb{N}}(y, \text{let $z$ be $y$ in $LSuc(m)$}, x)$}
+  \end{split}
+\]
+It remains future work to investigate which conditions these extra rules impose on the semantic interpretation of the natural numbers type, and also to explore more generally how to understand inductive types in the linear dependent setting.
   \subsection{Linearity, pointedness, stability and the delooping hypothesis}
   In our models, we have kept the categories $\mathcal{L}$ and $\mathcal{T}$ of linear and cartesian types only related mainly via the adjunction $L \dashv M$. This has provided us with a variety of options for understanding linear and cartesian types and their relation, but at this level of generality there does not seem to be a strong conceptual (or ontological) connection between linear and cartesian types.
 
