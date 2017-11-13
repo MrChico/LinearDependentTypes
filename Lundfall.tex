@@ -32,7 +32,7 @@ We provide two concrete examples of models, the \textit{set-indexed families mod
 \section{Introduction}
 Lately, there has been an increasing interest in combining linear types with dependent types  \cite{schreiber2014quantization}, \cite{krishnaswami}, \cite{vakar14}, \cite{nothing}. The idea is that such a theory would inherit the higher-order nature of dependent types, while maintaining a careful account of the variables being used. It is not completely clear, however, what the synthesis looks like, since in dependent type theory, variables may appear in both terms and types, but linear type theory only allows each variable to appear freely exactly once. Here, we take an approach inspired by \cite{krishnaswami} and \cite{vakar14}, which distinguishes between non-linear, dependent types, which we shall call \textit{cartesian}, and linear types, and solve the issue by only allowing cartesian terms to appear in types (both cartesian and linear).
 
-The theory splits contexts into two parts, divided by a semicolon, where the first half contains the cartesian assumptions, for which weakening and contraction is admissible, while the second half contains the linear assumptions, for which exchange is allowed. We introduce two new type formers, $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the type $B$ (and therefore the resulting construct) is a linear type. The traditional $!$ modality is deconstructed as a comonad arising from the adjoint pair $L \dashv M$, where $L$ is the functor sending cartesian types into linear, and $M$ sends linear types to cartesian. We have $\Pi_{x : A}B_M \cong (\sqcap_{x :A}B)_M$, for linear $B$, and, if we assume some commuting conversions, the linear equivalence $(\sqsubset_{x :A}C)_L \cong \Sigma_{x :A}C_L$ for cartesian $C$.
+The theory splits contexts into two parts, divided by a semicolon, where the first half contains cartesian assumptions, for which weakening and contraction is admissible, while the second half contains linear assumptions, for which exchange is allowed. We introduce two new type formers, $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the type $B$ (and therefore the resulting construct) is a linear type. The traditional $!$ modality is deconstructed as a comonad arising from the adjoint pair $L \dashv M$, where $L$ is the functor sending cartesian types into linear, and $M$ sends linear types to cartesian. We have $\Pi_{x : A}B_M \cong (\sqcap_{x :A}B)_M$, for linear $B$, and, if we assume some commuting conversions, the linear equivalence $(\sqsubset_{x :A}C)_L \cong \Sigma_{x :A}C_L$ for cartesian $C$.
 
 We get new elimination and computation rules for both $\Sigma$ and $Id$-types when eliminating into a linear type. 
 
@@ -51,6 +51,8 @@ The structure of this paper is the following: after reviewing some theory on fib
 The theory is both semantically and syntactically motivated, developed in an almost dialectical method, and a reader familiar with both category theory and type theory might benefit from jumping between sections to understand each type former individually both from a semantic and syntactic perspective.
 \section{Preliminaries}\label{prelim}
 \subsection{Dependent type theory}
+Dependent types are types in which terms from other types may appear freely. The canonical example is the type $Vec(n)$, of vectors of length $n : \mathbb{N}$. This general class of deductive frameworks was pioneered by Per Martin Löf \cite{martin1984intuitionistic} as a foundation for constructive mathematics. For a thorough introduction to the syntax and semantics of dependent types, the reader may refer to \cite{hofmann1997syntax}. Here, we only present three short intuitions on how dependent type theory can be understood:
+
 From a syntactic perspective, a \textit{type} is a syntactic object whose meaning and function stems from the ways in which it interacts with the derivation rules of a particular \textit{type theory}. A definition of this kind is the best we can hope for if we want to view type theory as a foundational system of mathematical reasoning, as it does not rely on any predefined semantic framework. Taking a foundational view, the question to ask is not \textit{what is a type?} but rather, for any other mathematical construction $X$ \textit{how do I express $X$, type theoretically?}. Unfortunately, such an explanation provides very little intuition of what types actually are.
 
 Instead, assuming some familiarity with traditional logic and set theory, a first approximation of what a type is, can be as the simoultaneous generalization of a proposition and a set. In particular, we can understand the $\Pi$-type as both being a universal quantifier and a special case of implication, and the $\Sigma$-type as both an existential quantifier and a special case of $\land$. This makes dependent type theory very similar to higher order logic, with a different take on quantification.
@@ -2454,11 +2456,11 @@ We first define a successor operation for $\mathbb{N}_L$ by:
 \]
 and define the function that applies this operation $x : \mathbb{N}$ times to any term of $\mathbb{N}_L$:
 \begin{prooftree}
-    \AxiomC{
-      \stackMath\Shortunderstack[c]{{x : \mathbb{N}; y : \mathbb{N}_L \vdash y : \mathbb{N}_L} {x : \mathbb{N} \vdash x : \mathbb{N}}}}
   \AxiomC{$x : \mathbb{N}, n : \mathbb{N}, z : \mathbb{N}; m : \mathbb{N}_L \vdash LSuc(m) : \mathbb{N}_L$}
   \AxiomC{$y : \mathbb{N}_L \vdash y : \mathbb{N}_L$}
   \BinaryInfC{$x : \mathbb{N}, n : \mathbb{N}; y : \mathbb{N}_L, m : \mathbb{N}_L \vdash \text{let $z$ be $y$ in $LSuc(m)$} : \mathbb{N}$}
+      \AxiomC{
+      \stackMath\Shortunderstack[c]{{x : \mathbb{N}; y : \mathbb{N}_L \vdash y : \mathbb{N}_L} {x : \mathbb{N} \vdash x : \mathbb{N}}}}
   \BinaryInfC{$x : \mathbb{N}; y : \mathbb{N}_L \vdash R^{\mathbb{N}}(y, \text{let $z$ be $y$ in $LSuc(m)$}, x) : \mathbb{N}_L$}
 \end{prooftree}
 allowing us to define ``linear addition operator'':
