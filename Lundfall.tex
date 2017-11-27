@@ -32,13 +32,13 @@ We provide two concrete examples of models, the \textit{set-indexed families mod
 \section{Introduction}
 Lately, there has been an increasing interest in combining linear types with dependent types  \cite{schreiber2014quantization}, \cite{krishnaswami}, \cite{vakar14}, \cite{nothing}. The idea is that such a theory would inherit the higher-order nature of dependent types, while maintaining a careful account of the variables being used. It is not completely clear, however, what the synthesis looks like, since in dependent type theory, variables may appear in both terms and types, but linear type theory only allows each variable to appear freely exactly once. Here, we take an approach inspired by \cite{krishnaswami} and \cite{vakar14}, which distinguishes between non-linear, dependent types, which we shall call \textit{cartesian}, and linear types, and solve the issue by only allowing cartesian terms to appear in types (both cartesian and linear).
 
-The theory splits contexts into two parts, divided by a semicolon, where the first half contains cartesian assumptions, for which weakening and contraction is admissible, while the second half contains linear assumptions, for which exchange is allowed. We introduce two new type formers, $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the type $B$ (and therefore the resulting construct) is a linear type. The traditional $!$ modality is deconstructed as a comonad arising from the adjoint pair $L \dashv M$, where $L$ is the functor sending cartesian types into linear, and $M$ sends linear types to cartesian. We have $\Pi_{x : A}B_M \cong (\sqcap_{x :A}B)_M$, for linear $B$, and, if we assume some commuting conversions, the linear equivalence $(\sqsubset_{x :A}C)_L \cong \Sigma_{x :A}C_L$ for cartesian $C$.
+The theory splits contexts into two parts, divided by a semicolon, where the first half contains cartesian assumptions, for which weakening and contraction is admissible, while the second half contains linear assumptions, for which exchange is allowed. We introduce two new type formers, $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the dependent type $B$ (and therefore the resulting construct) is a linear. The traditional $!$ modality is deconstructed as a comonad arising from the adjoint pair $L \dashv M$, where $L$ is the functor sending cartesian types into linear, and $M$ sends linear types to cartesian. We have $\Pi_{x : A}B_M \cong (\sqcap_{x :A}B)_M$, for linear $B$, and, if we assume some commuting conversions, the linear equivalence $(\sqsubset_{x :A}C)_L \cong \Sigma_{x :A}C_L$ for cartesian $C$.
 
 We get new elimination and computation rules for both $\Sigma$ and $Id$-types when eliminating into a linear type. 
 
 We postulate the existence of two universes, $L$ and $U$, containing codes of linear and cartesian types, respectively and assumed to be closed under all type formers.
 
-We develop categorical semantics for the theory, using traditional ZFC as a metatheory (assuming some inaccesible cardinals to support universes in Section \ref{universefam}). Our starting point is a \textit{comprehension categories} \cite{jacobs}, $\pi : \mathcal{T} \to \mathcal{C}$ equipped with a \textit{split monoidal fibration} $q : \mathcal{L} \to \mathcal{C}$ over the same base, making fibers over a context $\mathcal{L}_\Gamma$ monoidal categories, and reindexing functors monoidal functors. The traditional linear type formers $\&, \oplus, 0, \top, \multimap$ correspond to these fibers supporting binary products and coproducts, initial and terminal object and internal homs, respectively. The new type formers $\sqcap_{x : A}B$ and $\sqsubset_{x :A}B$ correspond to right and left adjoints to the reindexing functor $\pi_A : \mathcal{L}_{\Gamma.A} \to \mathcal{L}_\Gamma$, while the modalities $L$ and $M$ give rise to a fiber adjunction between $\mathcal{L}$ and $\mathcal{T}$. The new rules for $\Sigma$ are automatically satisfied by the semantic interpretation of $\Sigma_A$ as a left adjoint to the reindexing functor $\pi_A^* : \mathcal{T}_\Gamma \to \mathcal{T}_{\Gamma.A}$. The new rules for $Id$-types impose an additional condition on the semantic interpretation of $Id$, which are always fulfilled if our identity types are extensional.
+We develop categorical semantics for the theory, using traditional ZFC as a metatheory (assuming some inaccesible cardinals to support universes in Section \ref{universefam}). Our starting point is a \textit{comprehension category} \cite{jacobs}, $\pi : \mathcal{T} \to \mathcal{C}$ equipped with a \textit{split monoidal fibration} $q : \mathcal{L} \to \mathcal{C}$ over the same base. A split monoidal fibration has just enough structure to make the fibers over a context $\mathcal{L}_\Gamma$ into monoidal categories, and reindexing functors monoidal functors. The traditional linear type formers $\&, \oplus, 0, \top, \multimap$ correspond to the existence of binary products and coproducts, initial and terminal object and internal homs, in each fiber, such that these are preserved under reindexing. The new type formers $\sqcap_{x : A}B$ and $\sqsubset_{x :A}B$ correspond to right and left adjoints to the reindexing functor $\pi_A : \mathcal{L}_{\Gamma.A} \to \mathcal{L}_\Gamma$, while the modalities $L$ and $M$ give rise to a fiber adjunction between $\mathcal{L}$ and $\mathcal{T}$. The new rules for $\Sigma$ are automatically satisfied by the semantic interpretation of $\Sigma_A$ as a left adjoint to the reindexing functor $\pi_A^* : \mathcal{T}_\Gamma \to \mathcal{T}_{\Gamma.A}$. The new rules for $Id$-types impose an additional condition on the semantic interpretation of $Id$, which are always fulfilled if our identity types are extensional.
 
 We consider two concrete models, the \textit{families model}, in which cartesian types consist of families of sets, indexed by their context set $\Gamma$, and a linear type in the context $\Gamma$ is a $\Gamma$-indexed family of objects in a given symmetric monoidal category $\mathcal{V}$. Examples of $\mathcal{V}$ so that the families model supports all type formers are $\mathbf{AbGrp}$, $\mathbf{GCTop}_*$, $\mathbf{Vect}_F$ the category of abelian groups, the category of compact generated, pointed topological space and the category of vector spaces over a field $F$, respectively.
 
@@ -83,7 +83,7 @@ Just as inuitionistic logic naturally extends to (dependent) type theory under t
 \]
 and here linearity implies that the free variables of $t$ are $x_1, x_2, \dots x_n$, each appearing exactly once.\\
 Semantically, the generalization of a linear logic to linear type theory corresponds to the generalisation of symmetric monoidal preorders to symmetric monoidal categories.\\
-Interest in linear type theory stems from disparate sources. From the perspective of (classical) computer science, it can be used for modelling state and storage, with linear variables denoting resources like pointers or files \cite{krishnaswami}, or even as a theoretical description of the resource handling of a blockchain \cite{meredith2015linear}. In quantum physics, linear types respect the no cloning theorem of quantum states, and are also proposed as a syntax for quantum computation \cite{duncan2006types}. From a semantic perspective, linear type theory can be interpreted in a symmetric monoidal closed categories, generalising the structure of a cartesian closed categories in which (non-dependent) type theories are interepreted.\\
+Interest in linear type theory stems from disparate sources. From the perspective of (classical) computer science, it can be used for modelling state and storage, with linear variables denoting resources like pointers or files \cite{krishnaswami}, or even as a theoretical description of the resource handling of a blockchain \cite{meredith2015linear}. In quantum physics, linear types respect the no cloning theorem of quantum states, and can be used to model quantum computation \cite{duncan2006types}. From a semantic perspective, linear type theory can be interpreted in a symmetric monoidal closed categories, generalising the structure of a cartesian closed categories in which (non-dependent) type theories are interepreted.\\
 
 \input{fibrations}
 \subsection{Enriched and higher categories}
@@ -557,7 +557,7 @@ We introduce two the modal operators $M$ and $L$, which transfers a linear type/
 \mathcal{L}_{\Gamma} \ar[r, "M"{name=A, below}, bend right] & \mathcal{T}_{\Gamma} \ar[l, "L"{name=B, above}, bend right] \ar[from=A, to=B, symbol=\vdash]
 \kz
 \]
-where the exponential modality from traditional linear logic is understood as the comonad $! = LM$. The decomposition of the exponential into an adjunction goes back to at least \cite{bentonmixed}, and is given an interesting new light in \cite{licata2017fibrational}, where it is seen as a particular case of a more general procedure of encoding structure in contexts.
+where the exponential modality from traditional linear logic is understood as the comonad $! = LM$. The decomposition of the exponential into an adjunction goes back to at least \cite{benton1995mixed}, and is given an interesting new light in \cite{licata2017fibrational}, where it is seen as a particular case of a more general procedure of encoding structure in contexts.
 
 Below are the syntactic rules for the operators $M$ and $L$\footnote{We have not introduced universes yet, but there is a sublety involved with how they interact with the operators $M$ and $L$, which may warrant restricting the operators $M$ and $L$ to only act on small types. See section \ref{universesML}}. \\
 \fbox{
@@ -926,13 +926,14 @@ with terms introduced by:
   {\Gamma; \Xi \vdash (a, t) : \sqsubset_{x : Loc} [x \mapsto A]}
 \]
 
-
+\begin{comment}
 Another example takes inspiration from the realm of blockchain technology, where one deals with resources like bitcoin or ether balances. Say we model ownership of ether by a public address (generated from a cryptographic public key) having the linear type $addr_1 : ETH$. Then we can model a decentralized  mathematical prize comittee, which give out a reward of 1 ether to whoever proves the Goldbach conjecture.\\
 Since the reward is constant, this is not truly a dependent linear function and we abusively notate it by $\multimap$:
 \[
 \cdot; x : ETH \vdash GoldbachReward: \Pi_{x : \mathbb{N}}\Sigma_{y, z : \mathbb{N}}Prime(y) \times Prime(z) \times y + z =_{\mathbb{B}} 2(suc(suc(x))) \multimap ETH
 \]
 To execute such a function and receive the reward, one would need to exhibit that there is an address $x$ with one ether to begin with and provide a proof of the Goldbach conjecture.\\
+\end{comment}
 The sense in which $\sqcap$ and $\sqsubset$ are "linear analogues" of $\Pi$ and $\Sigma$ can be formalized in the following way:
 \begin{thm}\label{M-sqcap}
   For all $\Gamma \vdash A \type$ and $\Gamma, x : A \vdash B \linear$, there is an isomorphism:
@@ -1127,7 +1128,7 @@ or
 \end{split}
 \]
 respectively.
-It also allows us to formulate the type of "pointed linear types":
+It also allows us to formulate the type of ``pointed linear types'':
 \[
 \Gamma \vdash \sqsubset_{A : \mathcal{L}}A \linear
 \]
@@ -2570,8 +2571,6 @@ now only commuting up to a 2-cell $\alpha : f\circ a \implies b$.
 In the groupoid model, this corresponds to
 we might want to weaken the commutativity of morphisms above. That is, we want linear types to be specified by pointed cartesian types,
 \end{comment}
-\nocite{benton1995mixed}
-\nocite{hofmann1997syntax}
-\bibliographystyle{plain}
-\bibliography{refs.bib}
+\bibliographystyle{amsalphaurlmod}
+\bibliography{refs}
 \end{document}
