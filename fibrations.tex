@@ -80,7 +80,7 @@ A \textbf{monoidal fibration} is a functor $\Phi\colon E\to B$ such that
 In particular, when $B$ is a cartesian monoidal category, an arrow $f : b \to p(e)$ induces a strong monoidal functor $f^* : B_e \to B_{f^*e}$ between the fibers \cite{shulmanmonoidal}.
 
 
-The more general structure of a lax monoidal fibration \cite{zawadowski}, does not require neither $E$ nor $B$ to be monoidal. We simply want each fiber of $E$ to carry a monoidal structure, and that the induced functors between fibers are monoidal.
+A weaker structure is that of a lax monoidal fibration \cite{zawadowski}, which does not require neither $E$ nor $B$ to be monoidal. We simply want each fiber of $E$ to carry a monoidal structure, and that the induced functors between fibers are monoidal.
 \begin{defn}
 A \textbf{lax monoidal fibration} is a fibration $p : E \to B$ along with
 \begin{enumerate}
@@ -112,7 +112,7 @@ B \times_B E \ar[r, "I \times_B 1_{E}"] \ar[rdd, "\pi_2",swap] & E \times_B E  \
 \end{defn}
 These conditions are sufficient for each fiber to be a monoidal category and for the induced functors between fibers to be (lax) monoidal \cite{zawadowski}.\\
 \begin{expl}\label{graphs}
-An example of a fibration that is lax monoidal but not monoidal is the fibration $\mathbf{Gph} \to \mathbf{Set}$ taking a directed graph defined by $(V, E, dom, cod : E \to V)$ to its underlying set of verticies, $V$. For two graphs $\mathcal{A}= (A, O, dom_A, cod_A)$ and $\mathcal{B} = (B, O, dom_B, cod_B)$ over the same fiber $\mathbf{Gph}_O$, we define their tensor product by:
+An example of a fibration that is lax monoidal but not monoidal is the fibration $\mathbf{Gph} \to \mathbf{Set}$ taking a directed graph\footnote{Specifically, a directed multigraph with loops allowed, also known as a quiver, defined by the \textit{domain} and \textit{codomain} functions from the edge set to the vertex set} defined by $(V, E, dom, cod : E \to V)$ to its underlying set of verticies, $V$. For two graphs $\mathcal{A}= (A, O, dom_A, cod_A)$ and $\mathcal{B} = (B, O, dom_B, cod_B)$ over the same fiber $\mathbf{Gph}_O$, we define their tensor product by:
 \[
   \mathcal{A} \otimes \mathcal{B} = (A \times_O B, cod_A \circ \pi_1, dom_B \circ \pi_2)
 \]
