@@ -1,5 +1,5 @@
 \subsection{Fibrations}
-A general heuristic for modelling a mathematical object $E$ dependent over another object $B$ is to specify a \textit{projection} morphism $p : E \to B$ subject to certain constraints. For example, a family of sets $A_i$ indexed by the set $I$ might equally well be understood as the set $E = \bigsqcup_{i \in I}A_i$ together with a morphism $p : E  \to I$ such that $p^{-1}(i) = A_i$. This is the idea guiding the concept of a fibration. Dependeding on which kind of mathematical object we are dealing with, we impose various conditions on the projection $p : E \to B$ to be able to \textit{lift} certain structure of the base $B$ into \textit{fibers} $E_b = p^{-1}(b)$ for $b \in B$.
+A general heuristic for modeling a mathematical object $E$ dependent over another object $B$ is to specify a \textit{projection} morphism $p : E \to B$ subject to certain constraints. For example, a family of sets $A_i$ indexed by the set $I$ might equally well be understood as the set $E = \bigsqcup_{i \in I}A_i$ together with a morphism $p : E  \to I$ such that $p^{-1}(i) = A_i$. This is the idea guiding the concept of a fibration. Depending on which kind of mathematical object we are dealing with, we impose various conditions on the projection $p : E \to B$ to be able to \textit{lift} certain structure of the base $B$ into \textit{fibers} $E_b = p^{-1}(b)$ for $b \in B$.
 
 \subsubsection{Grothendieck fibrations}
 In the context of categories, the appropriate notion is that of a \textbf{Grothendieck fibration}, often just called \textbf{fibration}. In order for a functor $p : E \to B$ to be a fibration, one needs to be able to lift arrows in the base category $B$ to arrows in $E$. We do this by asking for the existence of certain \textit{cartesian arrows} in $E$.
@@ -14,14 +14,16 @@ p(e') \ar[r, "p(f)"] & p(e'') & & e' \ar[r, "f"] & e''\\
 \kz
 \]
 \begin{defn}[Grothendieck fibration]
-A functor $p: E \to B$ is a \textbf{Grothendieck fibration} if, for every $e \in E$, $b \in B$ and arrow $f : b \to p(e)$ in $B$, there exists a cartesian arrow $f^*$ in $E$ such that $p(f^*) = f$.
+A functor $p: E \to B$ is a \textbf{Grothendieck fibration} if, for every $e \in E$, $b \in B$ and arrow $f : b \to p(e)$ in $B$, there exists a cartesian arrow $\hat f$ in $E$ such that $p(\hat f) = f$.
 \end{defn}
-We will refer to a cartesian arrow $f^*$ for which $p(f^*) = f$ as a \textbf{lift} of $f$. Although lifts are not uniquely determined, from the condition of cartesianness their domain will determined up to unique isomorphism. 
+We will refer to a cartesian arrow $\hat f$ for which $p(\hat f) = f$ as a \textbf{lift} of $f$. Although lifts are not uniquely determined, their domain will determined up to unique isomorphism.
 A basic review of Grothendieck fibrations particularly relevant to the semantics of dependent type theory can be found in \cite{jacobs}. We will simply repeat the basic notions that will used in our investigations.
 \\
 
 For any object $b \in B$ in the base, we call the subcategory of $E$ which is mapped to $b$ and its identity morphism the \textbf{fiber} over $b$. This will be denoted $E_b$.
-A fibration $p : E \to B$ induces for every $u : b \to b'$ in $B$ a functor $u^*: E_{b'} \to E_{b}$ by sending every object to the domain of the cartesian arrow associated to $u^*$. Such functors will be unique up to unique natural isomorphism. In general, for two compatible morphisms $u$ and $v$ in the base, a lift of a composition is not identitcal to the composition of a lift, only naturally isomorphic. In other words, we have $u^* \circ v^* \cong (u \circ v)^*$, but not functoriality on the nose. Fibrations for which there are lifts of morphisms such that the equalities hold on the nose are called \textbf{split}.
+A fibration $p : E \to B$ induces for every $u : b \to b'$ in $B$ a \textit{reindexing functor} $u^*: E_{b'} \to E_{b}$, defined by sending every object to the domain of a lift of $u$. Such functors will be unique up to unique natural isomorphism. In general, for two compatible morphisms $u$ and $v$ in the base, the reindexing functor of a composition is not identical to the composition of reindexing functors -- only naturally isomorphic. In other words, we have $u^* \circ v^* \cong (u \circ v)^*$, but not functoriality on the nose.
+
+Although the definition of a fibration merely stipulates the existence of cartesian arrows, we often consider fibrations \textit{equipped} with a collection of liftings $\{u^*\}_{u \in B}$, called a \textit{cleavage}. Fibrations equipped with a cleavage such that the equalities $1_\Gamma^* = 1_{\mathcal{L}_\Gamma}$ and $u^* \circ v^* = (u \circ v)^*$ holds on the nose for all reindexing functors are called \textbf{split}.
 
 \begin{defn}[Cartesian functor]
 Let $p : E \to B$ and $q : E' \to B$ be fibrations over the same base. A functor $F : E \to E'$ is \textbf{cartesian} if $qF = p$ and cartesian morphisms in $E$ with respect to $p$ are mapped to cartesian morphisms in $E'$ with respect to $q$.
@@ -29,8 +31,8 @@ Let $p : E \to B$ and $q : E' \to B$ be fibrations over the same base. A functor
 This determines a category $\textbf{Fib}(B)$, consisting of fibrations over $B$ and cartesian functors between them. More generally, one can construct a category $\textbf{Fib}$ whose morphisms from fibrations $p : E \to B$ and $q : E' \to B'$ are pairs of functors $(F, G)$ where $F : E \to E'$ and $G : B \to B'$ such that $G \circ p = q \circ F$ and $F$ preserves cartesian morphisms. In fact, the functor $\textbf{Fib} \to \textbf{Cat}$ sending a fibration to its base is itself a fibration whose fibers are $\textbf{Fib}(B)$ for any small category $B$.
 
 
-With the notion of a fibered natural transformation, $\mathbf{Fib}$ forms a 2-category.
-\begin{defn}[Fibered natural transformation]
+With the notion of a fibred natural transformation, $\mathbf{Fib}$ forms a 2-category.
+\begin{defn}[Fibred natural transformation]
 For two pairs of parallel functors $F$, $H$ and $G$, $J$ between fibrations $(E, B)$ and $(E', B')$, as illustrated in the commutative square:
 \[
 \ti
@@ -38,30 +40,16 @@ E \ar[d, "p"] \ar[r, "F", bend left] \ar[r, "G", bend right] & E' \ar[d, "{p'}"]
 B \ar[r, "H", bend left] \ar[r, "J", bend right] & B'
 \kz
 \]
-a \textbf{Fibered natural transformation} $(\lambda, \lambda')$ between $(F, H)$ and $(G, J)$ is a pair of natural transformations $\lambda : G \to F$ and $\lambda' : A \to B$ such that $p'(\lambda) = p_{\lambda'}$.
+a \textbf{Fibred natural transformation} $(\lambda, \lambda')$ between $(F, H)$ and $(G, J)$ is a pair of natural transformations $\lambda : G \to F$ and $\lambda' : A \to B$ such that $p'(\lambda) = p_{\lambda'}$.
 \end{defn}
 
-Notice that this definition does not ask for $F$ and $G$ to be cartesian functors. But when that is the case, fibered natural transformations between the parallel morphisms $(F, A)$ and $(G, A)$ in $\mathbf{Fib}$ are the 2-morphisms of this 2-category.
+Notice that this definition does not ask for $F$ and $G$ to be cartesian functors. But when that is the case, fibred natural transformations between the parallel morphisms $(F, A)$ and $(G, A)$ in $\mathbf{Fib}$ are the 2-morphisms of this 2-category.
 
-An important special case of this is when $B = B'$ and $H = J = 1_B$. Then a fibered natural transformation $\lambda : F \to G$ is simply a natural transformation such that all of its components are sent to identities via $p'$. Such a natural transformation is sometimes called \textit{vertical}
+An important special case of this is when $B = B'$ and $H = J = 1_B$. Then a fibred natural transformation $\lambda : F \to G$ is simply a natural transformation such that all of its components are sent to identities via $p'$. Such a natural transformation is sometimes called \textit{vertical}
 
-\begin{defn}Let $p : E \to B$ and $q : D \to B$ be fibrations over the same base and $F : E \to D$ and $G : D \to E$ cartesian functors with respect to these. $F$ is called a \textbf{fibered left adjoint} of $G$ if $F \dashv G$ in the usual way and the unit $\eta$ of the adjunction is vertical. Such an adjunction will be called a \textbf{fiber adjunction}.
+\begin{defn}Let $p : E \to B$ and $q : D \to B$ be fibrations over the same base and $F : E \to D$ and $G : D \to E$ cartesian functors with respect to these. $F$ is called a \textbf{fibred left adjoint} of $G$ if $F \dashv G$ in the usual way and the unit $\eta$ of the adjunction is vertical. Such an adjunction will be called a \textbf{fiber adjunction}.
 \end{defn}
 
-\begin{comment}
-TODO: Put this in the right context (maybe leave it out actually)\\
-Let $\mathcal{C}$ be a category and $F : \mathcal{C} \to \mathbf{Cat}$ a (pseudo)functor. $\textbf{Cat}_{/*}$ denotes the slice category of categories over the terminal category, i.e. the category constisting of pointed categories $(\mathcal{D}, d)$, $(\mathcal{E}, e)$ as objects and functors $G : \mathcal{D} \to \mathcal{E}$ equipped with morphisms $\gamma : G(d) \to e$ as morphisms.
-\begin{defn}
-The Grothendieck construction $\int F$ of $F$ is the pullback of the following diagram:
-\[
-\ti
-\int F \ar[r] \ar[d] & \textbf{Cat}_{/*} \ar[d, "U"] \\
-\mathcal{C} \ar[r, "F"] & \textbf{Cat} \\
-\kz
-\]
-\end{defn}
-In other words, the category whose objects consists of pairs $(a, b)$ where $a \in \Ob(\mathcal{C})$ and $b \in F(a)$, and whose morphisms $f : (a, b) \to (\alpha, \beta)$ are pairs $(f, g)$ where $f: a \to \alpha$ and $g : F(f)(b) \to \beta$.
-\end{comment}
 \subsubsection{Other types of fibrations}
 In exploring models of linear and dependent types, fibrations of other structures will arise. Two important examples will be fibrations of groupoids and fibrations of monoidal categories.
 \begin{defn}
@@ -91,7 +79,7 @@ E \times_{B} E \ar[r, "\otimes"] \ar[rd] & E \ar[d, "p"] & B \ar[l, "I"] \ar[ld,
 & B &
 \kz
 \].
-\item Three fibered natural isomorphisms $\alpha, \lambda$ and $\rho$ associated with the diagrams:
+\item Three fibred natural isomorphisms $\alpha, \lambda$ and $\rho$ associated with the diagrams:
 \[
 \ti
 E \times_B E \times_B E \ar[r, "1_E \times_B \otimes"] \ar[d, "\otimes \times_B 1_E"] & E \times_B E \ar[d, "\otimes", swap] \\
@@ -112,7 +100,7 @@ B \times_B E \ar[r, "I \times_B 1_{E}"] \ar[rdd, "\pi_2",swap] & E \times_B E  \
 \end{defn}
 These conditions are sufficient for each fiber to be a monoidal category and for the induced functors between fibers to be (lax) monoidal \cite{zawadowski}.\\
 \begin{expl}\label{graphs}
-An example of a fibration that is lax monoidal but not monoidal is the fibration $\mathbf{Gph} \to \mathbf{Set}$ taking a directed graph\footnote{Specifically, a directed multigraph with loops allowed, also known as a quiver, defined by the \textit{domain} and \textit{codomain} functions from the edge set to the vertex set} defined by $(V, E, dom, cod : E \to V)$ to its underlying set of verticies, $V$. For two graphs $\mathcal{A}= (A, O, dom_A, cod_A)$ and $\mathcal{B} = (B, O, dom_B, cod_B)$ over the same fiber $\mathbf{Gph}_O$, we define their tensor product by:
+An example of a fibration that is lax monoidal but not monoidal is the fibration $\mathbf{Gph} \to \mathbf{Set}$ taking a directed graph\footnote{Specifically, a directed multigraph with loops allowed, also known as a quiver, defined by the \textit{domain} and \textit{codomain} functions from the edge set to the vertex set} defined by $(V, E, dom, cod : E \to V)$ to its underlying set of vertices, $V$. For two graphs $\mathcal{A}= (A, O, dom_A, cod_A)$ and $\mathcal{B} = (B, O, dom_B, cod_B)$ over the same fiber $\mathbf{Gph}_O$, we define their tensor product by:
 \[
   \mathcal{A} \otimes \mathcal{B} = (A \times_O B, cod_A \circ \pi_1, dom_B \circ \pi_2)
 \]
