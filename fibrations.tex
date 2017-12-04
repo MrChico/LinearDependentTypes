@@ -1,5 +1,5 @@
 \subsection{Fibrations}
-A general heuristic for modeling a mathematical object $E$ dependent over another object $B$ is to specify a \textit{projection} morphism $p : E \to B$ subject to certain constraints. For example, a family of sets $A_i$ indexed by the set $I$ might equally well be understood as the set $E = \bigsqcup_{i \in I}A_i$ together with a morphism $p : E  \to I$ such that $p^{-1}(i) = A_i$. This is the idea guiding the concept of a fibration. Depending on which kind of mathematical object we are dealing with, we impose various conditions on the projection $p : E \to B$ to be able to \textit{lift} certain structure of the base $B$ into \textit{fibers} $E_b = p^{-1}(b)$ for $b \in B$.
+A general heuristic for modeling a mathematical object $E$ dependening on another object $B$ is to specify a \textit{projection} morphism $p : E \to B$ subject to certain constraints. For example, a family of sets $A_i$ indexed by the set $I$ might equally well be understood as the set $E = \bigsqcup_{i \in I}A_i$ together with a morphism $p : E  \to I$ such that $p^{-1}(i) = A_i$. This is the idea guiding the concept of a fibration. Depending on which kind of mathematical object we are dealing with, we impose various conditions on the projection $p : E \to B$ to be able to \textit{lift} certain structure of the base $B$ into \textit{fibers} $E_b = p^{-1}(b)$ for $b \in B$.
 
 \subsubsection{Grothendieck fibrations}
 In the context of categories, the appropriate notion is that of a \textbf{Grothendieck fibration}, often just called \textbf{fibration}. In order for a functor $p : E \to B$ to be a fibration, one needs to be able to lift arrows in the base category $B$ to arrows in $E$. We do this by asking for the existence of certain \textit{cartesian arrows} in $E$.
@@ -69,7 +69,7 @@ In particular, when $B$ is a cartesian monoidal category, an arrow $f : b \to p(
 
 
 A weaker structure is that of a lax monoidal fibration \cite{zawadowski}, which does not require neither $E$ nor $B$ to be monoidal. We simply want each fiber of $E$ to carry a monoidal structure, and that the induced functors between fibers are monoidal.
-\begin{defn}
+\begin{defn}\label{laxmonoidal}
 A \textbf{lax monoidal fibration} is a fibration $p : E \to B$ along with
 \begin{enumerate}
 \item Two functors $\otimes : E \times_{B} E \to E$ and $I : B \to E$ fitting into the following diagram:
