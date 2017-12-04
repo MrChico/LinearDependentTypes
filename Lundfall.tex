@@ -2387,6 +2387,32 @@ and $h^{-1} : (A \otimes B \multimap C) \multimap (A \multimap B \multimap C)$:
     \end{proof}
   \end{thm}
   \section{Discussion}\label{discussion}
+  \subsection{Equality of linear types and linear function extensionality}
+  A basic assumption of our theory is the restriction disallowing linear terms to appear in types. This implies that we cannot form the identity type of two terms of a linear type, which could be seen as a lack of proper ``internalization'' of the notion of equality between linear terms. However, we can still utilize the ``surrogate equality'' described at the end of Section \ref{syntLandM}, which compares the image of the two linear terms under $M$. Building upon this idea, it is tempting to consider the addition of some kind of ``extensionality''-style rules to make the ``surrogate equality'' useful in practice. Such rules should allow us to prove equalities of linear terms by proving equalities of their consituent parts. For example, suppose we are given terms:
+  \[
+    \begin{split}
+    \Gamma; x : A \vdash t : B\\
+    \Gamma; x : A \vdash s : B
+    \end{split}
+  \]
+  and we know $s$ and $t$ to be equal in some weak (or propositional) sense, and therefore, we would like to say that there is a term of the type:
+  \[
+    \Gamma \vdash (\lambda x. t)_M =_{(A \multimap B)_M} (\lambda x. s)_M
+  \]  
+  We might say that to prove such an equality, it suffices to display a proof of the type:
+  \[
+    \begin{split}
+      \Gamma \vdash \text{fmap }(\lambda x . t) &=_{A_M \to B_M} \text{ fmap}(\lambda x. s) \equiv \\
+      \Gamma \vdash \lambda y. \big (\lambda x. t(\sigma(y)) \big )_M &=_{A_M \to B_M} \lambda y. \big (\lambda x. s(\sigma(y)) \big )_M
+    \end{split}
+  \]
+  which, in the presence of (cartesian) function extensionality reduces to a proof of:
+  \[
+    \Gamma \vdash \Pi_{y : A} \left ( t[(\sigma(y)/x]_M =_{B_M} s[\sigma(y)/x]_M  \right )
+  \]
+  We consider this rule to be a kind of \textit{linear function extensionality}, even though the name does not reflect the interplay between $M$ and $L$ present in its formulation. For an application of this rule, consider the proof of Theorem \ref{L-subset}. There we displayed a linear equivalence by showing judgmental equality between the roundabout $g \circ f$ and the identity function, but it is tempting to weaken this to a propositional equality and drop additional assumption $\Sigma$-$U$.
+
+  We have not investigated the semantic interpretation of linear function extensionality, nor its interplay with univalence or linear univalence. It appears that more investigation is warranted regarding equality between linear terms.
   \subsection{Inductive types in linear dependent logic}
   As we saw in the case for $\Sigma$- and $Id$-types, we add new elimination and computation rules for our traditional cartesian type formers for when the type we eliminate into is linear. This should remain true for inductive types. For example, adding the type of natural numbers to our theory, we would add the rules [$\mathbb{N}$-E$_2$], [$\mathbb{N}$-C$_2$-0], [$\mathbb{N}$-C$_2$-S] to the typical rules for the natural numbers type:\\
   \fbox{
