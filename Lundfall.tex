@@ -14,7 +14,7 @@
 \abstract
 In this paper, we construct a type theory which deals with non-linear, ordinary dependent types (which we will call \textit{cartesian}), and \textit{linear types}, where both constructs may depend on terms of cartesian types. In the interplay between the cartesian and linear types we introduce the new type formers $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the dependent type $B$, (and therefore the resulting construct) is a linear type. These can be seen as internalizing quantification over linear propositions. We also introduce the modalities $M$ and $L$, transforming linear types into cartesian types and vice versa.
 
-We interpret the theory in a split comprehension category $\pi : \mathcal{T} \to \mathcal{C}^\to$ \cite{jacobs}, accompanied by a split monoidal fibration (Definition \ref{splitmonoidal}), $q : \mathcal{L} \to \mathcal{C}$. Here $\mathcal{C}$ models a category of contexts, so that for any $\Gamma \in \mathcal{C}$, the fiber $\mathcal{T}_\Gamma$ is the category of cartesian types which can be formed in the context $\Gamma$, while the fiber $\mathcal{L}_\Gamma$ is a monoidal category of linear types in $\Gamma$. In this setting, the type formers $\sqcap_{x :A}$ and $\sqsubset_{x : A}$ are understood as right and left adjoints of the monoidal reindexing functor $\pi_A^* : \mathcal{L}_\Gamma \to \mathcal{L}_{\Gamma.A}$ corresponding to the weakening projection $\pi_A : \Gamma.A \to \Gamma$ in $\mathcal{C}$. The operators $M$ and $L$ give rise to a fiberwise adjunction $L \dashv M$ between $\mathcal{L}$ and $\mathcal{T}$, where we understand the traditional exponential modality as the comonad $! = LM$.
+We interpret the theory in a split comprehension category $\pi : \mathcal{T} \to \mathcal{C}^\to$ \cite{jacobs}, accompanied by a split monoidal fibration (Definition \ref{splitmonoidal}), $q : \mathcal{L} \to \mathcal{C}$. The intuition is that $\mathcal{C}$ models a category of contexts, so that for any $\Gamma \in \mathcal{C}$, the fiber $\mathcal{T}_\Gamma$ is the category containing the cartesian types which can be formed in the context $\Gamma$, while the fiber $\mathcal{L}_\Gamma$ is a monoidal category of linear types in $\Gamma$. In this setting, the type formers $\sqcap_{x :A}$ and $\sqsubset_{x : A}$ are understood as right and left adjoints of the monoidal reindexing functor $\pi_A^* : \mathcal{L}_\Gamma \to \mathcal{L}_{\Gamma.A}$ corresponding to the weakening projection $\pi_A : \Gamma.A \to \Gamma$ in $\mathcal{C}$. The operators $M$ and $L$ give rise to a fiberwise adjunction $L \dashv M$ between $\mathcal{L}$ and $\mathcal{T}$, where we understand the traditional exponential modality as the comonad $! = LM$.
 
 We provide two concrete examples of models, the \textit{set-indexed families model} and the \textit{diagrams model}. In the former, cartesian types are interpreted in the familiar way, as sets indexed by their context set $\Gamma$, and linear types are interpreted as $\Gamma$-indexed family of objects of a symmetric monoidal category $\mathcal{V}$. The latter model extends the groupoid model of dependent type theory \cite{hofmann1998} to accomodate linear types. Here, cartesian types over a context $\Gamma$ are interpreted as a family of groupoids indexed over the groupoid $\Gamma$, while linear types are interpreted as diagrams over groupoids, $A : \Gamma \to \mathcal{V}$ in any symmetric monoidal category $\mathcal{V}$. We show that the \textit{diagrams model} can under certain conditions model a linear analogue of the univalence axiom, and provide some discussion on the higher-dimensional nature of linear dependent types.
 \newpage
@@ -29,7 +29,7 @@ Compared to ordinary depdenent type theory, we get additional elimination and co
 
 We postulate the existence of two universes, $L$ and $U$, containing codes of linear and cartesian types, respectively and assumed to be closed under all type formers.
 
-We develop categorical semantics for the theory, using traditional ZFC as a metatheory (assuming some inaccesible cardinals to support universes in Section \ref{universefam}). Our starting point is a \textit{comprehension category} \cite{jacobs}, $\pi : \mathcal{T} \to \mathcal{C}$ equipped with a \textit{split monoidal fibration} $q : \mathcal{L} \to \mathcal{C}$ over the same base. A split monoidal fibration has just enough structure to make the fibers over a context $\mathcal{L}_\Gamma$ into monoidal categories, and reindexing functors (strict) monoidal functors. The traditional linear type formers $\&, \oplus, 0, \top, \multimap$ correspond to the existence of binary products and coproducts, initial and terminal object and internal homs in each fiber, such that these are preserved under reindexing. The new type formers $\sqcap_{x : A}B$ and $\sqsubset_{x :A}B$ correspond to right and left adjoints to the reindexing functor $\pi_A : \mathcal{L}_{\Gamma.A} \to \mathcal{L}_\Gamma$, while the modalities $L$ and $M$ give rise to a fiber adjunction between $\mathcal{L}$ and $\mathcal{T}$. The new rules for $\Sigma$ are automatically satisfied by the semantic interpretation of $\Sigma_A$ as a left adjoint to the reindexing functor $\pi_A^* : \mathcal{T}_\Gamma \to \mathcal{T}_{\Gamma.A}$. The new rules for $Id$-types impose an additional condition on the semantic interpretation of $Id$, which are always fulfilled if our identity types are extensional.
+We develop categorical semantics for the theory, using traditional ZFC as a metatheory (assuming some inaccesible cardinals to support universes in Section \ref{universefam}). Our starting point is a \textit{comprehension category} \cite{jacobs}, $\pi : \mathcal{T} \to \mathcal{C}$ equipped with a \textit{split monoidal fibration} $q : \mathcal{L} \to \mathcal{C}$ over the same base. A split monoidal fibration has just enough structure to make the fibers $\mathcal{L}_\Gamma$ over a context $\Gamma \in \mathcal{C}$ into monoidal categories, and reindexing functors (strict) monoidal functors. The traditional linear type formers $\&, \oplus, 0, \top, \multimap$ correspond to the existence of binary products and coproducts, initial and terminal object and internal homs in each fiber, such that these are preserved under reindexing. The new type formers $\sqcap_{x : A}B$ and $\sqsubset_{x :A}B$ correspond to right and left adjoints to the reindexing functor $\pi_A^* : \mathcal{L}_{\Gamma} \to \mathcal{L}_{\Gamma.A}$, while the modalities $L$ and $M$ give rise to a fiber adjunction between $\mathcal{L}$ and $\mathcal{T}$. The new rules for $\Sigma$ are automatically satisfied by the semantic interpretation of $\Sigma_A$ as a left adjoint to the reindexing functor $\pi_A^* : \mathcal{T}_\Gamma \to \mathcal{T}_{\Gamma.A}$. The new rules for $Id$-types impose an additional condition on the semantic interpretation of $Id$, which are always fulfilled if our identity types are extensional.
 
 We consider two concrete models, the \textit{families model}, in which cartesian types consist of families of sets, indexed by their context set $\Gamma$, and a linear type in the context $\Gamma$ is a $\Gamma$-indexed family of objects in a given symmetric monoidal category $\mathcal{V}$. Examples of suitable $\mathcal{V}$ supporting all type formers present in our syntax are $\mathbf{AbGrp}$, $\mathbf{GCTop}_*$, $\mathbf{Vect}_F$, i.e. the category of abelian groups, the category of compact generated, pointed topological space and the category of vector spaces over a field $F$, respectively.
 
@@ -39,20 +39,21 @@ We will be assuming a certain familiarity with basic category theory concepts li
 
 The structure of this paper is as follows: after reviewing some theory on fibrations, monoidal categories, higher and enriched categories in the Section \ref{prelim}, we outline the syntax of our linear dependent type theory in Section \ref{syntax}. Section \ref{semantics} first defines a minimal categorical framework (\textit{the semantic core}) necessary for interpreting the structural rules of the theory, dealing with weakening, context extension and substitution once and for all, and then proceeds by specifying the additional conditions imposed in order to support various type formers.
 
-We then turn our direction to more concrete models in Section \ref{models}, and reexamine these conditions in these particular settings. We end with some discussion on the particularities of linear dependent type theory: the new elimination rules it introduces and its identity types and possible higher dimensional nature.
+We then turn our direction to more concrete models in Section \ref{models}, and reexamine these conditions in these particular settings. We end with some discussion on the particularities of linear dependent type theory: the new elimination rules it introduces, inductive types in this setting, equality of linear terms and the possible higher dimensional nature of linear dependent types.
 
-As our theory is both semantically and syntactically motivated, emerging from the dialectic between its semantic interpretation and its independent (syntactic) utility as a deductive system, a reader familiar with both category theory and type theory might benefit from jumping between sections to understand each indivual type former both from a semantic and syntactic perspective.
+Our theory is both semantically and syntactically motivated, approached through a dialectic where we consider both the translation of constructs into previously known structures and their independent utility as part of a deductive system. Therefore, a reader familiar with both category theory and type theory may benefit from jumping between sections to understand each indivual type former from both perspectives.
+\newpage
 \section{Preliminaries}\label{prelim}
 \subsection{Dependent type theory}
 Dependent types are types in which terms from other types may appear freely. The canonical example is the type $Vec(n)$, of vectors of length $n : \mathbb{N}$. This general class of deductive frameworks was pioneered by Per Martin Löf \cite{martin1984intuitionistic} as a foundation for constructive mathematics. For a thorough introduction to the syntax and semantics of dependent types, the reader may refer to \cite{hofmann1997syntax}. Here, we only present three short intuitions on how dependent type theory can be understood:
 
-From a syntactic perspective, a \textit{type} is a syntactic object whose meaning and function stems from the ways in which it interacts with the derivation rules of a particular \textit{type theory}. A definition of this kind is the best we can hope for if we want to view type theory as a foundational system of mathematical reasoning, as it does not rely on any predefined semantic framework. Taking a foundational view, the question to ask is not \textit{what is a type?} but rather, for any other mathematical construction $X$ \textit{how do I express $X$, type theoretically?}.
+From a syntactic perspective, a \textit{type} is a syntactic object whose meaning and function stems from the ways in which it interacts with the derivation rules of a particular \textit{type theory}. A definition of this kind is the best we can hope for if we want to view type theory as a foundational system of mathematical reasoning, as it does not rely on any predefined semantic framework. Taking a foundational view, the relevant question is not \textit{what is a type?} but rather, for any other mathematical construction $X$ \textit{how do I express $X$, type theoretically?}.
 
 Relaxing the foundational viewpoint, assuming the words \textit{sets}, \textit{propositions} and \textit{logic} already have meaning to us, we can understand type theory as an alternative approach to higher order logic, in which we carry along ``proof terms'', or witnesses, for all proven propositions. In this setting, a first approximation of what a type is can be as the simultaneous generalization of a proposition and a set. This generalization allows us to understand the $\Pi$-type as both a universal quantifier and as an implication, and the $\Sigma$-type as both an existential quantifier and $\land$. This makes type theory a higher order system of deduction with penchant for a computational interpretation on the nature of proofs.
 
-A third way to understand dependent type theory is as a programming language, forming a unified framework for computation and their specification. This connection goes under the name of the \textit{Curry--Howard correspondence}, or the paradigm of ``proposition as types''. The computation rules of our theory provides the dynamics of our language by way of reducing terms to express them in a canonical form, while our typing rules ensure that the output has the appropriate format.
+A third way to understand dependent type theory is as a programming language, forming a unified framework for computation and their specification. This connection goes under the name of the \textit{Curry--Howard correspondence}, or the paradigm of ``proposition as types''. The computation rules of our theory provides the dynamics of our language by way of rewriting terms to express them in a canonical form, while our typing rules ensure that the output has the appropriate format.
 \subsection{Linear type theory}
-Linear logic is a substructural logic in which the rules of weakening and contraction:
+Linear logic is a substructural logic in which the structural rules of weakening and contraction:
 \[
   \begin{split}
     \inference{\Gamma, \Delta \vdash B}{\Gamma, A, \Delta \vdash B}[Weak] \quad \quad 
@@ -272,8 +273,9 @@ There is a small caveat due to the higher dimensional nature of this constructio
 However, by identifying 1-cells connected by a 2-cell, we get the quotient category $\mathbf{SMCat}_{/\sim}$, which has a symmetric closed monoidal structure.
 
 As a final note, which will become important in section \ref{highermodel}, one can easily see from the definition that if $\mathcal{A}$ and $\mathcal{B}$ are groupoids, their tensor product category will be a groupoid as well.
+\newpage
 \section{Syntax}\label{syntax}
-The particular linear dependent type theory under consideration is a simplified version of the work of Krishnaswami in \cite{krishnaswami}, with slight syntactic changes motivated by our semantic interpretation. Types are either \textit{cartesian}, in which case we simply write $\Gamma \vdash A \text{ type}$, or \textit{linear}, written $\Gamma \vdash A \text{ linear}$. When making typing judgments of linear terms, contexts will be split into two parts, separated by a semicolon. The first part contains \textit{cartesian} assumptions, for which weakening and contraction is allowed, while the second part is the \textit{linear} part, containing ephemeral assumptions that we are also inclined to think of as resources. The derivation rules for linear types will force the linear variables to occur exactly once in the conclusion. Dependent types are restricted to only depend on terms of cartesian types. 
+The particular linear dependent type theory under consideration is a simplified version of the work of Krishnaswami in \cite{krishnaswami}, with slight syntactic changes motivated by our semantic interpretation\footnote{Some concrete differences between our syntax and \cite{krishnaswami} are our intensional identity types, the fact that we allow for elimination of cartesian types into linear types, and the rules for the operators $M$ and $L$.}. Types are either \textit{cartesian}, in which case we simply write ``$\Gamma \vdash A \text{ type}$'', or \textit{linear}, written ``$\Gamma \vdash A \text{ linear}$''. When making typing judgments of linear terms, contexts will be split into two parts, separated by a semicolon. The first part contains \textit{cartesian} assumptions, for which weakening and contraction is allowed, while the second part is the \textit{linear} part, containing linear assumptions for which only exchange is allowed. The derivation rules for linear types will force the linear variables to occur exactly once in the conclusion. Both linear and cartesian types may depend on cartesian terms, but linear terms can only appear in linear terms.
 \subsection{Structural rules}
 We will be dealing with the following judgments:\\
 \begin{figure}[h]
@@ -783,7 +785,7 @@ Since we are inclined to think of $M$ as right adjoint, we should expect it to p
 which are easily seen to be mutually inverse.
 \end{thm}
 
-It is hard to reason about equality of linear terms since the ordinary $Id$-type is a dependent type, and in the theory we do not allow for type dependency on linear terms. In the presence of the $M$ operator, however, we can form the type $a_M = b_M$ for two terms $\Gamma; \cdot \vdash a, b : A$, which can serve as a surrogate for linear equality. Furthermore, we can compare terms $\Gamma; \Xi \vdash t : A$ and $\Gamma; \Xi \vdash t' : A$ of the same type in the same context by repeated currying by forming the identity type \footnote{abusing notation to treat $\Xi$ as a single type, instead of a list of types} $\lambda \xi . t =_{\Xi \multimap A} \lambda \xi. t'$.
+It is hard to reason about equality of linear terms since the ordinary $Id$-type is a dependent type, and in the theory we do not allow for type dependency on linear terms. In the presence of the $M$ operator, however, we can form the type $a_M = b_M$ for two terms $\Gamma; \cdot \vdash a, b : A$, which can serve as a surrogate for linear equality. Furthermore, we can compare terms $\Gamma; \Xi \vdash t : A$ and $\Gamma; \Xi \vdash t' : A$ of the same type in the same context by repeated currying to form the identity type $(\lambda \xi . t)_M =_{(\Xi \multimap A)_M} (\lambda \xi. t')_M$\footnote{Abusing notation to treat $\Xi$ as a single type, instead of a list of types}. More on this in Section \ref{extensionality}.
 
 
 If we add extensionality to our theory so that propositional equality implies judgmental equality, then $a_M =_{A_M} b_M$ implies $\Gamma; \cdot \vdash a \equiv b : A$.
@@ -930,7 +932,7 @@ Second, suppose we are given terms:
     \Gamma; \Xi'' &\vdash t : A_L
   \end{split}
 \]
-using the elimination rule for the $L$ operator, we can either first combine the second and third line followed by a substitution into the first to get:
+Using the elimination rule for the $L$ operator, we can either first combine the second and third line followed by a substitution into the first to get:
 \[
   \Gamma; \Xi, \Xi', \Xi'' \vdash e[\text{let $x$ be $t$ in $u$}/y] : C
 \]
@@ -999,72 +1001,73 @@ and in the other direction:
 \end{thm}
 As outlined in section \ref{semtypform}, the semantic interpretation of the type formers $\Pi$, $\sqcap$ and $\Sigma$, $\sqsubset$ are as left and right adjoints to reindexing functors respectively, which can by lemma \ref{adjointproducts} be constructed via limits and colimits, these results reflect the fact that the left adjoint $L$ preserves colimits and the right adjoints $M$ preserves limits.
 \subsection{Universes}\label{universes}
-Our cartesian and linear types live in separate universes, $U$ and $L$. Since linear types are type checked in a purely cartesian context, the linear universe is a cartesian type. This suggests that there is no need for more than one linear universe. 
-To simplify the semantics, we also only assume one cartesian and one linear universe, rather than an infinite cumulative hierarchy, where $El(U_i) : U_{i+1}$, even though this might be more appealing from a syntactic point of view. Our universes are given á la Tarski and are closed under all previously introduced type formers. Below, we only outline the closure over the type formers $\Pi$, $\otimes$ and $\sqcap$, but this should be sufficient to give the idea. For more detail we refer to Hofmann's \textit{Syntax and Semantics of Dependent types}, \cite{hofmann1997syntax}, or Krishnaswami's \textit{Integrating Linear and Dependent types}, \cite{krishnaswami}.\\
+Our cartesian and linear types live in separate universes, $\mathbb{U}$ and $\mathbb{L}$. Since linear types are type checked in a purely cartesian context, the linear universe is a cartesian type. This suggests that there is no need for more than one linear universe. 
+To simplify the semantics, we also only assume one cartesian and one linear universe, rather than an infinite cumulative hierarchy, where $El(\mathbb{U}_i) : \mathbb{U}_{i+1}$, even though this might be more appealing from a syntactic point of view. Our universes are given á la Tarski and are closed under all previously introduced type formers. Below, we only outline the closure over the type formers $\Pi$, $\otimes$ and $\sqcap$, but this should be sufficient to give the idea. For more detail we refer to Hofmann's \textit{Syntax and Semantics of Dependent types}, \cite{hofmann1997syntax}, or Krishnaswami's \textit{Integrating Linear and Dependent types}, \cite{krishnaswami}.\\
 \fbox{
   \begin{minipage}{.5\linewidth}
     \[
-      \inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash U \type}[$\mathcal{U}$-F]
+      \inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash \mathbb{U} \type}[$\mathbb{U}$-F]
     \]\\
     \[
-      \inference{\Gamma \vdash t : U}{\Gamma \vdash El(t) \type}[U-El-F]
+      \inference{\Gamma \vdash t : \mathbb{U}}{\Gamma \vdash El(t) \type}[$\mathbb{U}$-El-F]
     \]\\
     \[
-      \inference{\Gamma \vdash t : U \\
-        \Gamma, x : El(t) \vdash v : U}
-        {\Gamma \vdash \hat \Pi_{x : El(t)}v : U}[U-$\Pi$]
+      \inference{\Gamma \vdash t : \mathbb{U} \\
+        \Gamma, x : El(t) \vdash v : \mathbb{U}}
+        {\Gamma \vdash \hat \Pi_{x : El(t)}v : \mathbb{U}}[$\mathbb{U}$-$\Pi$]
       \]\\
       \[
-        \inference{\Gamma \vdash t : U \\
-        \Gamma, x : El(t) \vdash v : U}
-        {\Gamma \vdash  El(\hat \Pi_{x : El(t)}v) \equiv \Pi_{x : El(t)}El(v)}[U-$\Pi$-Ty]
+        \inference{\Gamma \vdash t : \mathbb{U} \\
+        \Gamma, x : El(t) \vdash v : \mathbb{U}}
+        {\Gamma \vdash  El(\hat \Pi_{x : El(t)}v) \equiv \Pi_{x : El(t)}El(v)}[$\mathbb{U}$-$\Pi$-Ty]
       \]
 \end{minipage}
 \begin{minipage}{.5\linewidth}
         \[
-      \inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash L \type}[L-F]
+      \inference{\vdash \Gamma \text{ ctxt}}{\Gamma \vdash \mathbb{L} \type}[$\mathbb{L}$-F]
     \]\\
     \[
-      \inference{\Gamma \vdash t : L}{\Gamma \vdash El(t) \linear}[L-El-F]
+      \inference{\Gamma \vdash t : \mathbb{L}}{\Gamma \vdash El(t) \linear}[$\mathbb{L}$-El-F]
     \]\\
     \[
-      \inference{\Gamma \vdash t : L \quad \Gamma \vdash s : L}{\Gamma \vdash t \hat \otimes s : L}[L-$\otimes$]
+      \inference{\Gamma \vdash t : \mathbb{L} \quad \Gamma \vdash s : \mathbb{L}}{\Gamma \vdash t \hat \otimes s : \mathbb{L}}[$\mathbb{L}$-$\otimes$]
     \]\\
         \[
-          \inference{\Gamma \vdash t : L \\
-            \Gamma \vdash s : L}{El(t \hat \otimes s) \equiv El(s) \otimes El(t)}[L-$\otimes$-Ty]
+          \inference{\Gamma \vdash t : \mathbb{L} \\
+            \Gamma \vdash s : \mathbb{L}}{El(t \hat \otimes s) \equiv El(s) \otimes El(t)}[$\mathbb{L}$-$\otimes$-Ty]
     \]\\
     \[
-      \inference{\Gamma \vdash t : U\\
-        \Gamma, x : El(t) \vdash s : L}
-        {\Gamma \vdash \hat \sqcap_{x : El(t)} s : L}[L-$\sqcap$]
+      \inference{\Gamma \vdash t : \mathbb{U}\\
+        \Gamma, x : El(t) \vdash s : \mathbb{L}}
+        {\Gamma \vdash \hat \sqcap_{x : El(t)} s : \mathbb{L}}[$\mathbb{L}$-$\sqcap$]
     \]\\
     \[
-      \inference{\Gamma \vdash t : U\\
-        \Gamma, x : El(t) \vdash s : L}
-        {\Gamma \vdash El(\hat \sqcap_{x : El(t)} s) \equiv \sqcap_{x : El(t)}El(s)} [L-$\sqcap$-Ty]
+      \inference{\Gamma \vdash t : \mathbb{U}\\
+        \Gamma, x : El(t) \vdash s : \mathbb{L}}
+        {\Gamma \vdash El(\hat \sqcap_{x : El(t)} s) \equiv \sqcap_{x : El(t)}El(s)} [$\mathbb{L}$-$\sqcap$-Ty]
     \]\\
   \end{minipage}
 }\\
 As an example using universes, we can properly formulate the identity function of cartesian or linear types by:
 \[
   \begin{split}
-&    \text{id} : \Pi_{A : \mathcal{U}}A \to A\\
+&    \text{id} : \Pi_{A : \mathbb{U}}A \to A\\
 &    \text{id }A \; a :\equiv a
     \end{split}
 \]
 or
 \[
 \begin{split}
-&  \text{id} : \sqcap_{A : \mathcal{L}}A \multimap A\\
+&  \text{id} : \sqcap_{A : \mathbb{L}}A \multimap A\\
 &  \text{id }A \; a :\equiv a
 \end{split}
 \]
 respectively.
 It also allows us to formulate the type of ``pointed linear types'':
 \[
-\Gamma \vdash \sqsubset_{A : \mathcal{L}}A \linear
+\Gamma \vdash \sqsubset_{A : \mathbb{L}}A \linear
 \]
+\newpage
 \section{Semantics}\label{semantics}
 \subsection{Structural semantic core}
 To explore the models of linear dependent type theory we begin by constructing a categorical structure which abstracts the key features of the theory. We will utilize the notion of a \textit{comprehension category}, which provides the most general structure in which we can deal with the structural rules like context extensions and substitutions. Once this has been taken care of we may consider what extra conditions have to be imposed in order for the model to support various type constructors, and then provide concrete models that satisfy these conditions.
@@ -1504,39 +1507,39 @@ The final condition of the definition is what yields the elimination and computa
   \end{proof}
 \end{thm}
 \subsubsection{Universes}
-There are various degrees to which a model can support universes. The baseline condition is an object $U$ in every fiber such there is an object in the same fiber for every section of the corresponding projection. In order to even state what it means for a universe to be closed under various types, we need to assume that our model supports such types.
-\begin{defn}A model of LDTT \textbf{supports cartesian universes}, if for every $\Gamma \in \mathcal{C}$, there exists objects $U_\Gamma \in \mathcal{T}_{\Gamma}$ and $El_\Gamma \in \mathcal{T}_{\Gamma.U_\Gamma}$, such that these are stable under reindexing, i.e. for any $f : \Delta \to \Gamma$ in $\mathcal{C}$, we have $f^*U_\Gamma = U_\Delta$ and $q_{(\pi_{U_\Gamma}, f)}^*(El_\Gamma) = El_\Delta$. For a section $t : \Gamma \to \Gamma.U$ to the corresponding projection, we write $El(t)$ for $t^*(El)$.
+There are various degrees to which a model can support universes. The baseline condition is an object $\mathbb{U}$ in every fiber such there is an object in the same fiber for every section of the corresponding projection. In order to even state what it means for a universe to be closed under various types, we need to assume that our model supports such types.
+\begin{defn}A model of LDTT \textbf{supports cartesian universes}, if for every $\Gamma \in \mathcal{C}$, there exists objects $\mathbb{U}_\Gamma \in \mathcal{T}_{\Gamma}$ and $El_\Gamma \in \mathcal{T}_{\Gamma.\mathbb{U}_\Gamma}$, such that these are stable under reindexing, i.e. for any $f : \Delta \to \Gamma$ in $\mathcal{C}$, we have $f^*\mathbb{U}_\Gamma = \mathbb{U}_\Delta$ and $q_{(\pi_{\mathbb{U}_\Gamma}, f)}^*(El_\Gamma) = El_\Delta$. For a section $t : \Gamma \to \Gamma.\mathbb{U}$ to the corresponding projection, we write $El(t)$ for $t^*(El)$.
 
   For a model that supports the type former in question, a cartesian universe is closed under:
   \begin{itemize}
-  \item $\Pi$-types, (or $\Sigma$) if, for morphisms $t : \Gamma \to \Gamma.U$ and $v : \Gamma.El(t) \to \Gamma.El(t).U$, there is a section $\hat \Pi_{El(t)}v : \Gamma \to \Gamma.U$ such that $El(\hat \Pi_{El(t)}) = \Pi_{El(t)}El(v)$ (or $\Sigma$) i.e. if the object corresponding to $\hat \Pi_{El(t)}v$ is equal the image of $El(v)$ under the functor corresponding to the semantic type former.
-  \item $Id$-types, if, for sections $A : \Gamma \to \Gamma.U$, $a, b : \Gamma \to \Gamma.El(A)$, there is a section $\hat Id(a, b) : \Gamma \to \Gamma.U$, such that $El(\hat Id(a, b)) = Id_A$.
+  \item $\Pi$-types, (or $\Sigma$) if, for morphisms $t : \Gamma \to \Gamma.\mathbb{U}$ and $v : \Gamma.El(t) \to \Gamma.El(t).\mathbb{U}$, there is a section $\hat \Pi_{El(t)}v : \Gamma \to \Gamma.\mathbb{U}$ such that $El(\hat \Pi_{El(t)}) = \Pi_{El(t)}El(v)$ (or $\Sigma$) i.e. if the object corresponding to $\hat \Pi_{El(t)}v$ is equal the image of $El(v)$ under the functor corresponding to the semantic type former.
+  \item $Id$-types, if, for sections $A : \Gamma \to \Gamma.\mathbb{U}$, $a, b : \Gamma \to \Gamma.El(A)$, there is a section $\hat Id(a, b) : \Gamma \to \Gamma.\mathbb{U}$, such that $El(\hat Id(a, b)) = Id_A$.
   \end{itemize}
 \end{defn}
 Linear universes are defined in the same fashion, keeping in mind that the linear universe is a cartesian type.
 \begin{defn}
-  A model of LDTT \textbf{supports linear universes}, if, for every $\Gamma \in \mathcal{C}$, there are objects $L_\Gamma \in \mathcal{T}_{\Gamma}$ and $El_\Gamma \in \mathcal{L}_{\Gamma.L_\Gamma}$, stable under reindexing.
+  A model of LDTT \textbf{supports linear universes}, if, for every $\Gamma \in \mathcal{C}$, there are objects $\mathbb{L}_\Gamma \in \mathcal{T}_{\Gamma}$ and $El_\Gamma \in \mathcal{L}_{\Gamma.\mathbb{L}_\Gamma}$, stable under reindexing.
 
   For a model that supports the type former in question, the linear universe is closed under this type if:
   \begin{itemize}
-    \item $I$, (or $\top$, $0$): There is a section $\hat I : \Gamma \to \Gamma.L$, such that $El(\hat I) = I$ in $\mathcal{L}_\Gamma$.
-    \item $\otimes$ (or $\multimap$, $\&$): For every pair of sections $a, b : \Gamma \to \Gamma.L$, there is a section $\hat{a\otimes b}$ (or $\hat \multimap$, $\hat \&$) such that $El(\hat{a\otimes b}) = El(a)\otimes El(b)$
+    \item $I$, (or $\top$, $0$): There is a section $\hat I : \Gamma \to \Gamma.\mathbb{L}$, such that $El(\hat I) = I$ in $\mathcal{L}_\Gamma$.
+    \item $\otimes$ (or $\multimap$, $\&$): For every pair of sections $a, b : \Gamma \to \Gamma.\mathbb{L}$, there is a section $\hat{a\otimes b}$ (or $\hat \multimap$, $\hat \&$) such that $El(\hat{a\otimes b}) = El(a)\otimes El(b)$
     \end{itemize}
   \end{defn}
   \begin{defn}
     Given a model supporting both cartesian and linear universes, these are closed under:
     \begin{itemize}
-    \item $M$, if, for every section $x : \Gamma \to \Gamma.L$, there exists an element $\hat M(x) : \Gamma \to \Gamma.U$ such that $El(\hat M(x)) = M(El(x))$.
-    \item $L$, if, for every section $x : \Gamma \to \Gamma.U$, there exists an element $\hat L(x) : \Gamma \to \Gamma.L$ such that $El(\hat L(x)) = L(El(x))$.
-    \item $\sqcap$ (or $\sqsubset$), if, for sections $t : \Gamma \to \Gamma.U$ and $s : \Gamma.El(t) \to \Gamma.El(t).L$, there exists a section $\hat \sqcap_{El(t)}s : \Gamma \to \Gamma.L$ (or $\hat \sqsubset$), such that $El(\hat \sqcap_{El(t)}s) = \sqcap_{El(t)}El(s)$.
+    \item $M$, if, for every section $x : \Gamma \to \Gamma.\mathbb{L}$, there exists an element $\hat M(x) : \Gamma \to \Gamma.\mathbb{U}$ such that $El(\hat M(x)) = M(El(x))$.
+    \item $L$, if, for every section $x : \Gamma \to \Gamma.\mathbb{U}$, there exists an element $\hat L(x) : \Gamma \to \Gamma.\mathbb{L}$ such that $El(\hat L(x)) = L(El(x))$.
+    \item $\sqcap$ (or $\sqsubset$), if, for sections $t : \Gamma \to \Gamma.\mathbb{U}$ and $s : \Gamma.El(t) \to \Gamma.El(t).\mathbb{L}$, there exists a section $\hat \sqcap_{El(t)}s : \Gamma \to \Gamma.\mathbb{L}$ (or $\hat \sqsubset$), such that $El(\hat \sqcap_{El(t)}s) = \sqcap_{El(t)}El(s)$.
     \end{itemize}
 \end{defn}
 \subsubsection{Universes and small type formers}\label{universesML}
-We have not said anything about which types we expect to be contained in our universes. As they stand, the axioms of in section \ref{universes} do not postulate that there are any inhabitants of $L$ or $U$ to begin with. One could imagine restating the type formation rules to be defined with respect to universes, an approach exemplified by \cite{krishnaswami}. As tempting as it is to think of any cartesian type being an element of $U$, this would imply that the code for the universe belongs to itself, which yields an inconsistency of the theory through Girard's Paradox \cite{hurkens}. Asking for every linear type to belong to $L$ is a more reasonable requirement, since the linear universe is a cartesian type. But doing this forces us to restrict the operators $M$ and $L$ so as to only act on small types.
-\begin{defn}In a model that supports cartesian universes, let the category $small(\mathcal{T})$ of \textbf{small cartesian types} be the full subcategory of $\mathcal{T}$ whose objects are $El(t)$ for some section $t : \Gamma \to \Gamma.U$ in some context $\Gamma$.
+We have not said anything about which types we expect to be contained in our universes. As they stand, the axioms of in section \ref{universes} do not postulate that there are any inhabitants of $\mathbb{L}$ or $\mathbb{U}$ to begin with. One could imagine restating the type formation rules to be defined with respect to universes, an approach exemplified by \cite{krishnaswami}. As tempting as it is to think of any cartesian type being an element of $\mathbb{U}$, this would imply that the code for the universe belongs to itself, which yields an inconsistency of the theory through Girard's Paradox \cite{hurkens}. Asking for every linear type to belong to $\mathbb{L}$ is a more reasonable requirement, since the linear universe is a cartesian type. But doing this forces us to restrict the operators $M$ and $L$ so as to only act on small types.
+\begin{defn}In a model that supports cartesian universes, let the category $small(\mathcal{T})$ of \textbf{small cartesian types} be the full subcategory of $\mathcal{T}$ whose objects are $El(t)$ for some section $t : \Gamma \to \Gamma.\mathbb{U}$ in some context $\Gamma$.
 \end{defn}
 \begin{defn}
-  Similarly, we define the category $\mathcal{L}^{sm}$ of \textbf{small linear types} to be the full subcategory of $\mathcal{L}$ whose objects are $El(t)$ for some section $t : \Gamma \to \Gamma.L$ in some context $\Gamma$.
+  Similarly, we define the category $\mathcal{L}^{sm}$ of \textbf{small linear types} to be the full subcategory of $\mathcal{L}$ whose objects are $El(t)$ for some section $t : \Gamma \to \Gamma.\mathbb{L}$ in some context $\Gamma$.
 \end{defn}
 \begin{defn}
   If there is a full subcategory $\mathcal{C}^{sm}$ of $\mathcal{C}$ such that the restriction of the functors $p, q$ and $\pi$ of a model of linear dependent type theory:
@@ -1557,7 +1560,7 @@ We have not said anything about which types we expect to be contained in our uni
 \end{defn}
 We can now define what it means for a model to support small versions of various type formers. 
 \begin{defn}
-  We say that a model of linear dependent type theory \textbf{supports $M$ and $L$ for small types}, if, for every $\Gamma \in \mathcal{C}$, there are morphisms $L : L \iff U : M$ in $\mathcal{T}_\Gamma$ natural in $\Gamma$, inducing a fiber adjunction:
+  We say that a model of linear dependent type theory \textbf{supports $M$ and $L$ for small types}, if, for every $\Gamma \in \mathcal{C}$, there are morphisms $L : \mathbb{L} \iff \mathbb{U} : M$ in $\mathcal{T}_\Gamma$ natural in $\Gamma$, inducing a fiber adjunction:
   \[
     \mathcal{L}^{sm}(El(L(t)), El(s)) \cong \mathcal{T}^{sm}(El(t), El(M(s)))
   \]
@@ -1569,16 +1572,16 @@ We can now define what it means for a model to support small versions of various
 Syntactically, this corresponds to changing the type formation rules of $M$ and $L$ so as to not be defined for all types, but only those who are contained in the cartesian and linear universes:
 \[
   \begin{split}
-  \inference{\Gamma \vdash A : L}
-  {\Gamma \vdash A_M : U}[M-F-U]
+  \inference{\Gamma \vdash A : \mathbb{L}}
+  {\Gamma \vdash A_M : \mathbb{U}}[M-F-$\mathbb{U}$]
   \\
-  \inference{\Gamma \vdash A : U}
-  {\Gamma \vdash A_L : L}[L-F-U]
+  \inference{\Gamma \vdash A : \mathbb{U}}
+  {\Gamma \vdash A_L : \mathbb{L}}[L-F-$\mathbb{U}$]
   \end{split}
 \]
 Similarly, we can define support for small $\sqcap$ and $\sqsubset$ as support for $\sqcap$ and $\sqsubset$ in a sub-model of small types.
 \begin{defn}
-  We say that the linear universe $L$ is \textbf{all-encompassing} if every object of $\mathcal{L}$ is also in $\mathcal{L}^{sm}$.
+  We say that the linear universe $\mathbb{L}$ is \textbf{all-encompassing} if every object of $\mathcal{L}$ is also in $\mathcal{L}^{sm}$.
 \end{defn}
 \newpage
 \section{Models}\label{models}
@@ -1719,11 +1722,11 @@ induces a fiber adjunction between the corresponding fibrations:
 As a result, the families model supports the operators $M$ and $L$ whenever $\mathcal{V}$ is a concrete category such that the free object generated by the singleton is the unit of the monoidal structure.
 
 \subsubsection{Universes in the families model}\label{universefam}
-When it comes to universes, we need to be careful so as to not run into size issues. We want to construct universes which contains as many types as possible, without yielding any inconsistencies or collapsing the entire theory. As an example of such a collapse, consider the scenario where the category $\mathcal{V}$ is small. Then we may define our linear universe $L \in Fam(\mathbf{Sets})_\Gamma$ as the constant family
+When it comes to universes, we need to be careful so as to not run into size issues. We want to construct universes which contains as many types as possible, without yielding any inconsistencies or collapsing the entire theory. As an example of such a collapse, consider the scenario where the category $\mathcal{V}$ is small. Then we may define our linear universe $\mathbb{L} \in Fam(\mathbf{Sets})_\Gamma$ as the constant family
 \[
   (\Gamma, \lambda \gamma . Ob(\mathcal{V})).
 \]
-Since any section of $\pi(\mathcal{L}) : \Gamma.\mathcal{L} \to \Gamma$ consists of a selection of morphisms
+Since any section of $\pi_{\mathbb{L}} : \Gamma.\mathbb{L} \to \Gamma$ consists of a selection of morphisms
 \[
   f_\gamma : \mathbf{1} \to Ob(\mathcal{V}),
 \]
@@ -1733,7 +1736,7 @@ This may not be as desirable as it appears on first sight however, as at least i
 \begin{thm}
 Assuming the law of excluded middle, if a category $\mathcal{V}$ has products indexed by the collection $Arr(\mathcal{V})$ of arrows in $\mathcal{V}$, then $\mathcal{V}$ is a preorder.
   \begin{proof}
-    Assume there are two distinct arrows $f, g : A \to B$ between objects $A, B \in \mathcal{V}$. We can combine these arrows to get $2^{|Arr(\mathcal{V})|}$ distinct arrows from $a \to \prod_{|Arr(\mathcal{V})|}b$, by the universal property of the product. But yields a contradiction, as this is obviously more arrows than exist in $\mathcal{V}$. By the law of the excluded middle, this double negation implies that there are no distinct arrows in $\mathcal{V}$.
+    Assume there are two distinct arrows $f, g : A \to B$ between objects $A, B \in \mathcal{V}$. We can combine these arrows to get $2^{|Arr(\mathcal{V})|}$ distinct arrows from $a \to \prod_{|Arr(\mathcal{V})|}b$, by the universal property of the product. But yields a contradiction, as this is obviously more arrows than exist in $\mathcal{V}$. By the law of the excluded middle, this implies that there are no distinct arrows in $\mathcal{V}$.
   \end{proof}
 \end{thm}
 If we want $\mathcal{V}$ to not be a preorder, it is clear that we need to be more careful in distinguishing between small and large types.
@@ -1769,26 +1772,26 @@ Now calling $\mathbf{SETS}$ what we previously called $\mathbf{Set}$, its full s
   \mathbf{SETS}
   \kz
 \]
-and define the cartesian universe $\mathcal{U} \in Fam(\mathbf{SETS})_\Gamma$ by the constant family:
+and define the cartesian universe $\mathbb{U} \in Fam(\mathbf{SETS})_\Gamma$ by the constant family:
 \[
-U = (\Gamma, \lambda \gamma. V_\kappa).
+\mathbb{U} = (\Gamma, \lambda \gamma. V_\kappa).
 \]
-Any section $t : \Gamma \to \Gamma.U$ defines a $\Gamma$ indexed collection $(\Gamma, t_\gamma)$ of sets in $V_\kappa$, which gives an interpretation of $El(t)$. Following closely the proof of theorem \ref{adjointproducts}, paying attention to size, we get the following result:
+Any section $t : \Gamma \to \Gamma.\mathbb{U}$ defines a $\Gamma$ indexed collection $(\Gamma, t_\gamma)$ of sets in $V_\kappa$, which gives an interpretation of $El(t)$. Following closely the proof of theorem \ref{adjointproducts}, paying attention to size, we get the following result:
 \begin{corl}
   For any function $u : S \to S'$  such that for each $s \in S'$, the subset $u^{-1}(s)$ is small, the functor  $u^* : Fam(\mathbf{SETS})_{S'} \to Fam(\mathbf{SETS})_S$ has left and right adjoints, $\Sigma$ and $\Pi$. Furthermore, for each family $(S', f)$ in $Fam(\mathbf{SETS})_S$, each member of the family $\Sigma(\Gamma, f) \in Fam(\mathbf{SETS})_S$ is small.
 \end{corl}
-By this argument, we find that the enlarged families model supports cartesian universes that are closed under $\Pi$ and $\Sigma$. Since the projections $\pi_U : \Gamma.U \to \Gamma$ associated to universes are such that the sets $\pi_U(\gamma)$ are small, for sections $t : \Gamma \to \Gamma.U$ and $s : \Gamma.El(t) \to \Gamma.El(t).U$, define $\hat \Pi_{El(t)}v$ as the section which associates each $\gamma$ to the image of the member $El(v)_\gamma$ under functor $\Pi$. The case for $\Sigma$ is completely analogous.
+By this argument, we find that the enlarged families model supports cartesian universes that are closed under $\Pi$ and $\Sigma$. Since the projections $\pi_{\mathbb{U}} : \Gamma.\mathbb{U} \to \Gamma$ associated to universes are such that the sets $\pi_{\mathbb{U}}(\gamma)$ are small, for sections $t : \Gamma \to \Gamma.\mathbb{U}$ and $s : \Gamma.El(t) \to \Gamma.El(t).\mathbb{U}$, define $\hat \Pi_{El(t)}v$ as the section which associates each $\gamma$ to the image of the member $El(v)_\gamma$ under functor $\Pi$. The case for $\Sigma$ is completely analogous.
 
 
 Similarly, as long as $Ob(\mathcal{V}) \in \mathbf{SETS}$, we can define the linear universe as the family:
 \[
-  L = (\Gamma, \lambda \gamma. Ob(\mathcal{V}))
+  \mathbb{L} = (\Gamma, \lambda \gamma. Ob(\mathcal{V}))
 \]
-Where a section $t : \Gamma \to \Gamma.L$ defines a family $El(t) = (\Gamma, t_\gamma)$ where $t_\gamma \in \mathcal{V}$.
+Where a section $t : \Gamma \to \Gamma.\mathbb{L}$ defines a family $El(t) = (\Gamma, t_\gamma)$ where $t_\gamma \in \mathcal{V}$.
 
-By this construction, we recover the ``small'' families model as sub-model of small types. Furthermore, the previous adjunction $L \dashv M$, induces, for every $\Gamma$, morphisms $L : L \iff U : M$ in $\mathcal{T}_{\Gamma}$, natural in $\Gamma$ such that this induces an adjunction of $El(L(-)) \dashv El(M(-))$, which forms support for $M$ and $L$ for small types.
+By this construction, we recover the ``small'' families model as sub-model of small types. Furthermore, the previous adjunction $L \dashv M$, induces, for every $\Gamma$, morphisms $L : \mathbb{L} \iff \mathbb{U} : M$ in $\mathcal{T}_{\Gamma}$, natural in $\Gamma$ such that this induces an adjunction of $El(L(-)) \dashv El(M(-))$, which forms support for $M$ and $L$ for small types.
 \subsubsection{Concrete examples}
-To summarize, these are the conditions imposed in order  to support all of the type formers described in section \ref{syntax} using the families model:
+To summarize, these are the conditions imposed in order to support all of the type formers described in section \ref{syntax} using the families model:
 \begin{itemize}
 \item A metatheory in which we can construct a Grothendieck universe (in ZFC, at least one inaccessible cardinal).
 \item A symmetric monoidal closed category $\mathcal{V}$, with small products and coproducts, which distribute over the monoidal structure.
@@ -1845,10 +1848,10 @@ The interpretation of this in the families model are precisely $\mathcal{V}$-enr
 \begin{defn}[Internal enriched categories]
   The type \textbf{Enr-cat} is defined as
   \[
-\text{Enr-cat} :\equiv \Sigma_{A : \mathcal{U}} \Sigma_{B : \Pi_{x, y : A}\mathcal{L}} \Sigma_{M : \Pi_{x, y, z : A} [B_{y, z} \otimes B_{x, y}, B_{x,z}]} \Sigma_{j : \Pi_{x: A}[I, B_{x, x}]}[\lambda f. f] = [\lambda f. M_{x, x, y}(f \otimes j_x)] \times [\lambda f. f] = [\lambda f. M_{x, x, y}(j_y \otimes f)] \\
+\text{Enr-cat} :\equiv \Sigma_{A : \mathbb{U}} \Sigma_{B : \Pi_{x, y : A}\mathbb{L}} \Sigma_{M : \Pi_{x, y, z : A} [B_{y, z} \otimes B_{x, y}, B_{x,z}]} \Sigma_{j : \Pi_{x: A}[I, B_{x, x}]}[\lambda f. f] = [\lambda f. M_{x, x, y}(f \otimes j_x)] \times [\lambda f. f] = [\lambda f. M_{x, x, y}(j_y \otimes f)] \\
   \]
 \end{defn}
-Since $Fam(\mathbf{Set})$ is an extensional model, whenever the $a =_A b$ is inhabited, we have $[[a]]=[[b]]$. Furthermore, since the equalities $p$, $q$ and $r$ are all identifying morphisms in the image of the faithful functor $M$, we have:
+Since $Fam(\mathbf{Set})$ is an extensional model, whenever the type $a =_A b$ is inhabited, we have $[[a]]\equiv[[b]]$. Furthermore, since the equalities $p$, $q$ and $r$ are all identifying morphisms in the image of the faithful functor $M$, we have:
 \[
 [[f \circ 1_x ]] \equiv [[1_y \circ f]] \equiv [[f]]
 \]
@@ -2163,15 +2166,14 @@ where $\pi_0$ is the functor sending a groupoid to its set of connected componen
 To support universes, assuming one inaccessible cardinal allows us to shift our perspective to from the category of small groupoids, $\mathbf{Gpd}$, to the category $\mathbf{GPD}$ of all groupoids. Among the objects of $\mathbf{GPD}$ we find the large groupoid $\mathbf{Gpd}^{core}$, and $\mathcal{V}^{core}$, the core (i.e. maximal sub-groupoid) of the corresponding categories. This allows us to define our cartesian and linear universes in any context $\Gamma$ as the functors:
 \[
   \begin{split}
-    U :  \Gamma \to \mathbf{GPD}\\
-    L : \Gamma \to \mathbf{GPD}
+    \mathbb{U} :  \Gamma \to \mathbf{GPD}\\
+    \mathbb{L} : \Gamma \to \mathbf{GPD}
   \end{split}
 \]
-which are constant at $\mathbf{Gpd}^{core}$ and $\mathcal{V}^{core}$, respectively. Any section $s : \Gamma \to \Gamma.U$ will determine a functor $\hat s : \Gamma \to \mathbf{Gpd}$, which will we can embed via the full subcategory embedding $\mathbf{Gpd} \to \mathbf{GPD}$ to get an interpretation of $El(s)$. Similarly, we get from each section $s : \Gamma \to \Gamma.L$, a functor $El(s) : \Gamma \to \mathcal{V}$. Restricting the type formers $\sqcap$, $\sqsubset$, $M$ and $L$ to small types only, this linear universe is all-encompassing.
-
+which are constant at $\mathbf{Gpd}^{core}$ and $\mathcal{V}^{core}$, respectively. Any section $s : \Gamma \to \Gamma.\mathbb{U}$ will determine a functor $\hat s : \Gamma \to \mathbf{Gpd}$, which will we can embed via the full subcategory embedding $\mathbf{Gpd} \to \mathbf{GPD}$ to get an interpretation of $El(s)$. Similarly, we get from each section $s : \Gamma \to \Gamma.\mathbb{L}$, a functor $El(s) : \Gamma \to \mathcal{V}$. Restricting the type formers $\sqcap$, $\sqsubset$, $M$ and $L$ to small types only, this linear universe is all-encompassing.
 
 It is easily seen that defining the linear universe via the core of $\mathcal{V}$ gives rise to the following interesting property, hinting at the possibility of a linear univalence axiom:
-\begin{corl}For a linear universe defined as above via $\mathcal{V}^{core}$, and two sections $s, t : \Gamma \to \Gamma.L$, an isomorphism $\alpha : El(t) \cong El(s)$ gives rise to a section $p : \Gamma \to \Gamma.Id_L\{s\}\{t\}$.
+\begin{corl}For a linear universe defined as above via $\mathcal{V}^{core}$, and two sections $s, t : \Gamma \to \Gamma.\mathbb{L}$, an isomorphism $\alpha : El(t) \cong El(s)$ gives rise to a section $p : \Gamma \to \Gamma.Id_{\mathbb{L}}\{s\}\{t\}$.
 \end{corl}
 \subsection{Univalence in linear dependent types}\label{highermodel}
 A key feature of the groupoid model is that it provides a model of dependent type theory where there might be nontrivial terms of the identity type. A natural question to ask is whether this higher dimensional feature of type theory can be extended to the linear dependent setting.
@@ -2180,14 +2182,14 @@ A key feature of the groupoid model is that it provides a model of dependent typ
 In particular, we want to explore a model in which the following, linear analogue to the univalence axiom, would hold:
 \[
   \inference{
-    \Gamma \vdash A : L\\
-    \Gamma \vdash B : L\\
+    \Gamma \vdash A : \mathbb{L}\\
+    \Gamma \vdash B : \mathbb{L}\\
     \Gamma; \cdot \vdash f : El(A) \multimap El(B)\\
     \Gamma; \cdot \vdash g : El(B) \multimap El(A)\\
     \Gamma; \cdot \vdash h : El(B) \multimap El(A)\\
     \Gamma \vdash p : (g \circ f)_M  =_{(El(A) \multimap El(A))_M} (id_A)_M\\
     \Gamma \vdash q : (f \circ h)_M =_{(El(B) \multimap El(B))_M} (id_B)_M\\
-    }{\Gamma \vdash ua(f)_{[g, h, p, q]} : A =_L B}[L-ua-I]
+    }{\Gamma \vdash ua(f)_{[g, h, p, q]} : A =_{\mathbb{L}} B}[L-ua-I]
   \]
   To define the corresponding computation rule, we first define a transport function for linear types:
   \begin{lemm}
@@ -2214,12 +2216,12 @@ In particular, we want to explore a model in which the following, linear analogu
 \]
       \end{proof}
     \end{lemm}
-    Taking $C \equiv L$, and $D \equiv El(x)$ for any $x : L$ in the procedure above yields, from judgments:
+    Taking $C \equiv \mathbb{L}$, and $D \equiv El(x)$ for any $x : \mathbb{L}$ in the procedure above yields, from judgments:
     \[
       \begin{split}
-        \Gamma &\vdash A : L\\
-        \Gamma &\vdash B : L\\
-        \Gamma &\vdash p : A =_L B
+        \Gamma &\vdash A : \mathbb{L}\\
+        \Gamma &\vdash B : \mathbb{L}\\
+        \Gamma &\vdash p : A =_{\mathbb{L}} B
       \end{split}
     \]
     the function $\Gamma; \cdot \vdash R^{Id}_{[x, y, p]}(\lambda u.u, A, B, p) : El(C) \multimap El(D)$.
@@ -2231,30 +2233,30 @@ In particular, we want to explore a model in which the following, linear analogu
     {\Gamma \vdash R^{Id}_{[x, y, p]}(\lambda u.u, A, B, ua(f)_{g, h, p, q}) \equiv f : El(A) \multimap El(B)}
     [L-ua-C$_1$]
   \]\\
-  and in the other direction, given an identity $p : A =_L B$, turning it to an equivalence and then back into an identity should return $p$:
+  and in the other direction, given an identity $p : A =_{\mathbb{L}} B$, turning it to an equivalence and then back into an identity should return $p$:
     \[
     \inference{
-      \Gamma \vdash ua(R^{Id}_{[x, y, p]}(\lambda u.u, A, B, p))_{[-,-,-,-]} : A =_L B}
-    {\Gamma \vdash ua(R^{Id}_{[x, y, p]}(\lambda u.u, A, B, p))_{[-,-,-,-]} \equiv p : A =_L B}
+      \Gamma \vdash ua(R^{Id}_{[x, y, p]}(\lambda u.u, A, B, p))_{[-,-,-,-]} : A =_\mathbb{L} B}
+    {\Gamma \vdash ua(R^{Id}_{[x, y, p]}(\lambda u.u, A, B, p))_{[-,-,-,-]} \equiv p : A =_{\mathbb{L}} B}
     [L-ua-C$_2$]
   \]\\
   \subsubsection{Semantic justification}
   The semantic interpretation of the procedure of turning an identity to an equivalence above is the following:
-  \begin{lemm}Given two sections $A, B : \Gamma \to \Gamma.L$, and a section $p : \Gamma \to \Gamma.Id_L\{A\}\{B^+\}$, there is an natural isomorphism $IdToEquiv(p) : El(A) \cong El(B)$ in $[\Gamma, \mathcal{V}]$.
-    \begin{proof}The section $p : \Gamma \to \Gamma.Id_L\{A\}\{B^+\}$ must for every $\Gamma$, select an object $(a \in A(\gamma), b \in B(\gamma), f : a \to b)$ of the groupoid $Id_L.\{A\}\{B^+\}(\gamma) = \delta \mathcal{V}^{core}(A,B)$, and map morphisms to commutative squares, defining a natural isomorphism $El(A) \cong El(B)$ between the diagrams $El(A) : \Gamma \to \mathcal{V}$ and $El(B) : \Gamma \to \mathcal{V}$.
+  \begin{lemm}Given two sections $A, B : \Gamma \to \Gamma.\mathbb{L}$, and a section $p : \Gamma \to \Gamma.Id_{\mathbb{L}}\{A\}\{B^+\}$, there is an natural isomorphism $IdToEquiv(p) : El(A) \cong El(B)$ in $[\Gamma, \mathcal{V}]$.
+    \begin{proof}The section $p : \Gamma \to \Gamma.Id_{\mathbb{L}}\{A\}\{B^+\}$ must for every $\Gamma$, select an object $(a \in A(\gamma), b \in B(\gamma), f : a \to b)$ of the groupoid $Id_{\mathbb{L}}.\{A\}\{B^+\}(\gamma) = \delta \mathcal{V}^{core}(A,B)$, and map morphisms to commutative squares, defining a natural isomorphism $El(A) \cong El(B)$ between the diagrams $El(A) : \Gamma \to \mathcal{V}$ and $El(B) : \Gamma \to \mathcal{V}$.
     \end{proof}
   \end{lemm}
  
   \begin{thm}
-    For $L \dashv M$ interpreted as in \ref{factorsets}, the linear univalence axiom holds in the diagrams model. That is, given the following data:
+    For $L \dashv M$ factoring through $\mathbf{Sets}$ as in Remark \ref{factorsets}, the linear univalence axiom holds in the diagrams model. That is, given the following data:
     \begin{itemize}
-    \item sections: $A, B : \Gamma \to \Gamma.L$
+    \item sections: $A, B : \Gamma \to \Gamma.{\mathbb{L}}$
     \item morphisms: $f : I \to [El(A), El(B)]$ and $g, h : I \to El(B)$ in $[\Gamma, \mathcal{V}]$,
     \item and sections: $p : \Gamma \to \Gamma.Id_{(M[El(A),El(A)])}\{M(g \circ f)\}\{M(id_A)\}$ and $q : \Gamma \to \Gamma.Id_{(M[El(B),El(B)])}\{M(f \circ h)\}\{M(id_B)\}$
     \end{itemize}
-    Then there is a section $ua(f)_{g, h, p, q} : \Gamma \to \Gamma.Id_L\{A\}\{B\}$ such that $IdToEquiv(ua(f)) = f$ and $ua(IdToEquiv(p)) = p$.
+    Then there is a section $ua(f)_{g, h, p, q} : \Gamma \to \Gamma.Id_{\mathbb{L}}\{A\}\{B\}$ such that $IdToEquiv(ua(f)) = f$ and $ua(IdToEquiv(p)) = p$.
     \begin{proof}
-      Since $M$ factors through sets, the interpretation of any type in its image is a functor with values in discrete groupoids, so by lemma \ref{discgroupoid}, the existence of a section $p : \Gamma \to \Gamma.Id_{M[El(A), El(A)]}\{(g \circ f)_M\}\{(id_{El(A)})_M\}$ implies that the sections $(g \circ f)_M : 1 \to M[A, A]$ and $(id_{El(A)})_M : 1 \to M[A,A]$ coincide, which by the adjunction $L \dashv M$ implies that $[[(g \circ f)]] = id_{El(A)}$. From the interpretation of $\multimap$ as internal hom, the syntactic composition operation coincides with the composition of the corresponding morphisms. In other words, denoting by $\hat f$ the transport of a map via the isomorphism $\mathcal{L}_\Gamma(I, [A,B]) \cong \mathcal{L}_\Gamma(A,B)$, we have $\hat [[g \circ f]] = \hat g \circ \hat f$ and $\hat id_{El(A)} = 1_{El(A)}$. We therefore have an isomorphism $\hat f : El(A) \to El(B)$ with $\hat g = \hat h$ as inverse. Selecting this isomorphism in $\mathcal{V}^{core}$ gives rise to a section $P : \Gamma \to \Gamma.Id_L\{A\}\{B\}$, which by the previous lemma can be transported back by $IdToEquiv(P) = \hat f$.
+      Since $M$ factors through sets, the interpretation of any type in its image is a functor with values in discrete groupoids, so by lemma \ref{discgroupoid}, the existence of a section $p : \Gamma \to \Gamma.Id_{M[El(A), El(A)]}\{(g \circ f)_M\}\{(id_{El(A)})_M\}$ implies that the sections $(g \circ f)_M : 1 \to M[A, A]$ and $(id_{El(A)})_M : 1 \to M[A,A]$ coincide, which by the adjunction $L \dashv M$ implies that $[[(g \circ f)]] = id_{El(A)}$. From the interpretation of $\multimap$ as internal hom, the syntactic composition operation coincides with the composition of the corresponding morphisms. In other words, denoting by $\hat f$ the transport of a map via the isomorphism $\mathcal{L}_\Gamma(I, [A,B]) \cong \mathcal{L}_\Gamma(A,B)$, we have $\hat [[g \circ f]] = \hat g \circ \hat f$ and $\hat id_{El(A)} = 1_{El(A)}$. We therefore have an isomorphism $\hat f : El(A) \to El(B)$ with $\hat g = \hat h$ as inverse. Selecting this isomorphism in $\mathcal{V}^{core}$ gives rise to a section $P : \Gamma \to \Gamma.Id_{\mathbb{L}}\{A\}\{B\}$, which by the previous lemma can be transported back by $IdToEquiv(P) = \hat f$.
 \end{proof}
 \end{thm}
 So the linear univalence axiom holds in the diagrams model as long as $M$ factors through sets, analogous to how one can prove the univalence axiom in the groupoid model for the universe which only contains discrete groupoids. This might not be completely satisfying from the perspective of homotopy type theory, as this essentially truncates any higher dimensional type into a set when transporting them via $M$. Instead, we could to imagine forming a model where our linear types have an inherently higher dimensional structure, which is preserved by $M$. One such model is given by letting the objects of $\mathcal{V}$ be categories, and $M$ be the functor taking a category to its core, i.e. its maximal sub-groupoid. If we want $\mathcal{V}$ to have a non-cartesian monoidal structure the candidate choices $\mathbf{Cat}$ and $\mathbf{Gpd}$ won't do. As briefly outlined in in \ref{smcatmon} and carefully described in \cite{smcat}, there is a symmetric monoidal structure on $\mathbf{SMCat}$, the category of small symmetric monoidal categories, symmetric monoidal functors and monoidal natural transformations. \footnote{Technically, the structure on $\mathbf{SMCat}$ is not quite symmetric monoidal, as the associators, unitors and symmetry functors are only invertible up to higher homotopy. However, if one applies these homotopies whenever necessary, one does get a model of linear dependent type theory.}
@@ -2300,22 +2302,24 @@ This adjunction lifts by lemma \ref{fiberadj} to a fiber adjunction:
     & \mathbf{Gpd}
     \kz
   \]
-  Furthermore, it is clear from the definition of $F$ and the unit $I$ of $\mathbf{SMCat}$, defined at \ref{smcat} that the image of $\mathbf{1}$ under $F$ is precisely $I$, so the higher dimensional model supports $M$ and $L$ by the fiber adjunction $F \dashv U$.
+  Furthermore, it is clear from the definition of $F$ and the unit $I$ of $\mathbf{SMCat}$, defined at \ref{smcatmon} that the image of $\mathbf{1}$ under $F$ is precisely $I$, so the higher dimensional model supports $M$ and $L$.
 
   
   Here we have two choices for our linear universe.\footnote{In our syntax we only defined a single linear universe, but it can easily be extended into several universes, which may be subcategories of each other, or even an infinite hierarchy of universes}
-  If we want univalence to hold in this model we can let the linear universe $L$ be the groupoid consisting of all \textit{discrete} symmetric monoidal categories, and isomorphisms between them. This is equivalently the core of $CMon$, the category of small commutative monoids (in $\mathbf{Set}$). $CMon$ is a full subcategory of $SMCat$, which allows us to let $El$ be the function sending an object of $L$ to an object of $\mathbf{SMCat}$.
+  If we want univalence to hold in this model we can let the linear universe ${\mathbb{L}}$ be the groupoid consisting of all \textit{discrete} symmetric monoidal categories, and isomorphisms between them. This is equivalently the core of $CMon$, the category of small commutative monoids (in $\mathbf{Set}$). $CMon$ is a full subcategory of $SMCat$, which allows us to let $El$ be the function sending an object of ${\mathbb{L}}$ to an object of $\mathbf{SMCat}$.
 
   
-  Another choice is to let $L = \mathbf{SMCat}^{core}$, making it an all-encompassing universe. This universe is not univalent, however, as one-dimensional groupoids do not carry enough higher dimensional structure to capture the weakness distinguishing an equivalence of categories and an isomorphism of categories.  
+  Another choice is to let ${\mathbb{L}} = \mathbf{SMCat}^{core}$, making it an all-encompassing universe. This universe is not univalent, however, as one-dimensional groupoids do not carry enough higher dimensional structure to capture the weakness distinguishing an equivalence of categories and an isomorphism of categories.  
 \subsubsection{Univalent linear type theory (syntactic)}
-It is not uncommon for linear logicians to state equalities like $A \multimap B \multimap C = A \otimes B \multimap C$ to mean $A \multimap B \multimap C \vdash A \otimes B \multimap C$ and $A \otimes B \multimap C \vdash A \multimap B \multimap C$. Here it is important to distinguish between linear logic and linear type theory. In linear logic, we have $A \& A \dashv \vdash A$, but in linear type theory, there is in general no equivalence $A \& A \cong A$, since there may be more than one term inhabiting $A$.
+It is not uncommon for linear logicians to state equalities like $A \multimap B \multimap C = A \otimes B \multimap C$ to mean $A \multimap B \multimap C \vdash A \otimes B \multimap C$ and $A \otimes B \multimap C \vdash A \multimap B \multimap C$. Here it is important to distinguish between linear logic and linear type theory. In both linear logic and linear type theory, we have $A \& A \dashv \vdash A$, but there is in general no equivalence $A \& A \cong A$, since there may be more than one term inhabiting $A$.
+
+Just as the normal, ``cartesian'' univalence axiom provides mathematicians with a way to equate isomorphic structures, despite its incompatibility with the ``official'' doctrines of conventional foundations, the linear univalence axiom allows us to identify well known equivalences between linear types without feeling guilty.
   \begin{thm}
     Assuming L-ua, for all linear types $A$, $B$, $C$, cartesian $D$ in $\Gamma$, and cartesian $E$ in $\Gamma.D$, the following types are inhabited:
     \begin{enumerate}
-    \item $\Gamma \vdash A \multimap B \multimap C =_{\mathcal{L}} A \otimes B \multimap C$
-    \item $\Gamma \vdash (\Sigma_{x : D}E)_L =_{\mathcal{L}}\sqsubset_{x :D}E_L$
-    \item $(A \& B)_{LM} =_{\mathcal{L}} A_{LM} \otimes B_{LM}$
+    \item $\Gamma \vdash A \multimap B \multimap C =_{\mathbb{L}} A \otimes B \multimap C$
+    \item $\Gamma \vdash (\Sigma_{x : D}E)_L =_{\mathbb{L}}\sqsubset_{x :D}E_L$
+    \item $(A \& B)_{LM} =_{\mathbb{L}} A_{LM} \otimes B_{LM}$
     \end{enumerate}
     \begin{proof}
       \begin{enumerate}
@@ -2386,9 +2390,12 @@ and $h^{-1} : (A \otimes B \multimap C) \multimap (A \multimap B \multimap C)$:
       \end{enumerate}
     \end{proof}
   \end{thm}
+  \newpage
   \section{Discussion}\label{discussion}
-  \subsection{Equality of linear types and linear function extensionality}
-  A basic assumption of our theory is the restriction disallowing linear terms to appear in types. This implies that we cannot form the identity type of two terms of a linear type, which could be seen as a lack of proper ``internalization'' of the notion of equality between linear terms. However, we can still utilize the ``surrogate equality'' described at the end of Section \ref{syntLandM}, which compares the image of the two linear terms under $M$. Building upon this idea, it is tempting to consider the addition of some kind of ``extensionality''-style rules to make the ``surrogate equality'' useful in practice. Such rules should allow us to prove equalities of linear terms by proving equalities of their consituent parts. For example, suppose we are given terms:
+  \subsection{Multicategories vs. Symmetric Monoidal Categories}
+  An alternative approach to modeling linear type theory is to start from \textit{Multicategories} instead of Symmetric Monoidal Categories. A multicategory is like a category, except that one allows multiple inputs and a single output. These are slightly more general, as for every monoidal category there is an underlying multicategory, but the converse does not hold. Although multicategories are less studied than monoidal categories, there are reasons to believe that they can provide a useful framework for interpreting linear type theory. First of all, they give us precisely the sufficient structure to interpret the core syntax of a linear type theory, and do not require us to assume support for $\otimes$ and $I$ at the level of the ``semantic core'', as we have done here. Secondly, in pursuing higher dimensional models of linear dependent type theory, the categories $\mathbf{Mult}$ of unbased multicategories and $\mathbf{Mult}_*$ of based multicategories are both symmetric monoidal, closed, and bicomplete, while $\mathbf{SMCat}$ does not have all colimits (and its monoidal structure is technically not that of a monoidal category ``on the nose''). There is also a strong connection between multicategories, symmetric spectra and algebraic $K$-theory, a connection that might be explored ``synthetically'' in linear dependent type theory, if one constructs a model based on multicategories \cite{elmendorf2009permutative}.
+  \subsection{Equality of linear types and linear function extensionality}\label{extensionality}
+  A basic assumption of our theory is the restriction disallowing linear terms to appear in types. This implies that we cannot form the identity type of two terms of a linear type, which could be seen as a lack of proper ``internalization'' of the notion of equality between linear terms. However, we can still utilize the ``surrogate equality'' described at the end of Section \ref{syntLandM}, which compares the image of the two linear terms under $M$. Building upon this idea, it is tempting to consider the addition of some kind of ``extensionality''-style rules to make the ``surrogate equality'' useful in practice. Such rules should allow us to prove equalities of linear terms by reducing it to a proof equalities of their consituent parts. For example, suppose we are given terms:
   \[
     \begin{split}
     \Gamma; x : A \vdash t : B\\
@@ -2490,7 +2497,7 @@ allowing us to define ``linear addition operator'':
     \_L+\_ &:\equiv \lambda n. \lambda m. \text{let $x$ be $n$ in $R^{\mathbb{N}}(y, \text{let $z$ be $y$ in $LSuc(m)$}, x)$}
   \end{split}
 \]
-It remains future work to investigate which conditions these extra rules impose on the semantic interpretation of the natural numbers type, and also to explore more generally how to understand inductive types in the linear dependent setting.
+It remains future work to investigate which conditions these extra rules impose on the semantic interpretation of the natural numbers type, and to explore more generally how to interpret inductive types in the linear dependent setting. It would also be interesting to see how inductive types constructed in this fashion compares to the ones considered by Frank Pfenning in \cite{pfenning}.
   \subsection{Linearity, pointedness, stability and the delooping hypothesis}
   In our models, we have kept the categories $\mathcal{L}$ and $\mathcal{T}$ of linear and cartesian types only related mainly via the adjunction $L \dashv M$. This has provided us with a variety of options for understanding linear and cartesian types and their relation, but at this level of generality there does not seem to be a strong conceptual (or ontological) connection between linear and cartesian types.
 
@@ -2570,22 +2577,7 @@ Roughly, this means that we are to understand a cartesian context $\Gamma$ as an
 This suggests a connection between dependent linear type theory and stable homotopy theory akin to the connection between dependent type theory and to homotopy theory. This connection was hypothesized in \cite{schreiber2014quantization}.
 
 However, as the connection between linear types and cartesian types relies heavily on pointed objects in the cartesian realm, one is tempted to experiment with a reformulation of the adjunction $L \dashv M$ that reflects this.
-
-
-\begin{comment}
-weaken the pointed category $\mathcal{C}_*$ by making morphisms into triangles:
-\[
- \ti
-  1 \ar[d, "a"] \ar[dr, "b", name=C] & \\
-  A \ar[r, "f", name=A,swap]& B \ar[from=A, to=C, symbol=\implies,yshift=-45, xshift=8, "\alpha"]
-  \kz
-\]
-now only commuting up to a 2-cell $\alpha : f\circ a \implies b$.
-
-
-In the groupoid model, this corresponds to
-we might want to weaken the commutativity of morphisms above. That is, we want linear types to be specified by pointed cartesian types,
-\end{comment}
+\newpage
 \bibliographystyle{amsalphaurlmod}
 \bibliography{refs}
 \end{document}
