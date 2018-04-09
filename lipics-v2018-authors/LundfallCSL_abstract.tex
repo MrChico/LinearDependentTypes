@@ -1,0 +1,69 @@
+\documentclass[a4paper,english]{lipics-v2018}
+%\usepackage{tikz-cd}
+%\usepackage[inference]{semantic}
+%8\usepackage{float}
+%This is a template for producing LIPIcs articles. 
+%See lipics-manual.pdf for further information.
+%for A4 paper format use option "a4paper", for US-letter use option "letterpaper"
+%for british hyphenation rules use option "UKenglish", for american hyphenation rules use option "USenglish"
+% for section-numbered lemmas etc., use "numberwithinsect"
+
+\usepackage{microtype}%if unwanted, comment out or use option "draft"
+\bibliographystyle{plainurl}% the recommnded bibstyle
+\title{The diagram model of linear dependent type theory}
+
+\titlerunning{Models of linear dependent type theory}%optional, please use if title is longer than one line
+
+\author{Martin Lundfall}{Stockholm University}{martin@dapp.org}{}{}%{johnqpublic@dummyuni.org}{https://orcid.org/0000-0002-1825-0097}{[funding]}%mandatory, please use full name; only 1 author per \author macro; first two parameters are mandatory, other parameters can be empty.
+
+\authorrunning{M. Lundfall}%mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et. al.'
+
+\Copyright{Martin Lundfall}%mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+\subjclass{
+\ccsdesc[500]{Theory of computation~Linear logic};
+\ccsdesc[500]{Theory of computation~Type theory}
+}
+\keywords{Dependent type theory, linear type theory, diagram model, monoidal categories, groupoid model}%mandatory
+
+\category{}%optional, e.g. invited paper
+
+\relatedversion{\url{http://kurser.math.su.se/pluginfile.php/16103/mod_folder/content/0/2017/2017_47_report.pdf}}%optional, e.g. full version hosted on arXiv, HAL, or other respository/website
+
+\supplement{}%optional, e.g. related research data, source code, ... hosted on a repository like zenodo, figshare, GitHub, ...
+
+\funding{}%optional, to capture a funding statement, which applies to all authors. Please enter author specific funding statements as fifth argument of the \author macro.
+
+\acknowledgements{I want to thank Peter Lumsdaine for his constant guidance and inspiration.}%optional
+
+%Editor-only macros:: begin (do not touch as author)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\EventEditors{John Q. Open and Joan R. Access}
+\EventNoEds{2}
+\EventLongTitle{42nd Conference on Very Important Topics (CVIT 2016)}
+\EventShortTitle{CVIT 2016}
+\EventAcronym{CVIT}
+\EventYear{2016}
+\EventDate{December 24--27, 2016}
+\EventLocation{Little Whinging, United Kingdom}
+\EventLogo{}
+\SeriesVolume{42}
+\ArticleNo{23}
+\nolinenumbers %uncomment to disable line numbering
+%\hideLIPIcs  %uncomment to remove references to LIPIcs series (logo, DOI, ...), e.g. when preparing a pre-final version to be uploaded to arXiv or another public repository
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We present a type theory dealing with non-linear, ``ordinary'' dependent types (which we will call \textit{cartesian}), and \textit{linear types}, where both constructs may depend on terms of the former. In the interplay between these, we find the new type formers $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the dependent type $B$, (and therefore the resulting construct) is a linear type. These can be seen as internalizing universal and existential quantification over linear propositions, respectively. We also consider two modalities, $M$ and $L$, transforming linear types into cartesian types and vice versa.
+
+The theory is interpreted in a split comprehension category $\pi : \mathcal{T} \to \mathcal{C}^\to$ \cite{jacobs}, accompanied by a split monoidal fibration, $q : \mathcal{L} \to \mathcal{C}$. We interpret $\mathcal{C}$ as a category of contexts, which for any $\Gamma \in \mathcal{C}$, determines the fibers $\mathcal{T}_\Gamma$ and $\mathcal{L}_\Gamma$. We interpret $\mathcal{T}_\Gamma$ as category of the cartesian types over $\Gamma$, and $\mathcal{L}_\Gamma$ as the monoidal category of linear types in $\Gamma$. In this setting, the type formers $\sqcap_{x :A}$ and $\sqsubset_{x : A}$ are understood as right and left adjoints of the monoidal reindexing functor $\pi_A^* : \mathcal{L}_\Gamma \to \mathcal{L}_{\Gamma.A}$ corresponding to the weakening projection $\pi_A : \Gamma.A \to \Gamma$ in $\mathcal{C}$. The operators $M$ and $L$ give rise to a fiberwise adjunction $L \dashv M$ between $\mathcal{L}$ and $\mathcal{T}$, where we understand the traditional exponential modality as the comonad $! = LM$.
+
+We provide a model of this theory called the \textit{Diagram model}, which extends the groupoid model of dependent type theory \cite{hofmann1998} to accomodate linear types. Here, cartesian types over a context $\Gamma$ are interpreted as a family of groupoids indexed over the groupoid $\Gamma$, while linear types are interpreted as diagrams over groupoids, $A : \Gamma \to \mathcal{V}$ in any symmetric monoidal category $\mathcal{V}$. We show that the \textit{diagrams model} can under certain conditions support a linear analogue of the univalence axiom, and provide some discussion on the higher-dimensional nature of linear dependent types.
+\end{abstract}
+
+\bibliography{LundfallCSL}
+
+
+\end{document}
