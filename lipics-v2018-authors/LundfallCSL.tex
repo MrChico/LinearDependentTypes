@@ -83,7 +83,7 @@ We provide a model of this theory called the \textit{Diagram model}, which exten
 \section{Introduction \& summary of results}
 Lately, there has been an increasing interest in combining linear and dependent types  \cite{schreiber2014quantization}, \cite{krishnaswami}, \cite{vakar14}, \cite{nothing}. The idea is that such a theory would inherit the higher-order nature of dependent types, while maintaining a careful account of how assumptions are used in a derivation. It is not completely clear, however, what the synthesis looks like, since in dependent type theory, variables may appear in both terms and types, but linear type theory only allows each variable to appear freely exactly once. Here, we take an approach inspired by \cite{krishnaswami} and \cite{vakar14}, in which we distinguish between non-linear, dependent types (which we call \textit{cartesian}), and linear types, and circumvent the issue by only allowing cartesian terms to appear in types (both cartesian and linear).
 
-The theory splits contexts into two parts, divided by a semicolon, where the first part contains cartesian assumptions, for which weakening and contraction is admissible, while the second part contains linear assumptions, for which only exchange is allowed. We introduce two new type formers, $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the dependent type $B$ (and therefore the resulting construct) is a linear. The traditional $!$ modality is deconstructed as a comonad arising from the adjoint pair $L \dashv M$, where $L$ is a functor (or modality) sending cartesian types into linear, and $M$ sends linear types to cartesian. We have $\Pi_{x : A}B_M \cong (\sqcap_{x :A}B)_M$, for linear $B$, and, assuming a few additional rules, a linear equivalence $(\Sigma_{x :A}C)_L \cong \sqsubset_{x :A}C_L$ for cartesian $C$.
+The theory splits contexts into two parts, divided by a semicolon, where the first part contains cartesian assumptions, for which weakening and contraction is admissible, while the second part contains linear assumptions, for which only exchange is allowed. We introduce two new type formers, $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the dependent type $B$ (and therefore the resulting construct) is a linear. The traditional $!$ modality is deconstructed as a comonad arising from the adjoint pair $L \dashv M$, where $L$ is a functor (or modality) sending cartesian types into linear, and $M$ sends linear types to cartesian. We have $\Pi_{x : A}B_M \cong (\sqcap_{x :A}B)_M$, for linear $B$, and, assuming a few additional rules, a linear isomorphism $(\Sigma_{x :A}C)_L \cong \sqsubset_{x :A}C_L$ for cartesian $C$.
 
 Compared to ordinary depdenent type theory, we get additional elimination and computation rules for both $\Sigma$ and $Id$-types when eliminating into a linear type.
 
@@ -196,22 +196,22 @@ The rules for the operators $M$ and $L$ are presented in Figure \ref{MLfig}.
 \inference{\Gamma \vdash B \linear}{\Gamma \vdash B_M \type}[M-F]
 \]\\
 \[
-\inference{\Gamma ; \cdot \vdash b : B}{\Gamma \vdash b_M : B_M}[M-I]
+\inference{\Gamma ; \cdot \vdash b : B}{\Gamma \vdash \sigma(b) : B_M}[M-I]
 \]\\
 \[
 \inference{
 \Gamma \vdash t : B_M\\
-}{\Gamma; \cdot \vdash \sigma(t) : B \\}[M-E]
+}{\Gamma; \cdot \vdash \sigma^{-1}(t) : B \\}[M-E]
 \]\\
 \[
 \inference{
-\Gamma \vdash b_M : B_M\\
-}{\Gamma; \cdot \vdash \sigma(b_M) \equiv b : B \\}[M-C$_1$]
+\Gamma \vdash \sigma(b)  : B_M\\
+}{\Gamma; \cdot \vdash \sigma^{-1}(\sigma(b)) \equiv b : B \\}[M-C$_1$]
 \]
 \[
 \inference{
-\Gamma \vdash \sigma(t)_M : B_M\\
-}{\Gamma \vdash \sigma(t)_M \equiv t : B_M \\}[M-C$_2$]
+\Gamma; \cdot \vdash \sigma^{-1}(t) : B_M\\
+}{\Gamma \vdash \sigma(\sigma^{-1}(t)) \equiv t : B_M \\}[M-C$_2$]
 \]
 \end{minipage}
 }
@@ -298,7 +298,7 @@ Second, we assume a kind of naturality rule for the $L$ modality:
 { \Gamma; \Xi, \Xi', \Xi'' \vdash e[\text{let $x$ be $t$ in $u$}/y] \equiv \text{let $x$ be $t$ in $e[u/y]$} : C}[Nat$_L$]
 \]
 \begin{proposition}\label{L-subset}
-  Assuming the Nat$_L$ and the uniqueness rules for $\Sigma$ and $\sqsubset$, there is a linear isomorphism:
+  Assuming the Nat$_L$ and the uniqueness rules for $\Sigma$ and $\sqsubset$, there is a linear isomorphism\footnote{Here a linear isomorphism, $A \cong B$, means a pair $f : A \multimap B$, $g : B \multimap A$ such that the composite is definitionally equal to the identity. We discuss the weaker notion of linear equivalence in Section \ref{highermodel}}
   \[
     (\Sigma_{x :A}B)_L \cong \sqsubset_{x:A}B_L
   \]
@@ -399,16 +399,16 @@ Let $\hat c_s = c(pr_1,pr_2)^*s^*c$. Given sections $a : \Gamma \to \Gamma.A$ an
   \end{proof}
 \end{theorem}
 \subsubsection{Identity types}
-When it comes to Id-types, the situation is not as fortunate. If one wants to keep the theory intensional, we need to add condition (2) to make sure that the semantic identity types satisfy the added elimination rule, =-E$_2$.
+The situation for Id-types requires a bit more care. If one wants to keep the theory intensional, we need to add condition (2) to make sure that the semantic identity types satisfy the added elimination rule, =-E$_2$.
 
 \begin{definition}[Id-types]\label{idsemantic}
-  A model of LDTT \textbf{supports Id-types} if, for all $A \in \mathcal{T}_{\Gamma}$, there exists an object $Id_A \in \mathcal{T}_{\Gamma.A.A\{\pi_A\}}$ and a morphism $r_A : \Gamma.A \to \Gamma.A.\pi_A^*A.Id_{A}$ such that $\pi_{Id_A} \circ r_A = v_A$, and:
+  A model of LDTT \textbf{supports Id-types} if, for all $A \in \mathcal{T}_{\Gamma}$, there exists an object $Id_A \in \mathcal{T}_{\Gamma.A.\pi_A^*A}$ and a morphism $r_A : \Gamma.A \to \Gamma.A.\pi_A^*A.Id_{A}$ such that $\pi_{Id_A} \circ r_A = v_A$, and:
   \begin{enumerate}
 \item For any commutative diagram:
   \[
     \begin{tikzcd}
     \Gamma.A \ar[d, "r_A"] \ar[r] & \Delta.C \ar[d, "\pi_C"]\\
-    \Gamma.A.A\{\pi_A\}.Id_A \ar[r] & \Delta
+    \Gamma.A.\pi_A^*A.Id_A \ar[r] & \Delta
     \end{tikzcd}
   \]
   there exists a lift $J: \Gamma.A.\pi_A^*A.Id_A \to \Delta.C$ making the two triangles commute.
@@ -440,10 +440,15 @@ the canonical natural transformation $f^*\sqcap_{E'} \to \sqcap_{E}q^*_{E, E'}$ 
 \end{definition}
 \subsubsection{The operators $M$ and $L$}
 \begin{definition}\label{semanticML}
-  A model of LDTT with unit \textbf{supports the operators $M$ and $L$} if there exists functors $M : \mathcal{L} \leftrightarrow \mathcal{T} : L$ which are cartesian with respect to the fibrations $p : \mathcal{T} \to \mathcal{C}$ and $q : \mathcal{L} \to \mathcal{C}$, such that $L \dashv M$ is a fibred adjunction and there is an isomorphism of hom-sets:
+  A model of LDTT with unit \textbf{supports the operators $M$ and $L$} if there exists functors $M : \mathcal{L} \leftrightarrow \mathcal{T} : L$ which are cartesian with respect to the fibrations $p : \mathcal{T} \to \mathcal{C}$ and $q : \mathcal{L} \to \mathcal{C}$, such that
+  \begin{itemize}
+  \item $L \dashv M$ is a fibred adjunction,
+  \item $L(1) \cong I$
+  \item and there is an isomorphism of hom-sets:
   \[
     \mathcal{L}_{\Gamma.A}(\pi_A^*(\Xi'), \pi_A^*(B)) \cong \mathcal{L}_\Gamma(LA \otimes \Xi', B)\].
-  
+
+  \end{itemize}
 \end{definition}
 Recall that a fibred adjunction implies that there are natural isomorphisms making the following diagram commute:
 \[
@@ -454,8 +459,10 @@ Recall that a fibred adjunction implies that there are natural isomorphisms maki
 \]
 which from a syntactic perspective ensures that $M$ and $L$ commute with substitution.
 
+Note that the interpretation of a term $\Gamma \cdot \vdash \sigma(a) : A_M$ arises from the adjunction via $\sigma : \mathcal{L}_\Gamma(I, A) \cong \mathcal{L}_\Gamma(L(1), A) \cong \mathcal{T}_\Gamma(1, M(A))$.
 
-The final condition of the definition is what yields the elimination and computation rules L-U, and while it might appear somewhat unnatural semantically, it does turn out to hold automatically in a large class of models, due to the following result:
+
+The final condition of the definition is what yields the elimination and computation rules L-U, and while it might appear somewhat unnatural semantically, it does turn out to hold in a broad variety of models, due to the following result:
 \begin{theorem}In a model of LDTT that supports $\multimap$ type formers, then any fibred adjunction $L \dashv M$ where $L(1) \cong I$ satisfies $\mathcal{L}_{\Gamma.A}(\pi^*_A(\Xi'), \pi^*(B)) \cong \mathcal{L}_{\Gamma}(LA \otimes \Xi', B)$.
   \begin{proof}
     A model supporting internal homs must have reindexing functions which preserve these. That is, we have an isomorphism $\pi_A^*[\Xi, B] \cong [\pi_A^*\Xi, \pi^*_AB]$. We get a chain of isomorphisms:
@@ -539,6 +546,7 @@ This construction satisfies the additional requirement in our definition of sema
 To see that the computation rule holds, we only need to notice that when $M \equiv N$ and $P = refl(M)$, $\phi$ is the identity natural transformation.
 \end{proof}
 \end{theorem}
+
 As in the families model, limits and colimits are constructed pointwise, and preserved by precomposition, so the model supports $\&$, $\top$, $\oplus$, $0$, if $\mathcal{V}$ has binary products, terminal object, binary coproducts and initial object respectively.
 
 When it comes to $\multimap$, we utilize the following result:
@@ -599,8 +607,8 @@ In particular, we might wish for a linear analogue to the univalence axiom to ho
     \Gamma; \cdot \vdash f : El(A) \multimap El(B)\\
     \Gamma; \cdot \vdash g : El(B) \multimap El(A)\\
     \Gamma; \cdot \vdash h : El(B) \multimap El(A)\\
-    \Gamma \vdash p : (g \circ f)_M  =_{(El(A) \multimap El(A))_M} (id_A)_M\\
-    \Gamma \vdash q : (f \circ h)_M =_{(El(B) \multimap El(B))_M} (id_B)_M\\
+    \Gamma \vdash p : \sigma(g \circ f)  =_{(El(A) \multimap El(A))_M} (id_A)_M\\
+    \Gamma \vdash q : \sigma(f \circ h) =_{(El(B) \multimap El(B))_M} (id_B)_M\\
     }{\Gamma \vdash ua(f) : A =_{\mathbb{L}} B}[L-ua-I]
   \]
   To define the corresponding computation rule, we will the make use of a linear version of \texttt{transport}, which is easily defineable through identity elimination. Given $\Gamma, x : C \vdash D \linear$, and an identity $p : a =_C b$, we get a function:
@@ -610,85 +618,49 @@ In particular, we might wish for a linear analogue to the univalence axiom to ho
   which we call the linear \textbf{transport along p}.
   This function has an inverse and thus yields for any $q : A =_L B$ a linear equivalence $El(A) \cong El(B)$.
   
-    The computation rules for the linear univalence axiom states that the procedure of generating an equivalence from an identity is itself an equivalence. In other words, given a linear function $f : El(A) \multimap El(B)$ which gives rise to a linear equivalence of $El(A)$ and $El(B)$, turning the equivalence $f$ into an identity and then back into an equivalence should return $f$ again:
+    The computation rules for the univalence axiom asserst that the process creating equivalences from identities forms an inverse to univalence:
   \[
     \inference{
       \Gamma \vdash ua(f)^* : El(A) \multimap El(B)}
     {\Gamma \vdash ua(f)^* \equiv f : El(A) \multimap El(B)}
     [L-ua-C$_1$]
-  \]\\
-  and conversely, given an identity $p : A =_{\mathbb{L}} B$, turning it to an equivalence and then back into an identity should return $p$:
+  \]
     \[
     \inference{
       \Gamma \vdash ua(p^*) : A =_\mathbb{L} B}
     {\Gamma \vdash ua(p^*) \equiv p : A =_{\mathbb{L}} B}
     [L-ua-C$_2$]
-  \]\\
-  \subsubsection{Semantic justification}
-  The semantic interpretation of the procedure of turning an identity to an equivalence above is the following:
-  \begin{lemma}Given two sections $A, B : \Gamma \to \Gamma.\mathbb{L}$, and a section $p : \Gamma \to \Gamma.(B^+)^*A^*Id_{\mathbb{L}}$, there is an natural isomorphism $IdToEquiv(p) : El(A) \cong El(B)$ in $[\Gamma, \mathcal{V}]$.
-    \begin{proof}The section $p : \Gamma \to \Gamma.(B^+)^*A^*Id_{\mathbb{L}}$ selects for every $\Gamma$ an object $(a \in A(\gamma), b \in B(\gamma), f : a \to b)$ of the groupoid $Id_{\mathbb{L}}.\{A\}\{B^+\}(\gamma) = \delta \mathcal{V}^{core}(A,B)$, and map morphisms to commutative squares, defining a natural isomorphism $El(A) \cong El(B)$ between the diagrams $El(A) : \Gamma \to \mathcal{V}$ and $El(B) : \Gamma \to \mathcal{V}$.
+  \]
+  The semantic interpretation of the procedure of turning an identity to an equivalence becomes the following:
+  \begin{lemma}In the diagram model, given two sections $A, B : \Gamma \to \Gamma.C$, there is an isomorphism between the sections to the projection morphism $\Gamma.{B^+}^*A^*Id_{C} \to \Gamma$, and natural isomorphisms $A \cong El(B)$ in $[\Gamma, \mathcal{V}]$.
+    \begin{proof}Since $\Gamma.(B^+)^*A^*Id_{\mathbb{L}} \cong \Gamma.{\mathcal{V}^{core}}^{\to}$, a section $p : \Gamma \to \Gamma.{\mathcal{V}^{core}}^{\to}$ defines for every morphism $\alpha : \gamma \to \gamma'  \in \Gamma$ a naturality square:
+      \[
+      \begin{tikzcd}
+        A(\gamma) \ar[r,"p(\gamma)"] \ar[d,"A(\alpha)"] & B(\gamma) \ar[d,"B(\alpha)"]\\
+        A(\gamma') \ar[r, "p(\gamma')"] & B(\gamma')
+      \end{tikzcd}
+      \]
+where $A(\gamma)$ and $B(\gamma)$ are isomorphisms. Conversely, every natural isomorphism $El(A) \cong El(B)$ clearly defines such a section.
     \end{proof}
   \end{lemma}
- 
   \begin{theorem}
-    For $L \dashv M$ factoring through $\mathbf{Sets}$ as in Remark \ref{factorsets}, the linear univalence axiom holds in the diagram model. That is, given the following data:
+    When $M$ factors through $\mathbf{Sets}$ as in Remark \ref{factorsets}, the linear univalence axiom holds in the diagram model. That is, given the following data:
     \begin{itemize}
     \item sections: $A, B : \Gamma \to \Gamma.{\mathbb{L}}$
-    \item morphisms: $f : I \to [El(A), El(B)]$ and $g, h : I \to El(B)$ in $[\Gamma, \mathcal{V}]$,
-    \item and sections: $p : \Gamma \to \Gamma.Id_{(M[El(A),El(A)])}\{M(g \circ f)\}\{M(id_A)\}$ and $q : \Gamma \to \Gamma.Id_{(M[El(B),El(B)])}\{M(f \circ h)\}\{M(id_B)\}$
+    \item morphisms: $f : I \to [El(A), El(B)]$ and $g, h : I \to [El(B),El(A)]$ in $[\Gamma, \mathcal{V}]$,
+    \item sections: $p : \Gamma \to \Gamma.(M(g f))^*(M(id_A))^*Id_{(M[El(A),El(A)])}$
+    \item and $q : \Gamma \to \Gamma.(M(f g))^*(M(id_B))^*Id_{(M[El(B),El(B)])}$
     \end{itemize}
-    Then there is a section $ua(f)_{g, h, p, q} : \Gamma \to \Gamma.Id_{\mathbb{L}}\{A\}\{B\}$ such that $IdToEquiv(ua(f)) = f$ and $ua(IdToEquiv(p)) = p$.
+There is a natural isomorphism $El(A) \cong El(B)$.
     \begin{proof}
-      Since $M$ factors through sets, the interpretation of any type in its image is a functor with values in discrete groupoids, so by lemma \ref{discgroupoid}, the existence of a section $p : \Gamma \to \Gamma.Id_{M[El(A), El(A)]}\{(g \circ f)_M\}\{(id_{El(A)})_M\}$ implies that the sections $(g \circ f)_M : 1 \to M[A, A]$ and $(id_{El(A)})_M : 1 \to M[A,A]$ coincide, which by the adjunction $L \dashv M$ implies that $[[(g \circ f)]] = id_{El(A)}$. From the interpretation of $\multimap$ as internal hom, the syntactic composition operation coincides with the composition of the corresponding morphisms. In other words, denoting by $\hat f$ the transport of a map via the isomorphism $\mathcal{L}_\Gamma(I, [A,B]) \cong \mathcal{L}_\Gamma(A,B)$, we have $\hat [[g \circ f]] = \hat g \circ \hat f$ and $\hat id_{El(A)} = 1_{El(A)}$. We therefore have an isomorphism $\hat f : El(A) \to El(B)$ with $\hat g = \hat h$ as inverse. Selecting this isomorphism in $\mathcal{V}^{core}$ gives rise to a section $P : \Gamma \to \Gamma.Id_{\mathbb{L}}\{A\}\{B\}$, which by the previous lemma can be transported back by $IdToEquiv(P) = \hat f$.
+      The section $p$ selects for every $\gamma \in \Gamma$ an isomorphism between $\sigma(gf)$ and $\sigma(id_A)$ of $M[El(A),El(A)]$. But since $M$ factors through sets, $M[El(A), El(A)]$ is a discrete groupoid, so $\sigma(gf)$ and $\sigma(id_A)$ must be identical, and the same is true for $\sigma(fg)$ and $\sigma(id_B)$. Transporting back through the isomorphisms $[\Gamma,\mathbf{GPD}](1,M[El(A),El(A)]) \cong [\Gamma, \mathcal{V}](I, [El(A),El(A)]) \cong [\Gamma,\mathcal{V}](El(A),El(A))$ we find $gf = 1_{El(A)}$, and similarly $fg = 1_{El(B)}$.
 \end{proof}
-\end{theorem}
-So the linear univalence axiom holds in the diagrams model as long as $M$ factors through sets, analogous to how one can prove the univalence axiom in the groupoid model for the universe which only contains discrete groupoids. This might not be completely satisfying from the perspective of homotopy type theory, as this essentially truncates any higher dimensional type into a set when transporting them via $M$. Instead, we could to imagine forming a model where our linear types have an inherently higher dimensional structure, which is preserved by $M$. One such model is given by letting the objects of $\mathcal{V}$ be categories, and $M$ be the functor taking a category to its core, i.e. its maximal sub-groupoid. If we want $\mathcal{V}$ to have a non-cartesian monoidal structure the candidate choices $\mathbf{Cat}$ and $\mathbf{Gpd}$ won't do. As briefly outlined in in \ref{smcatmon} and carefully described in \cite{smcat}, there is a symmetric monoidal structure on $\mathbf{SMCat}$, the category of small symmetric monoidal categories, symmetric monoidal functors and monoidal natural transformations. \footnote{Technically, the structure on $\mathbf{SMCat}$ is not quite symmetric monoidal, as the associators, unitors and symmetry functors are only invertible up to higher homotopy. However, if one applies these homotopies whenever necessary, one does get a model of linear dependent type theory.}
-\begin{definition}
- Let the \textbf{2-categorical model of LDTT} be given by the diagrams model where $\mathcal{V}$ is the 2-category of small symmetric monoidal categories, symmetric monoidal functors and monoidal natural transformations:
-  \[
-    \begin{tikzcd}
-    \diag(\mathbf{SMCat}) \ar[rd, "cod"] & \diag(\mathbf{Gpd}) \ar[r, "\pi"] \ar[d, "cod"] & \mathbf{Gpd}^\to \ar[ld, "dom"]\\
-    & \mathbf{Gpd}
-    \end{tikzcd}
-  \]
-\end{definition}
-For two symmetric monoidal categories $\mathcal{A}$ and $\mathcal{B}$, the category $[\mathcal{A}, \mathcal{B}]$ consisting of monoidal functors and monoidal transformations between them carries a natural monoidal structure \cite{smcat}, and gives $\mathbf{SMCat}$ a monoidal closed structure. Since $\mathbf{SMCat}$ is complete, with limits inherited from $\mathbf{Cat}$ equipped with a pointwise monoidal structure, we have support for $\sqcap$ and $\&$, and theorem \ref{diaghoms} gives us that this model supports $\multimap$ type formers. \footnote{Note, however, that we do not have all coproducts in $\mathbf{SMCat}$. Therefore, we cannot support $\oplus$ or $\sqsubset$. An alternative to be explored is the category $\mathbf{Mult}$, of multicategories, which is a symmetric monoidal closed, complete and co-complete \cite{elmendorf2009permutative}. More on this in section \ref{discussion}}
-  \begin{proposition}
-    There is a functor $F : \mathbf{Cat} \to \mathbf{SMCat}$ which constructs the free symmetric monoidal category of any groupoid, i.e. is a left adjoint to the forgetful functor $U_{smcat} : \mathbf{SMCat} \to \mathbf{Cat}$, forgetting the monoidal structure.
-\end{proposition}
-Combining this adjunction with the familiar adjunction:
-\[
-\begin{tikzcd}
-\mathbf{Cat} \ar[r, "\text{core}"{name=A, below}, bend right] & \mathbf{Gpd} \ar[l, "U_{gpd}"{name=B, above}, bend right] \ar[from=A, to=B, symbol=\vdash]
-\end{tikzcd}
-\]
-where $U_{gpd}$ is the forgetful functor and $\text{core}$ is the functor sending a category to its underlying maximal sub-groupoid, we get an adjunction:
-\[
-\begin{tikzcd}
-\mathbf{SMCat} \ar[r, "\text{core }\circ U_{smcat}"{name=A, below}, bend right] & \mathbf{Gpd} \ar[l, "F \circ U_{gpd}"{name=B, above}, bend right] \ar[from=A, to=B, symbol=\vdash]
-\end{tikzcd}
-\]
-This adjunction lifts by lemma \ref{fiberadj} to a fiber adjunction:
-  \[
-\begin{tikzcd}
-    \diag(\mathbf{SMCat}) \ar[rd, "cod"] \ar[rr, "M"{name=B, below},swap] & & \ar[ll, "L"{name=A, above},bend right] \ar[from=A, to=B, symbol=\dashv] \diag(\mathbf{Gpd}) \ar[ld, "cod"]\\
-    & \mathbf{Gpd}
-    \end{tikzcd}
-  \]
-  Furthermore, it is clear from the definition of $F$ and the unit $I$ of $\mathbf{SMCat}$, defined at \ref{smcatmon} that the image of $\mathbf{1}$ under $F$ is precisely $I$, so the higher dimensional model supports $M$ and $L$.
-
-  
-  Here we have two choices for our linear universe.\footnote{In our syntax we only defined a single linear universe, but it can easily be extended into several universes, which may be subcategories of each other, or even an infinite hierarchy of universes}
-  If we want univalence to hold in this model we can let the linear universe ${\mathbb{L}}$ be the groupoid consisting of all \textit{discrete} symmetric monoidal categories, and isomorphisms between them. This is equivalently the core of $CMon$, the category of small commutative monoids (in $\mathbf{Set}$). $CMon$ is a full subcategory of $SMCat$, which allows us to let $El$ be the function sending an object of ${\mathbb{L}}$ to an object of $\mathbf{SMCat}$.
-
-  
-  Another choice is to let ${\mathbb{L}} = \mathbf{SMCat}^{core}$, making it an all-encompassing universe. This universe is not univalent, however, as one-dimensional groupoids do not carry enough higher dimensional structure to capture the weakness distinguishing an equivalence of categories and an isomorphism of categories.
-
+  \end{theorem}
+  By the lemma above, equivalences $El(A) \cong El(B)$ are in one-to-one correspondence with identities $p : A =_L B$, demonstrating that the linear univalence axiom holds in the diagrams model as long as $M$ factors through sets.
   \subsubsection{Examples}
-To summarize, these are the conditions imposed in order to support all of the type formers described in section \ref{syntax} using the families model:
+To summarize, these are the conditions imposed on $\mathcal{V}$ in order for the diagram model to support all of the type formers of our theory:
 \begin{itemize}
-\item A symmetric monoidal closed category $\mathcal{V}$, with small products and coproducts, which distribute over the monoidal structure.
+\item A bicomplete symmetric monoidal closed category $\mathcal{V}$
 \item An adjunction $L \dashv M$ between $\mathcal{V}$ and $\mathbf{Sets}$, such that $L\{*\}$ is isomorphic to the unit of the monoidal structure of $\mathcal{V}$.
 \end{itemize}
 Some concrete choices for $\mathcal{V}$ that fulfill these conditions are:
@@ -697,7 +669,26 @@ Some concrete choices for $\mathcal{V}$ that fulfill these conditions are:
 \item More generally, for any commutative ring $R$, the category $R$-$\mathbf{Mod}$ of modules over $R$ with the free functor/forgetful functor adjunction
 \item The category $\mathbf{CGTop}_*$, of pointed compactly generated topological spaces, with the smash product as monoidal structure. The functor $M$ is here the forgetful functor which both forgets the base point and the topology, which has a left adjoint given by the discrete topology, and then taking the coproduct with the point to create a pointed space. The unit of $\mathbf{CGTop}_*$ is the two point discrete set $S^0$, which is precisely the image of the point in the adjunction above.
 \end{itemize}
+  \subsection{Discussion}
+  Although the diagram model supports the univalence axiom, we are forced to truncate any higher dimensional structure by factoring $M$ through $\mathbf{Set}$, just as we can support it in the groupoid model for a universe only containing discrete groupoids. From the perspective of homotopy type theory, we may think of the set-indexed families model as a 0-dimensional model of linear dependent type theory and the diagram model as a 1-dimensional one. We conclude the paper by sketching what a 2-dimensional model might look:
 
+  As outlined in \cite{smcat}, there is a symmetric monoidal structure on $\mathbf{SMCat}$, the category of small symmetric monoidal categories, symmetric monoidal functors and monoidal natural transformations. \footnote{Technically, the structure on $\mathbf{SMCat}$ is not quite symmetric monoidal, as the associators, unitors and symmetry functors are only invertible up to higher homotopy. However, if one applies these homotopies whenever necessary, one does get a model of linear dependent type theory.}
+\begin{definition}
+ Let the \textbf{2-dimensional model of LDTT} be given by the diagrams model where $\mathcal{V}$ is the 2-category of small symmetric monoidal categories, symmetric monoidal functors and monoidal natural transformations:
+  \[
+    \begin{tikzcd}
+    \diag(\mathbf{SMCat}) \ar[rd, "cod"] & \diag(\mathbf{Gpd}) \ar[r, "\pi"] \ar[d, "cod"] & \mathbf{Gpd}^\to \ar[ld, "dom"]\\
+    & \mathbf{Gpd}
+    \end{tikzcd}
+  \]
+\end{definition}
+For two symmetric monoidal categories $\mathcal{A}$ and $\mathcal{B}$, the (monoidal) functor category $[\mathcal{A}, \mathcal{B}]$ between them carries a natural monoidal structure \cite{smcat}, and gives $\mathbf{SMCat}$ a monoidal closed structure. Since $\mathbf{SMCat}$ is complete, with limits inherited from $\mathbf{Cat}$ equipped with a pointwise monoidal structure, we have support for $\sqcap$ and $\&$, and theorem \ref{diaghoms} gives us that this model supports $\multimap$ type formers. \footnote{Note, however, that we do not have all coproducts in $\mathbf{SMCat}$. Therefore, we cannot support $\oplus$ or $\sqsubset$. An alternative to be explored is the category $\mathbf{Mult}$, of multicategories, which is a symmetric monoidal closed, complete and co-complete \cite{elmendorf2009permutative}}
+There is a natural candidate for the adjunction $L \dashv M$, based on the composite:
+  \[
+  \begin{tikzcd}
+\mathbf{SMCat} \ar[r, "U"{name=D, below}, bend right]  & \ar[l, "F"{name=C, above}, bend right] \ar[from=C, to=D, symbol=\dashv] \mathbf{Cat} \ar[r, "\text{core}"{name=B, below}, bend right]   &  \mathbf{Gpd} \ar[l, "U"{name=A, above}, bend right] \ar[from=A, to=B, symbol=\dashv]
+    \end{tikzcd}
+  \]
 \bibliography{LundfallCSL}
 
 
