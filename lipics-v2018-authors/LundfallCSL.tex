@@ -77,7 +77,7 @@ We present a type theory dealing with non-linear, ``ordinary'' dependent types (
 
 The theory is interpreted in a split comprehension category $\pi : \mathcal{T} \to \mathcal{C}^\to$ \cite{jacobs}, accompanied by a split monoidal fibration, $q : \mathcal{L} \to \mathcal{C}$. We interpret $\mathcal{C}$ as a category of contexts, which for any $\Gamma \in \mathcal{C}$, determines the fibers $\mathcal{T}_\Gamma$ and $\mathcal{L}_\Gamma$. We interpret $\mathcal{T}_\Gamma$ as category of the cartesian types over $\Gamma$, and $\mathcal{L}_\Gamma$ as the monoidal category of linear types in $\Gamma$. In this setting, the type formers $\sqcap_{x :A}$ and $\sqsubset_{x : A}$ are understood as right and left adjoints of the monoidal reindexing functor $\pi_A^* : \mathcal{L}_\Gamma \to \mathcal{L}_{\Gamma.A}$ corresponding to the weakening projection $\pi_A : \Gamma.A \to \Gamma$ in $\mathcal{C}$. The operators $M$ and $L$ give rise to a fiberwise adjunction $L \dashv M$ between $\mathcal{L}$ and $\mathcal{T}$, where we understand the traditional exponential modality as the comonad $! = LM$.
 
-We provide a model of this theory called the \textit{Diagram model}, which extends the groupoid model of dependent type theory \cite{hofmann1998} to accomodate linear types. Here, cartesian types over a context $\Gamma$ are interpreted as a family of groupoids indexed over the groupoid $\Gamma$, while linear types are interpreted as diagrams over groupoids, $A : \Gamma \to \mathcal{V}$ in any symmetric monoidal category $\mathcal{V}$. We show that the \textit{diagrams model} can under certain conditions support a linear analogue of the univalence axiom, and provide some discussion on the higher-dimensional nature of linear dependent types.
+We provide a model of this theory called the \textit{Diagram model}, which extends the groupoid model of dependent type theory \cite{hofmann1998} to accommodate linear types. Here, cartesian types over a context $\Gamma$ are interpreted as a family of groupoids indexed over the groupoid $\Gamma$, while linear types are interpreted as diagrams over groupoids, $A : \Gamma \to \mathcal{V}$ in any symmetric monoidal category $\mathcal{V}$. We show that the \textit{diagrams model} can under certain conditions support a linear analogue of the univalence axiom, and provide some discussion on the higher-dimensional nature of linear dependent types.
 \end{abstract}
 \tableofcontents
 \section{Introduction \& summary of results}
@@ -85,7 +85,7 @@ Lately, there has been an increasing interest in combining linear and dependent 
 
 The theory splits contexts into two parts, divided by a semicolon, where the first part contains cartesian assumptions, for which weakening and contraction is admissible, while the second part contains linear assumptions, for which only exchange is allowed. We introduce two new type formers, $\sqcap_{x : A}B$ and $\sqsubset_{x : A}B$, akin to $\Pi$ and $\Sigma$, but where the dependent type $B$ (and therefore the resulting construct) is a linear. The traditional $!$ modality is deconstructed as a comonad arising from the adjoint pair $L \dashv M$, where $L$ is a functor (or modality) sending cartesian types into linear, and $M$ sends linear types to cartesian. We have $\Pi_{x : A}B_M \cong (\sqcap_{x :A}B)_M$, for linear $B$, and, assuming a few additional rules, a linear isomorphism $(\Sigma_{x :A}C)_L \cong \sqsubset_{x :A}C_L$ for cartesian $C$.
 
-Compared to ordinary depdenent type theory, we get additional elimination and computation rules for both $\Sigma$ and $Id$-types when eliminating into a linear type.
+Compared to ordinary dependent type theory, we get additional elimination and computation rules for both $\Sigma$ and $Id$-types when eliminating into a linear type.
 
 We postulate the existence of two universes, $L$ and $U$, containing codes of linear and cartesian types, respectively and assumed to be closed under all type formers.
 
@@ -100,60 +100,48 @@ The purely linear part of our type theory contains all the type formers of intui
 Finally, we have the two modalities, $M$ and $L$, which turns linear types into cartesian, and vice versa.
 A detailed presentation of our syntax can be found in \cite{MLundfall}. For the familiar, ``purely'' dependent or linear type formers, our presentation offer no significant surprises, except for a couple of additional rules for $\Sigma$ and the identity type. Therefore, we focus on presenting the syntax for the new type formers $\sqsubset$, $\sqcap$ and the modalities $M$ and $L$.
 
-\subsection{Auxillary elimination rules}\label{newElim}
-Besides the traditional rules for $\Pi$, $\Sigma$ and the identity type, we find that since we can now eliminate into linear types, we must introduce an extra elimination and computational rule for each one. These additional rules for $\Sigma$ are presented next along with the traditional elimination and computation rules in Figure \ref{elimfig}.
-\begin{figure}\label{elimfig}
+\subsection{Auxiliary elimination rules}\label{newElim}
+Besides the traditional rules for $\Pi$, $\Sigma$ and the identity type, we find that since we can now eliminate into linear types, we must introduce an extra elimination and computational rule for each one. These additional rules are presented next along with the traditional elimination rules in Figure \ref{elimfig}.
+\begin{figure}
 \fbox{
-  \begin{minipage}{.45\linewidth}
-      \small
+  \begin{minipage}{.40\linewidth}
+      \footnotesize
   \[
-\inference{\Gamma, t : \Sigma_{x : A}B \vdash C \type\\
+\inference[{\footnotesize$\Sigma$-E$_1$}]{\Gamma, t : \Sigma_{x : A}B \vdash C \type\\
 \Gamma, x : A, y : B \vdash c : C[(x, y)/t]\\
 \Gamma \vdash s : \Sigma_{x : A}B}
-{\Gamma \vdash \hat c[s] : C[s/t]}[$\Sigma-$E$_1$]
+{\Gamma \vdash \hat c[s] : C[s/t]}
 \]\\
 \[
-\inference{\Gamma \vdash \hat c[(a, b)] : C[(a, b)/t]}
-{\Gamma \vdash \hat c[(a, b)] \equiv c[(a, b)/t] : C[(a, b)/t]}[$\Sigma$-C$_1$]
-\]\\
+\inference[{\footnotesize =-E$_1$}]{\Gamma, x, y : A, p : x =_Ay \vdash C \type\\
+\Gamma, z : A \vdash c: C[z/x, z/y, \text{refl}(z)/p]\\
+\Gamma \vdash M, N : A\\
+\Gamma \vdash P : M =_A N}
+{\Gamma \vdash R^{Id} : C[M/x, N/y, P/p]}
+\]
 \end{minipage}
-  \begin{minipage}{.55\linewidth}
-    \small
+  \begin{minipage}{.60\linewidth}
+    \footnotesize
 \[
-  \inference{\Gamma, t : \Sigma_{x : A}B \vdash C \linear\\
+  \inference[{\footnotesize $\Sigma$-E$_2$}]{\Gamma, t : \Sigma_{x : A}B \vdash C \linear\\
 \Gamma, x : A, y : B; \Xi \vdash c : C[(x, y)/t]\\
 \Gamma \vdash s : \Sigma_{x : A}B}
-{\Gamma; \Xi[pr_1(s)/x][pr_2(s)/y] \vdash \hat c[s] : C[s/t]}[$\Sigma$-E$_2$]
+{\Gamma; \Xi[pr_1(s)/x][pr_2(s)/y] \vdash \hat c[s] : C[s/t]}
 \]\\
 \[
-\inference{\Gamma; \Xi \vdash \hat c[(a, b)] : C[(a, b)/t]}
-{\Gamma; \Xi \vdash \hat c[(a, b)] \equiv c[(a, b)/t] : C[(a, b)/t]}[$\Sigma$-C$_2$]
-\]\\
+  \inference[{\footnotesize =-E$_2$}]{\vdash \Gamma, x, y : A, p : x =_Ay; \Xi \text{ ctxt}\\
+    \Gamma, x, y : A, p : x =_Ay \vdash C \linear\\
+\Gamma, z : A; \Xi[z/x, z/y, \text{refl}(z)/p] \vdash c: C[z/x, z/y, \text{refl}(z)/p]\\
+\Gamma \vdash M, N : A\\
+\Gamma \vdash P : M =_A N}
+{\Gamma; \Xi[M/x, N/y, P/p] \vdash R^{Id} : C[M/x, N/y, P/p]}
+\]
 \end{minipage}
 }
-\caption{Elimination and computation rules for $\Sigma$}
+\caption{Elimination rules for $\Sigma$ and $Id$}
+\label{elimfig}
 \end{figure}
-Similarly, for the identity type, in addition to the usual elimination rule:
-\[
-\small
-\inference{\Gamma, x, y : A, p : x =_Ay \vdash C \type\\
-\Gamma, z : A \vdash c: C[z/x, z/y, refl(z)/p]\\
-\Gamma \vdash M : A\\
-\Gamma \vdash N : A\\
-\Gamma \vdash P : M =_A N}
-{\Gamma \vdash R^{Id}_{[x, y, p]}(c, M, N, P) : C[M/x, N/y, P/p]}[=-E$_1$]
-\]
-we may also eliminate into linear types:
-\[\label{id}
-\small
-  \inference{\vdash \Gamma, x, y : A, p : x =_Ay; \Xi \text{ ctxt}\\
-    \Gamma, x, y : A, p : x =_Ay \vdash C \linear\\
-\Gamma, z : A; \Xi[z/x, z/y, refl(z)/p] \vdash c: C[z/x, z/y, refl(z)/p]\\
-\Gamma \vdash M : A\\
-\Gamma \vdash N : A\\
-\Gamma \vdash P : M =_A N}
-{\Gamma; \Xi[M/x, N/y, P/p] \vdash R^{Id}_{[x, y, p]}(c, M, N, P) : C[M/x, N/y, P/p]}[=-E$_2$]
-\]
+
 \subsection{The modalities $M$ and $L$}\label{syntLandM}
 We introduce two the modal operators $M$ and $L$, which transfers a linear type/term to its cartesian counterpart and vice versa. Semantically, this will establish a fiberwise monoidal adjunction between the categories of linear and cartesian types:
 \[
@@ -164,45 +152,44 @@ We introduce two the modal operators $M$ and $L$, which transfers a linear type/
 where the exponential modality from traditional linear logic is understood as the comonad $! = LM$. The decomposition of the exponential into an adjunction goes back to at least \cite{benton1995mixed}, and is given an interesting new light in \cite{licata2017fibrational}, where it is seen as a particular case of a more general procedure of encoding structure in contexts.
 
 The rules for the operators $M$ and $L$ are presented in Figure \ref{MLfig}.
-\begin{figure}\label{MLfig}
+\begin{figure}
 \fbox{
   \small
 \begin{minipage}{.6\linewidth}
 \[
 \inference{\Gamma \vdash A \type}{\Gamma \vdash A_L \linear}[L-F]
-\]\\
+\]
 \[
 \inference{\Gamma \vdash a : A}{\Gamma ; \cdot \vdash a_L : A_L}[L-I]
-\]\\
+\]
 \[
 \inference{(\Gamma \vdash B \linear) \\
 (\vdash \Gamma; \Xi' \text{ ctxt})\\ \Gamma; \Xi \vdash y : A_L \quad \Gamma, x : A; \Xi' \vdash t : B}{\Gamma; \Xi, \Xi' \vdash \text{let  $x$ be $y$ in }t : B}[L-E]
-\]\\
+\]
 \[
 \inference{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t : B}{\Gamma; \Xi \vdash \text{let  $x$ be $s_L$ in }t \equiv t[s/x]  : B}[L-C]
-\]\\
+\]
 \[
   \inference{\Gamma; y : A_L, \Xi \vdash t : B \\
-    (\Gamma, x : A; \Xi \vdash t[x_L/y] : B)\\
     \Gamma; \Xi' \vdash a : A_L 
   }
   {\Gamma; \Xi, \Xi' \vdash \text{let $x$ be $a$ in $t[x_L/y]$} \equiv t[a/y] : B}[L-U]
-\]\\
+\]
 
 \end{minipage}
 \begin{minipage}{.4\linewidth}
   \small
 \[
 \inference{\Gamma \vdash B \linear}{\Gamma \vdash B_M \type}[M-F]
-\]\\
+\]
 \[
 \inference{\Gamma ; \cdot \vdash b : B}{\Gamma \vdash \sigma(b) : B_M}[M-I]
-\]\\
+\]
 \[
 \inference{
 \Gamma \vdash t : B_M\\
 }{\Gamma; \cdot \vdash \sigma^{-1}(t) : B \\}[M-E]
-\]\\
+\]
 \[
 \inference{
 \Gamma \vdash \sigma(b)  : B_M\\
@@ -216,6 +203,7 @@ The rules for the operators $M$ and $L$ are presented in Figure \ref{MLfig}.
 \end{minipage}
 }
 \caption{Typing rules for $M$ and $L$}
+\label{MLfig}
 \end{figure}
 The interpretation of $L$ and $M$ as an adjoint pair is already present at the syntactic level. We can show that they form instances of a Haskell-like \textbf{Functor} class, by constructing terms: $\textup{\texttt{fmapM}} : (A \multimap B)_M \to A_M \to B_M$ and $\textup{\texttt{fmapL}} : L(A \to B) \multimap (LA \multimap LB)$, satisfying the functor laws.
 
@@ -228,7 +216,7 @@ For any term: $\Gamma; y : A_L \vdash f : B$, there is a unique term $\Gamma, x 
 We can now also reformulate some common results about the exponential modality using $! = LM$, such as $(A \& B)_{LM} \cong A_{LM} \otimes B_{LM}$.
 \subsection{$\sqcap$ and $\sqsubset$}
 Since we allow linear types to depend on terms of cartesian types, we can form new versions of the $\Pi$- and $\Sigma$-types, denoted $\sqcap$ and $\sqsubset$, respectively. The typing rules for these are presented in Figure \ref{clawhousefig}.
-\begin{figure}\label{clawhousefig}
+\begin{figure}
 \fbox{
   \begin{minipage}{.47\linewidth}
     \small
@@ -270,6 +258,7 @@ Since we allow linear types to depend on terms of cartesian types, we can form n
 \end{minipage}
 }
 \caption{Typing rules for $\sqsubset$ and $\sqcap$}
+\label{clawhousefig}
 \end{figure}
 The sense in which $\sqcap$ and $\sqsubset$ are ``linear analogues'' of $\Pi$ and $\Sigma$ can be formalized in the following way:
 \begin{proposition}\label{M-sqcap}
@@ -279,15 +268,7 @@ The sense in which $\sqcap$ and $\sqsubset$ are ``linear analogues'' of $\Pi$ an
     \]
 \end{proposition}
 
-We would like to show a similar result relating $\Sigma$ and $\sqsubset$, but for this we need a couple of additional rules. First, we assume the following uniqueness rules for $\Sigma$ and $\sqsubset$ \footnote{The former is provable as a propositional identity \cite[Corollary~2.7.3]{hott-book}. Perhaps it is possible to obtain a similar result for $\sqsubset$, using the ``surrogate equality'' described in the end of Section \ref{syntLandM}}:
-\[
-  \inference{\Gamma \vdash p : \Sigma_{x : A}B}
-  {\Gamma \vdash (\text{pr}_1(p), \text{pr}_2(p)) \equiv p}[$\Sigma$-U]
-\]
-\[
-  \inference{\Gamma;\Xi \vdash \text{let $x, y$ be $t$ in $(x, y) : A$}}
-  {\Gamma;\Xi \vdash \text{let $x, y$ be $t$ in $(x, y) \equiv t : A$}}[$\sqsubset$-U]
-\]
+We would like to show a similar result relating $\Sigma$ and $\sqsubset$, but for this we need a couple of additional rules. First, we assume uniqueness rules for $\Sigma$ and $\sqsubset$, asserting that the elimination rule followed by the introduction rule is the identity. In other words, for any $p : \Sigma_{x : A}B$ and $q : \sqsubset_{x : C}D$, we have $(pr_1(p),pr_2(p)) \equiv p$ and $\text{let $x, y$ be $q$ in $(x, y)$} \equiv q$ \footnote{The former is provable as a propositional identity \cite[Corollary~2.7.3]{hott-book}. Perhaps it is possible to obtain a similar result for $\sqsubset$, using the ``surrogate equality'' described in the end of Section \ref{syntLandM}}:
 Second, we assume a kind of naturality rule for the $L$ modality:
 \[
   \inference{
@@ -298,7 +279,7 @@ Second, we assume a kind of naturality rule for the $L$ modality:
 { \Gamma; \Xi, \Xi', \Xi'' \vdash e[\text{let $x$ be $t$ in $u$}/y] \equiv \text{let $x$ be $t$ in $e[u/y]$} : C}[Nat$_L$]
 \]
 \begin{proposition}\label{L-subset}
-  Assuming the Nat$_L$ and the uniqueness rules for $\Sigma$ and $\sqsubset$, there is a linear isomorphism\footnote{Here a linear isomorphism, $A \cong B$, means a pair $f : A \multimap B$, $g : B \multimap A$ such that the composite is definitionally equal to the identity. We discuss the weaker notion of linear equivalence in Section \ref{highermodel}}
+  Assuming the Nat$_L$ and the uniqueness rules for $\Sigma$ and $\sqsubset$, there is a linear isomorphism\footnote{Here a linear isomorphism, $A \cong B$, means a pair $f : A \multimap B$, $g : B \multimap A$ such that the composite is judgmentally equal to the identity. We discuss the weaker notion of linear equivalence in Section \ref{highermodel}}
   \[
     (\Sigma_{x :A}B)_L \cong \sqsubset_{x:A}B_L
   \]
@@ -357,7 +338,7 @@ A \textbf{model for linear dependent type theory} consists of a split comprehens
 
 This provides the necessary machinery to interpret all the structural rules of our theory as well as the rules for $\otimes$ and $I$, by constructing an interpretation function $[[-]]$, which sends:
   \begin{itemize}
-  \item Cartesian contexts $\Gamma$ to objects of $\mathcal{C}$, considered up to definitional equality and renaming of bound variables.
+  \item Cartesian contexts $\Gamma$ to objects of $\mathcal{C}$, considered up to judgmental equality and renaming of bound variables.
   \item Linear contexts $\Xi = a_1 : A_1, a_2 : A_2, \dots a_n : A_N$ in $\Gamma$ to objects $[[\Xi]] = \bigotimes^n_{i = 1}[[A_i]]$ of $\mathcal{L}_{[[\Gamma]]}$.
   \item Cartesian types $A$ in $\Gamma$ to objects of $\mathcal{T}_{[[\Gamma]]}$.
   \item Linear types $B$ in $\Gamma$ to objects of $\mathcal{L}_{[[\Gamma]]}$.
@@ -412,7 +393,7 @@ The situation for Id-types requires a bit more care. If one wants to keep the th
     \end{tikzcd}
   \]
   there exists a lift $J: \Gamma.A.\pi_A^*A.Id_A \to \Delta.C$ making the two triangles commute.
-\item For any pair of objects, $C, \Xi \in \mathcal{L}_{\Gamma.A.\pi_A^*A.Id}$, sections $M, N : \Gamma \to \Gamma.A$, $P : \Gamma \to \Gamma.M^*(N^+)^*Id_A$, and morphism $c : r_A^*\Xi \to r_A^*C$, there exists a morphism $\hat c_{[M,N,P]} : M^*(N^+)^*P^*\Xi \to M^*(N^+)^*P^*C$ such that $\hat c_{[M,M,refl]} = M^*c$.
+\item For any pair of objects, $C, \Xi \in \mathcal{L}_{\Gamma.A.\pi_A^*A.Id}$, sections $M, N : \Gamma \to \Gamma.A$, $P : \Gamma \to \Gamma.M^*(N^+)^*Id_A$, and morphism $c : r_A^*\Xi \to r_A^*C$, there exists a morphism $\hat c_{[M,N,P]} : M^*(N^+)^*P^*\Xi \to M^*(N^+)^*P^*C$ such that $\hat c_{[M,M,\text{refl}]} = M^*c$.
 \end{enumerate}
 \end{definition}
 Notice that if our type theory has extensional id-types, in the sense that $a =_A b$ implies $a \equiv b$, then the third condition is always met.
@@ -530,7 +511,7 @@ Since $\top$ is the groupoid $\mathbf{1}$ consisting of a single object, we will
 As shown in \cite{hofmann1998}, this model supports $\Pi$ and $\Sigma$ type formers, and provides an interesting interpretation of the identity type $Id_A$ as the arrow category of $A$.
 
 This construction satisfies the additional requirement in our definition of semantic identity types:
-\begin{theorem}Given a $\Gamma$-indexed groupoid $A$, diagrams $C, \Xi \in [\Gamma.A^\to, \mathcal{V}] \cong [\Gamma.A.\pi_A^*A,Id_A, \mathcal{V}]$, sections $M, N : \Gamma \to \Gamma.A$, $P : \Gamma.A \to \Gamma.Id_A$ and a natural transformation $c : \Xi \circ r_A \implies C\circ r_A$, there exists a natural transformation $\hat c_{[M,N,P]} : \Xi \circ P^+ \circ N^+ \circ M \implies C \circ P^+ \circ N^+ \circ M$ such that $\hat c_{[M,M,refl]} = c \circ M$ \footnote{Where the sections $N^+ : \Gamma.A \to \Gamma.A.\pi_A^*A$ and $P^+ : \Gamma.A.\pi_A^* \to \Gamma.A.\pi_A^*.Id_A$ are weakenings of $N$ and $P$, i.e. functors ignoring the additional arguments}
+\begin{theorem}Given a $\Gamma$-indexed groupoid $A$, diagrams $C, \Xi \in [\Gamma.A^\to, \mathcal{V}] \cong [\Gamma.A.\pi_A^*A,Id_A, \mathcal{V}]$, sections $M, N : \Gamma \to \Gamma.A$, $P : \Gamma.A \to \Gamma.Id_A$ and a natural transformation $c : \Xi \circ r_A \implies C\circ r_A$, there exists a natural transformation $\hat c_{[M,N,P]} : \Xi \circ P^+ \circ N^+ \circ M \implies C \circ P^+ \circ N^+ \circ M$ such that $\hat c_{[M,M,\text{refl}]} = c \circ M$ \footnote{Where the sections $N^+ : \Gamma.A \to \Gamma.A.\pi_A^*A$ and $P^+ : \Gamma.A.\pi_A^* \to \Gamma.A.\pi_A^*.Id_A$ are weakenings of $N$ and $P$, i.e. functors ignoring the additional arguments}
   \begin{proof}
     The key point to observe is that there is always an isomorphism $(\gamma, P_\gamma : M_\gamma \to N_\gamma) \cong (\gamma, 1_{M_\gamma} : M_\gamma \to M_\gamma)$ given by the commutative diagram:
     \[
@@ -543,7 +524,7 @@ This construction satisfies the additional requirement in our definition of sema
 \[
 \Xi \circ P^+ \circ N^+ \circ M \xrightarrow{\Xi_{\phi}} \Xi \circ r_A \circ M \xrightarrow{cM} C \circ r_A \circ M \xrightarrow{C_{\phi^{-1}}} C \circ P^+ \circ N^+ \circ M
 \]
-To see that the computation rule holds, we only need to notice that when $M \equiv N$ and $P = refl(M)$, $\phi$ is the identity natural transformation.
+To see that the computation rule holds, we only need to notice that when $M \equiv N$ and $P = \text{refl}(M)$, $\phi$ is the identity natural transformation.
 \end{proof}
 \end{theorem}
 
@@ -611,14 +592,14 @@ In particular, we might wish for a linear analogue to the univalence axiom to ho
     \Gamma \vdash q : \sigma(f \circ h) =_{(El(B) \multimap El(B))_M} (id_B)_M\\
     }{\Gamma \vdash ua(f) : A =_{\mathbb{L}} B}[L-ua-I]
   \]
-  To define the corresponding computation rule, we will the make use of a linear version of \texttt{transport}, which is easily defineable through identity elimination. Given $\Gamma, x : C \vdash D \linear$, and an identity $p : a =_C b$, we get a function:
+  To define the corresponding computation rule, we will the make use of a linear version of \texttt{transport}, which is easily definable through identity elimination. Given $\Gamma, x : C \vdash D \linear$, and an identity $p : a =_C b$, we get a function:
 \[
   p^* : D[a/x] \multimap D[b/x]
   \]
   which we call the linear \textbf{transport along p}.
   This function has an inverse and thus yields for any $q : A =_L B$ a linear equivalence $El(A) \cong El(B)$.
   
-    The computation rules for the univalence axiom asserst that the process creating equivalences from identities forms an inverse to univalence:
+    The computation rules for the univalence axiom asserts that the process creating equivalences from identities forms an inverse to univalence:
   \[
     \inference{
       \Gamma \vdash ua(f)^* : El(A) \multimap El(B)}
@@ -689,6 +670,9 @@ There is a natural candidate for the adjunction $L \dashv M$, based on the compo
 \mathbf{SMCat} \ar[r, "U"{name=D, below}, bend right]  & \ar[l, "F"{name=C, above}, bend right] \ar[from=C, to=D, symbol=\dashv] \mathbf{Cat} \ar[r, "\text{core}"{name=B, below}, bend right]   &  \mathbf{Gpd} \ar[l, "U"{name=A, above}, bend right] \ar[from=A, to=B, symbol=\dashv]
     \end{tikzcd}
   \]
+  through which one should be able to construct a univalent universe containing nontrivial 1-dimensional linear types.
+
+  Eventually, one would like to go all the way up and construct a $\infty$-dimensional formulation of linear dependent type theory. It has been speculated that models of a higher dimensional linear dependent type theory can be expressed through stable homotopy type theory \cite{schreiber2014quantization}, although it is unclear what the syntax for such a theory looks like.
 \bibliography{LundfallCSL}
 
 
